@@ -92,10 +92,10 @@ export class SubscriptionService {
   /** A client buying a trainer/center's ProviderPackage — creates a PENDING_PAYMENT
    *  Subscription tied to that package; follow up with StripeService.createCheckoutSession
    *  using the returned subscriptionId, same two-step flow as selectPlan. */
-  purchasePackage(packageId: number) {
+  purchasePackage(packageId: number, paymentCode?: string) {
     return this.httpClient.post<ApiResponse<PackagePurchaseResponse>>(
       `${this.url}/subscription/purchasePackage`,
-      { packageId },
+      paymentCode ? { packageId, paymentCode } : { packageId },
       { headers: new HttpHeaders().set('Content-Type', 'application/json') }
     );
   }

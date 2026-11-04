@@ -128,11 +128,18 @@
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
           You already have this ({{ sessionsLeft(plan) }}). Book your next session out of it.
         </p>
-        <a [routerLink]="bookPath" [queryParams]="{ plan: plan.id }"
-          class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2">
+        <a *ngIf="plan.sessionsPerWeek; else bookOne" [routerLink]="['/dashboard/weekly-subscriptions']" [queryParams]="{ id: ownedFrom(plan)?.id }"
+          class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2" data-testid="manage-weekly">
           <i-feather name="calendar" style="width:14px;height:14px;"></i-feather>
-          Book a session
+          Set or change my weekly times
         </a>
+        <ng-template #bookOne>
+          <a [routerLink]="bookPath" [queryParams]="{ plan: plan.id }"
+            class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2">
+            <i-feather name="calendar" style="width:14px;height:14px;"></i-feather>
+            Book a session
+          </a>
+        </ng-template>
       </ng-container>
 
       <ng-template #notOwned>
@@ -164,6 +171,28 @@
             </button>
           </div>
           <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+        </div>
+
+        <!-- "I have a unique code": an admin-approved code stands in for the payment -->
+        <div *ngIf="!isGuest" class="rounded-xl border border-gray-200 dark:border-gray-800 p-3 flex flex-col gap-2" data-testid="code-block">
+          <button type="button" (click)="showCodeBox = !showCodeBox" data-testid="have-code"
+            class="self-start text-xs font-semibold text-red-600 dark:text-red-400 hover:underline">
+            {{ showCodeBox ? 'Hide the code box' : 'I have a unique code' }}
+          </button>
+          <div *ngIf="showCodeBox" class="flex flex-col gap-2">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="payment-code-input">Enter the code your trainer or Berliz sent you. It replaces the payment.</label>
+            <input id="payment-code-input" type="text" [(ngModel)]="paymentCode" autocomplete="off" autocapitalize="characters" placeholder="BZ-XXXX-XXXX"
+              class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm font-mono uppercase tracking-wider" data-testid="code-input" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <button type="button" (click)="askTrainerForCode()" [disabled]="askingTrainer || askSent" data-testid="ask-trainer"
+              class="self-start text-[11px] text-gray-600 dark:text-gray-300 underline disabled:opacity-50 disabled:no-underline">
+              {{ askSent ? 'Your trainer was asked for a code' : askingTrainer ? 'Asking…' : 'No code? Request a code from my trainer' }}
+            </button>
+            <span *ngIf="askSent" class="text-[11px] text-emerald-700 dark:text-emerald-400" data-testid="ask-sent">
+              {{ providerName }} has been told. If they agree, they ask the administration and you both receive the code by email and in your inbox.
+            </span>
+          </div>
         </div>
 
         <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>

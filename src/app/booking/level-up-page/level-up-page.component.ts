@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,6 +9,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { CenterService } from 'src/app/services/center.service';
+import { PaymentCodeService } from 'src/app/services/payment-code.service';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -38,7 +40,7 @@ import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-pr
  */
 @Component({
   selector: 'app-level-up-page',
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
+  imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule],
   templateUrl: './level-up-page.component.html'
 })
 export class LevelUpPageComponent implements OnInit, OnDestroy {
@@ -66,6 +68,12 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
   /** The plan the link asked for (`?plan=`); used once the provider's plans have loaded. */
   private pendingPlanId: number | null = null;
 
+  /** "I have a unique code": the box is shown, and what was typed. A valid code replaces the payment. */
+  showCodeBox = false;
+  paymentCode = '';
+  askingTrainer = false;
+  askSent = false;
+
   /** A visitor who is not signed in asked to pay: show the log in / create account choice. */
   showAuthPrompt = false;
 
@@ -87,6 +95,7 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
     private trainerService: TrainerService,
     private centerService: CenterService,
     private providerPackageService: ProviderPackageService,
+    private paymentCodeService: PaymentCodeService,
     private subscriptionService: SubscriptionService,
     private stripeService: StripeService,
     private authRedirect: AuthRedirectService,
@@ -126,12 +135,15 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
     if (!plan) return '';
     if (this.buyingPlanId === plan.id) return 'Starting checkout…';
     if (this.isGuest) return 'Continue';
-    return `${planActionLabel(plan)} · $${plan.price}${planKind(plan) === 'subscription' ? ' / month' : ''}`;
+    if (this.showCodeBox && this.paymentCode.trim()) return `${planActionLabel(plan)} with my code`;
+    const kind = planKind(plan);
+    const note = kind === 'subscription' || (kind === 'weekly' && plan.billingType === 'RECURRING') ? ' / month' : kind === 'weekly' ? ' / term' : '';
+    return `${planActionLabel(plan)} · $${plan.price}${note}`;
   }
 
   /** The intro names only what this provider actually sells, so it never promises a product the page does not list. */
   get introText(): string {
-    const verbs: Record<string, string> = { subscription: 'subscribe', pack: 'buy a session pack', membership: 'get a membership' };
+    const verbs: Record<string, string> = { weekly: 'train every week at fixed times', subscription: 'subscribe', pack: 'buy a session pack', membership: 'get a membership' };
     const offered = this.groups.map(g => verbs[g.kind]);
     if (offered.length === 0) return 'Commit to more than one session with this provider.';
     const list = offered.length === 1 ? offered[0] : offered.slice(0, -1).join(', ') + ' or ' + offered[offered.length - 1];
@@ -288,12 +300,21 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
 
     this.submitError = null;
     this.buyingPlanId = plan.id;
-    this.subscriptionService.purchasePackage(plan.id).subscribe({
+    const code = this.showCodeBox ? this.paymentCode.trim() : '';
+    this.subscriptionService.purchasePackage(plan.id, code || undefined).subscribe({
       next: res => {
         const purchase = res?.data;
         if (!purchase?.subscriptionId) {
           this.buyingPlanId = null;
           this.submitError = res?.message || 'Could not start that purchase — try again.';
+          return;
+        }
+        // A code activated it with nothing to pay: no checkout, go straight to what comes next.
+        if (code && purchase.status !== 'PENDING_PAYMENT') {
+          this.buyingPlanId = null;
+          this.snackBar.openSnackBar(res?.message || 'Your code is applied.', '');
+          this.router.navigate(planKind(plan) === 'weekly' ? ['/dashboard/weekly-subscriptions'] : ['/dashboard/my-subscriptions'],
+            planKind(plan) === 'weekly' ? { queryParams: { id: purchase.subscriptionId } } : {});
           return;
         }
         this.stripeService.createCheckoutSession({
@@ -302,7 +323,7 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
           currency: purchase.currency,
           productName: purchase.packageName,
           // A subscription is charged again every month; a pack or membership is paid once.
-          recurring: planKind(plan) === 'subscription',
+          recurring: planKind(plan) === 'subscription' || (planKind(plan) === 'weekly' && plan.billingType === 'RECURRING'),
         }).subscribe({
           next: checkoutRes => {
             const checkoutUrl = checkoutRes.data?.checkoutUrl;
@@ -322,6 +343,31 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
       error: err => {
         this.buyingPlanId = null;
         if (!this.handleSessionExpired(err)) this.submitError = err?.error?.message || 'Could not start that purchase — try again.';
+      }
+    });
+  }
+
+  /**
+   * "Request a code from my trainer": a client without a code tells the trainer they would like one for this plan. The trainer
+   * takes it from there (asks the administration); the client hears back by email and in their inbox.
+   */
+  askTrainerForCode(): void {
+    const plan = this.selectedPlan;
+    if (!plan || this.askingTrainer || this.askSent) return;
+    if (this.isGuest) {
+      this.promptToSignIn();
+      return;
+    }
+    this.submitError = null;
+    this.askingTrainer = true;
+    this.paymentCodeService.askTrainer({ targetType: 'PACKAGE', packageId: plan.id }).subscribe({
+      next: () => {
+        this.askingTrainer = false;
+        this.askSent = true;
+      },
+      error: err => {
+        this.askingTrainer = false;
+        if (!this.handleSessionExpired(err)) this.submitError = err?.error?.message || 'Could not ask your trainer — try again.';
       }
     });
   }

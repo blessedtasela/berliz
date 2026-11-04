@@ -95,12 +95,12 @@ interface LocationGroup {
             <span class="flex flex-col min-w-0">
               <span class="text-xs font-semibold text-gray-800 dark:text-gray-100 break-words">{{ spotName(loc) }}</span>
               <span *ngIf="spotDetail(loc)" class="text-[11px] text-gray-500 dark:text-gray-400 break-words">{{ spotDetail(loc) }}</span>
-              <span *ngIf="loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Gym drop-in about &#36;{{ loc.dropInFee | number:'1.2-2' }}, paid to the gym</span>
+              <span *ngIf="loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Gym drop-in about CA&#36;{{ loc.dropInFee | number:'1.2-2' }}, paid to the gym directly, not included in your payment to Berliz</span>
             </span>
           </span>
           <span class="shrink-0 text-[11px] font-semibold text-right"
             [ngClass]="spotFee(loc) ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
-            {{ spotFee(loc) ? '+$' + (spotFee(loc) | number:'1.2-2') + (spotZoneText(loc) ? ' travel' : '') : 'No extra trainer fee' }}
+            {{ spotFee(loc) ? '+CA$' + (spotFee(loc) | number:'1.2-2') + (spotZoneText(loc) ? ' travel' : '') : 'No extra trainer fee' }}
           </span>
         </button>
       </div>
@@ -124,10 +124,10 @@ interface LocationGroup {
           aria-label="Google Maps link of the gym (optional)" placeholder="Google Maps link (optional, sets the travel zone)" class="berliz-input w-full text-sm" />
         <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="custom-gym-zone">
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-          <span *ngIf="gymZone !== 'PENDING'">{{ zoneText(gymZone) }}: {{ gymFee ? 'travel fee $' + (gymFee | number:'1.2-2') + '.' : 'no travel fee.' }}</span>
-          <span *ngIf="gymZone === 'PENDING'">Without a Google Maps link the trainer confirms the zone when accepting (no travel fee downtown, &#36;30 up to 30&nbsp;km, &#36;50 beyond). You will see the final amount before you pay.</span>
+          <span *ngIf="gymZone !== 'PENDING'">{{ zoneText(gymZone) }}: {{ gymFee ? 'travel fee CA$' + (gymFee | number:'1.2-2') + '.' : 'no travel fee.' }}</span>
+          <span *ngIf="gymZone === 'PENDING'">Without a Google Maps link the trainer confirms the zone when accepting (no travel fee downtown, CA&#36;30 up to 30&nbsp;km, CA&#36;50 beyond). You will see the final amount before you pay.</span>
         </p>
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">The gym may charge a drop-in fee at the door: you pay that to the gym, it is not in your total.</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">The gym may charge a drop-in fee up to CA$25 at the door: you pay that to the gym directly, not through Berliz.</p>
       </div>
 
       <button type="button" *ngIf="customAllowed" (click)="selectCustom()"
@@ -141,7 +141,7 @@ interface LocationGroup {
         </span>
         <span class="shrink-0 text-[11px] font-semibold"
           [ngClass]="ownPlaceFee ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
-          {{ ownPlaceFee ? (placeKnown ? '+$' : 'from +$') + (ownPlaceFee | number:'1.2-2') : 'No extra trainer fee' }}
+          {{ ownPlaceFee ? (placeKnown ? '+CA$' : 'from +CA$') + (ownPlaceFee | number:'1.2-2') : 'No extra trainer fee' }}
         </span>
       </button>
 
@@ -177,13 +177,13 @@ interface LocationGroup {
         <p *ngIf="quote && quote.ok && placeKnown" class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
           {{ quote.insideListedCity ? 'In ' + place.city + ', where they work.' : 'Outside the cities they list.' }}
-          {{ quote.fee ? 'Travel fee: $' + (quote.fee | number:'1.2-2') + '.' : 'No travel fee.' }}
+          {{ quote.fee ? 'Travel fee: CA$' + (quote.fee | number:'1.2-2') + '.' : 'No travel fee.' }}
         </p>
       </div>
 
       <p *ngIf="selectedFee" class="text-[11px] text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-        This location adds a &#36;{{ selectedFee | number:'1.2-2' }} fee on top of the session price.
+        This location adds a CA&#36;{{ selectedFee | number:'1.2-2' }} travel fee on top of the session price, paid to Berliz.
       </p>
 
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="gym-dropin-note">

@@ -59,11 +59,11 @@ describe('BookingLocationPickerComponent', () => {
     expect(text).toContain('Austin, TX, USA');
     expect(text).toContain("Mike's Gym");
     expect(text).toContain('12 Main St');
-    expect(text).toContain('+$15.00');
+    expect(text).toContain('+CA$15.00');
     expect(text).toContain('Anywhere in Dallas');
     expect(text).toContain('No extra trainer fee');
     expect(text).toContain('my own place');
-    expect(text).toContain('+$25.00');
+    expect(text).toContain('+CA$25.00');
   });
 
   it('marks an approximate spot as an approximate area', () => {
@@ -168,7 +168,7 @@ describe('BookingLocationPickerComponent', () => {
     const el = render(trainer());
     component.selectListed(component.locations[0]);
     fixture.detectChanges();
-    expect(el.textContent).toContain('adds a $15.00 fee');
+    expect(el.textContent).toContain('adds a CA$15.00 travel fee');
 
     component.selectListed(component.locations[1]);
     fixture.detectChanges();

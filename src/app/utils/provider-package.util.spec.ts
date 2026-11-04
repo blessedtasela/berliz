@@ -59,4 +59,30 @@ describe('provider-package util', () => {
 
     expect(groups.map(g => g.kind)).toEqual(['subscription', 'pack']);
   });
+
+  describe('weekly plans', () => {
+    const weekly = { billingType: 'ONE_TIME' as const, sessionCount: 8, sessionsPerWeek: 2, groupSize: 1, durationDays: 28 };
+
+    it('is a weekly plan whenever it has sessions per week, even when it also renews', () => {
+      expect(planKind(weekly)).toBe('weekly');
+      expect(planKind({ ...weekly, billingType: 'RECURRING' })).toBe('weekly');
+      expect(planKind({ billingType: 'RECURRING', sessionCount: null })).toBe('subscription');
+    });
+
+    it('says how many sessions a week and how it is billed', () => {
+      expect(planIncludes(weekly)).toContain('2 sessions a week at fixed times');
+      expect(planPriceNote(weekly)).toBe('per term');
+      expect(planPriceNote({ ...weekly, billingType: 'RECURRING' })).toBe('/ month, renews');
+    });
+
+    it('explains what happens next', () => {
+      expect(planCheckoutNote(weekly)).toContain('weekly days and times');
+      expect(planCheckoutNote({ ...weekly, billingType: 'RECURRING' })).toContain('again each month');
+    });
+
+    it('lists weekly plans before the other kinds', () => {
+      const groups = groupPlansByKind([{ id: 1, billingType: 'ONE_TIME', sessionCount: 5 }, { id: 2, ...weekly }] as any);
+      expect(groups.map(g => g.kind)).toEqual(['weekly', 'pack']);
+    });
+  });
 });

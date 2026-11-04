@@ -114,7 +114,7 @@ export class TrainerDataComponent {
       address: [spot?.address ?? '', Validators.maxLength(300)],
       precision: [spot?.precision ?? 'EXACT'],
       fee: [spot?.fee ?? null, Validators.min(0)],
-      dropInFee: [spot?.dropInFee ?? null, Validators.min(0)],
+      dropInFee: [spot?.dropInFee ?? null, [Validators.min(0), Validators.max(25)]],
       mapsUrl: [spot?.mapsUrl ?? '', Validators.maxLength(500)],
     });
   }

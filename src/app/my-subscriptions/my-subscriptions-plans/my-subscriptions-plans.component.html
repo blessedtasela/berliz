@@ -109,6 +109,13 @@
         <span *ngIf="selectingPlanId !== plan.id">Select {{ plan.name }}</span>
       </button>
 
+      <!-- "Don't have a code?" -- always visible, same spot on every tier -->
+      <button type="button" (click)="requestCode(plan)"
+        [disabled]="requestingCodeForPlanId !== null || hasRequestedCodeFor(plan)"
+        class="self-center text-[11px] text-gray-500 dark:text-gray-400 underline disabled:no-underline disabled:opacity-70">
+        {{ hasRequestedCodeFor(plan) ? 'Code requested — we\'ll be in touch' : requestingCodeForPlanId === plan.id ? 'Asking…' : 'No code? Request one' }}
+      </button>
+
     </div>
 
   </div>

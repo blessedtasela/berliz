@@ -247,6 +247,26 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Payment codes (admin-approved codes that stand in for a payment) and weekly fixed-time subscriptions
+      {
+        path: 'payment-codes',
+        loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Payment codes',
+          expectedRole: expectedRoleAll
+        }
+      },
+      {
+        path: 'weekly-subscriptions',
+        loadComponent: () => import('../weekly-subscriptions/weekly-subscriptions.component').then(m => m.WeeklySubscriptionsComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Weekly subscriptions',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // FAQs
       {
         path: 'my-faqs',
@@ -602,6 +622,8 @@ const dashboardRoutes: Routes = [
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Settings', expectedRole: expectedRoleAll } },
           { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Notifications', expectedRole: expectedRoleAll } },
           { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Tasks', expectedRole: expectedRoleAll } },
+          { path: 'payment-codes', loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payment codes', expectedRole: expectedRoleAll } },
+          { path: 'weekly-subscriptions', loadComponent: () => import('../weekly-subscriptions/weekly-subscriptions.component').then(m => m.WeeklySubscriptionsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Weekly subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: expectedRoleAll } },
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'To-do List', expectedRole: expectedRoleAll } },

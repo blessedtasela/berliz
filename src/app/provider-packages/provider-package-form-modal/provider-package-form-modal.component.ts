@@ -48,12 +48,20 @@ export class ProviderPackageFormModalComponent {
       // Unchecked = time-based/unlimited (sessionCount null); checked exposes the count field.
       isBundle: [p ? p.sessionCount != null : true],
       sessionCount: [p?.sessionCount ?? 5, [Validators.min(1)]],
+      // A weekly plan: N sessions every week at fixed days and times; the server works out the session count from the term length.
+      isWeekly: [!!p?.sessionsPerWeek],
+      sessionsPerWeek: [p?.sessionsPerWeek ?? 2, [Validators.min(1), Validators.max(7)]],
+      sessionMinutes: [p?.sessionMinutes ?? 60, [Validators.min(15), Validators.max(240)]],
       price: [p?.price ?? null, [Validators.required, Validators.min(0.01)]],
       durationDays: [p?.durationDays ?? null, [Validators.min(1)]],
       groupSize: [p?.groupSize ?? 1, [Validators.required, Validators.min(1)]],
       billingType: [p?.billingType ?? 'ONE_TIME', Validators.required],
       isActive: [p?.isActive ?? true],
     });
+  }
+
+  get isWeekly(): boolean {
+    return !!this.form.get('isWeekly')?.value;
   }
 
   get isBundle(): boolean {
@@ -79,9 +87,11 @@ export class ProviderPackageFormModalComponent {
     const payload = {
       name: value.name.trim(),
       description: value.description || null,
-      sessionCount: this.isBundle && value.sessionCount ? Number(value.sessionCount) : null,
+      sessionCount: !this.isWeekly && this.isBundle && value.sessionCount ? Number(value.sessionCount) : null,
+      sessionsPerWeek: this.isWeekly ? Number(value.sessionsPerWeek) : null,
+      sessionMinutes: this.isWeekly ? Number(value.sessionMinutes) : null,
       price: Number(value.price),
-      durationDays: value.durationDays ? Number(value.durationDays) : null,
+      durationDays: value.durationDays ? Number(value.durationDays) : (this.isWeekly ? 28 : null),
       groupSize: Number(value.groupSize),
       billingType: value.billingType,
       isActive: value.isActive,

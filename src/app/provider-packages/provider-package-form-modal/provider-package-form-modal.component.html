@@ -25,12 +25,36 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <input type="checkbox" formControlName="isWeekly" id="isWeekly" data-testid="is-weekly" class="rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-400" />
+            <label for="isWeekly" class="text-xs text-gray-700 dark:text-gray-300">Weekly plan: the client trains a set number of times every week at fixed days and times (for example every Tuesday and Thursday)</label>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3" *ngIf="isWeekly" data-testid="weekly-fields">
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Sessions per week</label>
+                <input aria-label="Sessions per week" type="number" min="1" max="7" formControlName="sessionsPerWeek"
+                    class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-800 transition" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Session length (minutes)</label>
+                <input aria-label="Session length (minutes)" type="number" min="15" max="240" formControlName="sessionMinutes"
+                    class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-800 transition" />
+            </div>
+            <p class="col-span-2 text-[11px] text-gray-400 dark:text-gray-500">
+                The price is for one whole term. Set the term below with "Valid for (days)" (28 = four weeks, 84 = three months; blank = 28), and choose "Renews" under billing for a plan that renews every month.
+                The number of sessions is worked out for you.
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2" *ngIf="!isWeekly">
             <input type="checkbox" formControlName="isBundle" id="isBundle" class="rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-400" />
             <label for="isBundle" class="text-xs text-gray-700 dark:text-gray-300">Fixed number of sessions (uncheck for a time-based/unlimited membership)</label>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-            <div class="flex flex-col gap-1" *ngIf="isBundle">
+            <div class="flex flex-col gap-1" *ngIf="isBundle && !isWeekly">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Sessions included</label>
                 <input aria-label="Sessions included" type="number" min="1" formControlName="sessionCount"
                     class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100

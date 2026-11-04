@@ -1,0 +1,170 @@
+<div class="max-w-4xl mx-auto p-4 flex flex-col gap-4">
+  <div>
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Payment codes</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      A unique code lets a client skip paying for one booking or package. A trainer asks the administration, the
+      administration approves, and the trainer and the client both receive the code by email and in their inbox.
+    </p>
+  </div>
+
+  <div class="flex gap-2 flex-wrap" role="tablist">
+    <button *ngIf="isSuperAdmin" type="button" (click)="tab = 'review'" data-test="tab-review"
+      class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'review' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
+      To review <span *ngIf="pendingForAdmin.length" class="ml-1 font-semibold">({{ pendingForAdmin.length }})</span>
+    </button>
+    <button type="button" (click)="tab = 'codes'" data-test="tab-codes"
+      class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'codes' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
+      {{ isSuperAdmin ? 'All codes' : 'My codes' }}
+    </button>
+    <button type="button" (click)="tab = 'requests'" data-test="tab-requests"
+      class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'requests' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
+      Requests <span *ngIf="askedOfMe.length" class="ml-1 font-semibold">({{ askedOfMe.length }})</span>
+    </button>
+    <button *ngIf="isProvider" type="button" (click)="tab = 'new'" data-test="tab-new"
+      class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'new' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
+      Ask for a code
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm animate-pulse">Loading…</div>
+
+  <!-- ===================== SUPER ADMIN: REVIEW ===================== -->
+  <section *ngIf="tab === 'review' && isSuperAdmin" class="flex flex-col gap-3">
+    <div *ngIf="pendingForAdmin.length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400">
+      Nothing is waiting for you.
+    </div>
+    <div *ngFor="let r of pendingForAdmin" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3" data-test="review-card">
+      <div class="flex justify-between gap-2 flex-wrap">
+        <div>
+          <div class="font-medium text-gray-900 dark:text-gray-100">{{ r.providerName }} asks for a code for {{ r.clientName }}</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">For {{ r.targetLabel }} · request #{{ r.id }} · {{ r.date | date:'medium' }}</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Opened by {{ r.requestedByName }} ({{ r.requestedByRole === 'CLIENT' ? 'the client, forwarded by the trainer' : 'the trainer' }}) · {{ r.clientEmail }}</div>
+        </div>
+        <span class="text-xs px-2 py-1 rounded-full h-fit" [ngClass]="statusClass(r.status)">{{ statusLabel(r.status) }}</span>
+      </div>
+      <p *ngIf="r.reason" class="text-sm text-gray-800 dark:text-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 p-2">“{{ r.reason }}”</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <label class="text-xs text-gray-600 dark:text-gray-400">Uses
+          <input type="number" min="1" max="50" [(ngModel)]="decision[r.id].uses" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+        <label class="text-xs text-gray-600 dark:text-gray-400">Valid for (days)
+          <input type="number" min="1" max="365" [(ngModel)]="decision[r.id].validDays" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+        <label class="text-xs text-gray-600 dark:text-gray-400">Note (shown to both if rejected)
+          <input type="text" [(ngModel)]="decision[r.id].note" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" (click)="approve(r)" [disabled]="busyId === r.id" data-test="approve"
+          class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">Approve and send the code</button>
+        <button type="button" (click)="reject(r)" [disabled]="busyId === r.id" data-test="reject"
+          class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-50">Reject</button>
+      </div>
+    </div>
+
+    <h2 *ngIf="decidedForAdmin.length" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-2">Already decided</h2>
+    <div *ngFor="let r of decidedForAdmin" class="rounded-xl border border-gray-200 dark:border-gray-800 p-3 text-sm flex justify-between gap-2 flex-wrap">
+      <span>#{{ r.id }} · {{ r.providerName }} → {{ r.clientName }} · {{ r.targetLabel }}</span>
+      <span class="text-xs px-2 py-1 rounded-full" [ngClass]="statusClass(r.status)">{{ statusLabel(r.status) }}<ng-container *ngIf="r.decidedByName"> · {{ r.decidedByName }}</ng-container></span>
+    </div>
+  </section>
+
+  <!-- ===================== CODES ===================== -->
+  <section *ngIf="tab === 'codes'" class="flex flex-col gap-3">
+    <div *ngIf="!loading && (isSuperAdmin ? adminCodes : myCodes).length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400">
+      No payment codes yet.
+    </div>
+    <div *ngFor="let c of (isSuperAdmin ? adminCodes : myCodes)" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2" data-test="code-card">
+      <div class="flex justify-between gap-2 flex-wrap items-center">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-lg tracking-wider text-gray-900 dark:text-gray-100" data-test="code-text">{{ c.code || '••••-••••' }}</span>
+          <button *ngIf="c.code" type="button" (click)="copy(c.code)" class="text-xs px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700">Copy</button>
+        </div>
+        <span class="text-xs px-2 py-1 rounded-full" [ngClass]="statusClass(c.state)">{{ statusLabel(c.state) }}</span>
+      </div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        {{ c.targetLabel }} · {{ c.providerName }} → {{ c.clientName }}
+      </div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        {{ c.usesLeft }} of {{ c.maxUses }} use{{ c.maxUses === 1 ? '' : 's' }} left · expires {{ c.expiresAt | date:'mediumDate' }}
+      </div>
+      <ul *ngIf="c.redemptions?.length" class="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5">
+        <li *ngFor="let rd of c.redemptions">
+          Used by {{ rd.redeemedByName }} on {{ rd.redeemedAt | date:'medium' }}
+          <span *ngIf="rd.bookingId"> for booking #{{ rd.bookingId }}</span><span *ngIf="rd.subscriptionId"> for purchase #{{ rd.subscriptionId }}</span>
+          <span *ngIf="rd.releasedAt"> · given back {{ rd.releasedAt | date:'medium' }} ({{ rd.releaseReason }})</span>
+        </li>
+      </ul>
+      <div *ngIf="isSuperAdmin && c.state === 'ACTIVE'">
+        <button type="button" (click)="revoke(c)" [disabled]="busyId === c.id" class="text-xs px-3 py-1.5 rounded-lg border border-red-300 text-red-700 dark:text-red-300">Cancel this code</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REQUESTS ===================== -->
+  <section *ngIf="tab === 'requests'" class="flex flex-col gap-3">
+    <div *ngIf="!loading && myRequests.length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400">
+      No code requests yet.
+    </div>
+    <div *ngFor="let r of myRequests" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2" data-test="request-card">
+      <div class="flex justify-between gap-2 flex-wrap">
+        <div class="font-medium text-gray-900 dark:text-gray-100">{{ r.clientName }} · {{ r.targetLabel }}</div>
+        <span class="text-xs px-2 py-1 rounded-full h-fit" [ngClass]="statusClass(r.status)">{{ statusLabel(r.status) }}</span>
+      </div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        Request #{{ r.id }} · opened by {{ r.requestedByName }} · {{ r.date | date:'medium' }}
+      </div>
+      <p *ngIf="r.reason" class="text-sm text-gray-800 dark:text-gray-200">“{{ r.reason }}”</p>
+      <p *ngIf="r.decisionNote" class="text-sm text-gray-600 dark:text-gray-400">Note: {{ r.decisionNote }}</p>
+      <div class="flex gap-2 flex-wrap">
+        <ng-container *ngIf="r.status === 'ASKED' && r.providerUserId === user?.id">
+          <button type="button" (click)="forward(r)" [disabled]="busyId === r.id" data-test="forward"
+            class="px-3 py-1.5 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-sm disabled:opacity-50">Send to the administration</button>
+          <button type="button" (click)="decline(r)" [disabled]="busyId === r.id" data-test="decline"
+            class="px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-50">Decline</button>
+        </ng-container>
+        <button *ngIf="(r.status === 'ASKED' || r.status === 'PENDING') && r.requestedByName && r.requestedByRole === (isProvider ? 'PROVIDER' : 'CLIENT')"
+          type="button" (click)="withdraw(r)" [disabled]="busyId === r.id"
+          class="px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-50">Withdraw</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROVIDER: ASK FOR A CODE ===================== -->
+  <section *ngIf="tab === 'new' && isProvider" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3" data-test="request-form">
+    <label class="text-xs text-gray-600 dark:text-gray-400">What is the code for?
+      <select [(ngModel)]="form.targetType" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
+        <option value="BOOKING">A booking</option>
+        <option value="PACKAGE">A package or subscription (not bought yet)</option>
+        <option value="SUBSCRIPTION">A purchase waiting for payment</option>
+      </select>
+    </label>
+    <label *ngIf="form.targetType === 'BOOKING'" class="text-xs text-gray-600 dark:text-gray-400">Booking number
+      <input type="number" [(ngModel)]="form.bookingId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+    </label>
+    <ng-container *ngIf="form.targetType === 'PACKAGE'">
+      <label class="text-xs text-gray-600 dark:text-gray-400">Package number
+        <input type="number" [(ngModel)]="form.packageId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+      </label>
+      <label class="text-xs text-gray-600 dark:text-gray-400">Client number
+        <input type="number" [(ngModel)]="form.clientId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+      </label>
+    </ng-container>
+    <label *ngIf="form.targetType === 'SUBSCRIPTION'" class="text-xs text-gray-600 dark:text-gray-400">Purchase number
+      <input type="number" [(ngModel)]="form.subscriptionId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+    </label>
+    <label class="text-xs text-gray-600 dark:text-gray-400">How many times can it be used?
+      <input type="number" min="1" max="50" [(ngModel)]="form.uses" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+    </label>
+    <label class="text-xs text-gray-600 dark:text-gray-400">Why should this client not have to pay?
+      <textarea rows="3" [(ngModel)]="form.reason" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm"></textarea>
+    </label>
+    <p *ngIf="formError" class="text-sm text-red-600" role="alert" data-test="form-error">{{ formError }}</p>
+    <div>
+      <button type="button" (click)="submitRequest()" [disabled]="sending" data-test="send-request"
+        class="px-4 py-2 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-sm font-medium disabled:opacity-50">
+        {{ sending ? 'Sending…' : 'Send to the administration' }}
+      </button>
+    </div>
+  </section>
+</div>
