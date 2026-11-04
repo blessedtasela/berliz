@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { subscriptionTitle } from '../subscription-status.util';
 import { BILLING_STORE_LABEL, billingStoreOf } from 'src/app/utils/subscription-billing';
 
 @Component({
@@ -10,6 +11,8 @@ import { BILLING_STORE_LABEL, billingStoreOf } from 'src/app/utils/subscription-
 })
 export class MySubscriptionsActiveComponent {
   @Input() subscription!: Subscriptions;
+
+  get title(): string { return subscriptionTitle(this.subscription); }
   @Output() refresh = new EventEmitter<void>();
 
   /** "App Store" / "Google Play" when the subscription was bought in the mobile app and is billed there, else ''. */

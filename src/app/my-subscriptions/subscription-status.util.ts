@@ -55,3 +55,26 @@ export function completePaymentLink(sub: Subscriptions | null | undefined): { pa
     query: { plan: pkg.id },
   };
 }
+
+type TitleSource = {
+  plan?: string | null;
+  providerPackage?: { name?: string | null } | null;
+  trainer?: { name?: string | null } | null;
+  center?: { name?: string | null } | null;
+} | null | undefined;
+
+/**
+ * A row's name: its plan, else the package it was bought as, else who it is with. A row must never read as a bare
+ * "Subscription" with nothing to say what it was.
+ */
+export function subscriptionTitle(sub: TitleSource): string {
+  const own = sub?.plan?.trim() || sub?.providerPackage?.name?.trim();
+  if (own) return own;
+  const who = sub?.trainer?.name?.trim() || sub?.center?.name?.trim();
+  return who ? `Plan with ${who}` : 'Subscription (no plan name recorded)';
+}
+
+/** "Ended: Dec 22, 2026" or, when no end date was recorded, a plain statement of that instead of a blank. */
+export function subscriptionEndedText(sub: { endDate?: Date | string | null } | null | undefined, formatDate: (d: Date | string) => string): string {
+  return sub?.endDate ? `Ended: ${formatDate(sub.endDate)}` : 'No end date recorded';
+}

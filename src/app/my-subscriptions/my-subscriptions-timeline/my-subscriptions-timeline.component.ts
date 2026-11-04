@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
-import { subscriptionState, subscriptionStatusClasses, subscriptionStatusLabel } from '../subscription-status.util';
+import { subscriptionState, subscriptionStatusClasses, subscriptionStatusLabel, subscriptionTitle } from '../subscription-status.util';
 
 @Component({
     selector: 'app-my-subscriptions-timeline',
@@ -9,7 +9,8 @@ import { subscriptionState, subscriptionStatusClasses, subscriptionStatusLabel }
     standalone: false
 })
 export class MySubscriptionsTimelineComponent {
- @Input() subscriptions: Subscriptions[] = [];
+  @Input() subscriptions: Subscriptions[] = [];
+  readonly title = subscriptionTitle;
 
   // Cached per input array: a getter that returned a fresh array on every change-detection pass made *ngFor re-diff each time.
   private sortedFrom: Subscriptions[] | null = null;
