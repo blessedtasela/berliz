@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
@@ -39,7 +39,7 @@ describe('QuickSignupComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [QuickSignupComponent],
-      imports: [CommonModule, ReactiveFormsModule],
+      imports: [CommonModule, FormsModule, ReactiveFormsModule],
       providers: [
         { provide: UserService, useValue: userService },
         { provide: SocialAuthService, useValue: socialAuthService },
