@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InlineAlertComponent } from '../../shared/inline-alert/inline-alert.component';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Subject, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { MySubscriptionsPlansComponent } from './my-subscriptions-plans.component';
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { Plan } from 'src/app/models/plan.model';
+import { PlanCodeRequest } from 'src/app/models/payment-code.model';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
 import { selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
@@ -45,7 +46,8 @@ describe('MySubscriptionsPlansComponent', () => {
     actions$ = new Subject<any>();
     snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     authRedirectSpy = jasmine.createSpyObj('AuthRedirectService', ['goToLogin']);
-    const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem']);
+    const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem', 'requestCode', 'getMyCodeRequests']);
+    bypassCodeServiceSpy.getMyCodeRequests.and.returnValue(of({ data: [] }));
 
     TestBed.configureTestingModule({
     declarations: [MySubscriptionsPlansComponent, InlineAlertComponent],
@@ -216,6 +218,60 @@ describe('MySubscriptionsPlansComponent', () => {
   it('cleans up its subscriptions on destroy without throwing', () => {
     fixture.detectChanges();
     expect(() => component.ngOnDestroy()).not.toThrow();
+  });
+
+  describe('request a code (no trainer involved -- straight to the administration)', () => {
+    it('is available on every plan, and asks once per plan', () => {
+      fixture.detectChanges();
+      const bypassCodeService = TestBed.inject(BypassCodeService) as jasmine.SpyObj<BypassCodeService>;
+      (bypassCodeService.requestCode as jasmine.Spy).and.returnValue(of({ message: 'Sent', data: {} }));
+
+      expect(component.hasRequestedCodeFor(plans[0])).toBeFalse();
+      component.requestCode(plans[0]);
+
+      expect(bypassCodeService.requestCode).toHaveBeenCalledWith({ planId: 1 });
+      expect(component.hasRequestedCodeFor(plans[0])).toBeTrue();
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Sent', '');
+    });
+
+    it('does not ask again for a plan that is already requested', () => {
+      fixture.detectChanges();
+      const bypassCodeService = TestBed.inject(BypassCodeService) as jasmine.SpyObj<BypassCodeService>;
+      (bypassCodeService.requestCode as jasmine.Spy).and.returnValue(of({ message: 'Sent', data: {} }));
+
+      component.requestCode(plans[0]);
+      component.requestCode(plans[0]);
+
+      expect(bypassCodeService.requestCode).toHaveBeenCalledTimes(1);
+    });
+
+    it('restores "already requested" from the server on load', () => {
+      const bypassCodeService = TestBed.inject(BypassCodeService) as jasmine.SpyObj<BypassCodeService>;
+      const requests: PlanCodeRequest[] = [
+        { id: 1, status: 'OPEN', planId: 1, planName: 'Basic', clientId: 2, clientName: 'Sam', clientEmail: 's@e.com', note: null, decidedByName: null, decidedAt: null, decisionNote: null, date: '2026-11-01', lastUpdate: '2026-11-01' },
+        { id: 2, status: 'CLOSED', planId: 3, planName: 'Exclusive', clientId: 2, clientName: 'Sam', clientEmail: 's@e.com', note: null, decidedByName: null, decidedAt: null, decisionNote: null, date: '2026-11-01', lastUpdate: '2026-11-01' },
+      ];
+      bypassCodeService.getMyCodeRequests.and.returnValue(of({ message: 'ok', success: true, statusCode: 200, data: requests }));
+
+      fixture.detectChanges();
+
+      expect(component.hasRequestedCodeFor(plans[0])).toBeTrue();
+      expect(component.hasRequestedCodeFor(plans[1])).toBeFalse(); // CLOSED, not OPEN
+    });
+
+    it('shows the server error and lets the person try again', () => {
+      fixture.detectChanges();
+      const bypassCodeService = TestBed.inject(BypassCodeService) as jasmine.SpyObj<BypassCodeService>;
+      (bypassCodeService.requestCode as jasmine.Spy).and.returnValue(
+        throwError(() => ({ error: { message: 'You already have an open request for this plan — we\'ll be in touch.' } }))
+      );
+
+      component.requestCode(plans[0]);
+
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('You already have an open request for this plan — we\'ll be in touch.', 'error');
+      expect(component.hasRequestedCodeFor(plans[0])).toBeFalse();
+      expect(component.requestingCodeForPlanId).toBeNull();
+    });
   });
 
   it('never shows provider (subscription-tier) perks for a client', () => {
