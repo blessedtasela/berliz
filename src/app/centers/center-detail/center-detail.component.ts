@@ -113,6 +113,12 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     return this.suggestion ? this.suggestionRoute(this.suggestion) : [this.directoryRoute];
   }
 
+  /**
+   * Which of the center's public sections have answered (even with an error). A section is only drawn once it has, so a visitor
+   * never sees "No equipment published yet" flash up on a center that has equipment still on its way.
+   */
+  loaded = { intro: false, locations: false, equipment: false, pricing: false, albums: false, videos: false, trainers: false };
+
   /** False until the reviews / trainers lists have answered: the count tiles show a dash before that, never a false 0. */
   reviewsLoaded = false;
   trainersLoaded = false;
@@ -340,37 +346,37 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.centerService.getIntroductionsByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerIntro = (res?.data ?? [])[0] ?? null)
+        .subscribe(res => { this.centerIntro = (res?.data ?? [])[0] ?? null; this.loaded.intro = true; })
     );
 
     this.subscription.add(
       this.centerService.getLocationsByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerLocation = res?.data ?? [])
+        .subscribe(res => { this.centerLocation = res?.data ?? []; this.loaded.locations = true; })
     );
 
     this.subscription.add(
       this.centerService.getEquipmentByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerEquipment = res?.data ?? [])
+        .subscribe(res => { this.centerEquipment = res?.data ?? []; this.loaded.equipment = true; })
     );
 
     this.subscription.add(
       this.centerService.getPricingByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerPricing = res?.data?.id ? res.data : null)
+        .subscribe(res => { this.centerPricing = res?.data?.id ? res.data : null; this.loaded.pricing = true; })
     );
 
     this.subscription.add(
       this.centerService.getPhotoAlbumsByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerAlbums = res?.data ?? [])
+        .subscribe(res => { this.centerAlbums = res?.data ?? []; this.loaded.albums = true; })
     );
 
     this.subscription.add(
       this.centerService.getVideoAlbumsByCenterId(id)
         .pipe(catchError(() => of(null)))
-        .subscribe(res => this.centerVideoAlbums = res?.data ?? [])
+        .subscribe(res => { this.centerVideoAlbums = res?.data ?? []; this.loaded.videos = true; })
     );
 
     this.subscription.add(
@@ -378,6 +384,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         .pipe(catchError(() => of(null)))
         .subscribe(res => {
           this.affiliations = (res?.data ?? []).filter(t => t.status !== 'INACTIVE');
+          this.loaded.trainers = true;
           this.buildTrainerCards();
         })
     );

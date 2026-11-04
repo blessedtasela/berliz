@@ -22,7 +22,7 @@ describe('CenterDetailComponent', () => {
 
   const ironWorks = { id: 9, name: 'Iron Works', motto: 'Lift', address: '1 Main St', categoryIds: [] };
 
-  function setup(opts: { slug?: string; centers?: any[]; availability?: Observable<any> } = {}) {
+  function setup(opts: { slug?: string; centers?: any[]; availability?: Observable<any>; equipment?: Observable<any>; locations?: Observable<any> } = {}) {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const centerServiceSpy = jasmine.createSpyObj('CenterService', [
       'getIntroductionsByCenterId', 'getLocationsByCenterId', 'getEquipmentByCenterId',
@@ -30,8 +30,8 @@ describe('CenterDetailComponent', () => {
       'getCenterTrainersByCenterId'
     ]);
     centerServiceSpy.getIntroductionsByCenterId.and.returnValue(of(null));
-    centerServiceSpy.getLocationsByCenterId.and.returnValue(of(null));
-    centerServiceSpy.getEquipmentByCenterId.and.returnValue(of(null));
+    centerServiceSpy.getLocationsByCenterId.and.returnValue(opts.locations ?? of(null));
+    centerServiceSpy.getEquipmentByCenterId.and.returnValue(opts.equipment ?? of(null));
     centerServiceSpy.getPricingByCenterId.and.returnValue(of(null));
     centerServiceSpy.getPhotoAlbumsByCenterId.and.returnValue(of(null));
     centerServiceSpy.getVideoAlbumsByCenterId.and.returnValue(of(null));
@@ -127,6 +127,55 @@ describe('CenterDetailComponent', () => {
 
       expect(component.acceptingBookings).toBeNull();
       expect(bookButtons(el).length).toBe(1);
+    });
+  });
+
+  describe('sections', () => {
+    it('draws no "none published yet" card while a section is still loading, nor once it came back empty', () => {
+      const loading = setup({ slug: 'iron-works', centers: [ironWorks], equipment: NEVER });
+      expect(loading.querySelector('app-center-equipments')).toBeNull();
+      expect(component.loaded.equipment).toBeFalse();
+      TestBed.resetTestingModule();
+
+      const empty = setup({ slug: 'iron-works', centers: [ironWorks], equipment: of({ data: [] }) });
+      expect(component.loaded.equipment).toBeTrue();
+      expect(empty.querySelector('app-center-equipments')).toBeNull();
+    });
+
+    it('shows a section once it has something to show', () => {
+      const el = setup({
+        slug: 'iron-works', centers: [ironWorks],
+        equipment: of({ data: [{ id: 1, name: 'Squat rack' }] }),
+        locations: of({ data: [{ id: 2, address: '2 Side St' }] })
+      });
+
+      expect(el.querySelector('app-center-equipments')).not.toBeNull();
+      expect(el.querySelector('app-center-locations')).not.toBeNull();
+    });
+
+    it('counts a failed lookup as answered, so the section is simply left out', () => {
+      const el = setup({ slug: 'iron-works', centers: [ironWorks], equipment: throwError(() => new Error('boom')) });
+
+      expect(component.loaded.equipment).toBeTrue();
+      expect(el.querySelector('app-center-equipments')).toBeNull();
+    });
+  });
+
+  describe('single-session price', () => {
+    const hours = of({ data: [{ dayOfWeek: 1, isActive: true }] });
+
+    it('is stated next to the Book button when the center sets an hourly rate', () => {
+      const el = setup({ slug: 'iron-works', centers: [{ ...ironWorks, hourlyRate: 80 }], availability: hours });
+
+      const price = el.querySelector('[data-testid="session-price"]');
+      expect(price?.textContent).toContain('CA$80');
+      expect(price?.textContent).toContain('nothing is charged until Iron Works confirms');
+    });
+
+    it('is left out when there is no rate, and when booking is not offered', () => {
+      expect(setup({ slug: 'iron-works', centers: [ironWorks], availability: hours }).querySelector('[data-testid="session-price"]')).toBeNull();
+      TestBed.resetTestingModule();
+      expect(setup({ slug: 'iron-works', centers: [{ ...ironWorks, hourlyRate: 80 }], availability: of({ data: [] }) }).querySelector('[data-testid="session-price"]')).toBeNull();
     });
   });
 });
