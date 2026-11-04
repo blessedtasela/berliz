@@ -1,4 +1,5 @@
 # Berliz — Feature Reference
+**Monthly coaching on Level Up** (trainer pages only; backend `POST /subscription/purchaseTrainerPlan`). The trainer's own Online / Hybrid / Personal monthly rates are listed with the commitment discount for 1, 3, 6, 9 and 12 months and the optional two-programs discount, every amount labelled CA$. The price shown is worked out with the same arithmetic the server charges (monthly rate, less the commitment percent, times the months, less the two-programs amount once); the server prices it again from the trainer's own pricing and never trusts the number from the page. The client pays the whole term once through Stripe Checkout, it appears under My Subscriptions, ends after the term and does not renew by itself. A trainer who is paid directly by clients (DIRECT mode) cannot be bought this way. A payment code cannot be used on a monthly plan yet (only on packages, weekly plans and bookings).
 
 The living inventory of everything Berliz does. Update this file in the **same change**
 that ships a feature — add the row under the right domain, and log it under

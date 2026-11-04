@@ -89,9 +89,18 @@ export class SubscriptionService {
     );
   }
 
+  /** Buys a trainer's monthly plan (online / hybrid / personal for 1, 3, 6, 9 or 12 months). The server prices it; pay with a Stripe checkout afterwards. */
+  purchaseTrainerPlan(trainerId: number, mode: string, months: number, twoPrograms: boolean) {
+    return this.httpClient.post<ApiResponse<PackagePurchaseResponse>>(
+      `${this.url}/subscription/purchaseTrainerPlan`,
+      { trainerId, mode, months, twoPrograms },
+      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
+    );
+  }
+
   /** A client buying a trainer/center's ProviderPackage — creates a PENDING_PAYMENT
    *  Subscription tied to that package; follow up with StripeService.createCheckoutSession
-   *  using the returned subscriptionId, same two-step flow as selectPlan. */
+   *  using the returned subscriptionId, same two-step flow as selectPlan. A payment code activates it with nothing to pay. */
   purchasePackage(packageId: number, paymentCode?: string) {
     return this.httpClient.post<ApiResponse<PackagePurchaseResponse>>(
       `${this.url}/subscription/purchasePackage`,
