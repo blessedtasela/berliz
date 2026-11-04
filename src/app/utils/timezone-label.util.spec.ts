@@ -1,4 +1,4 @@
-import { formatClock, instantInZone, sameClock, zoneAbbreviation, zoneLabel } from './timezone-label.util';
+import { formatClock, instantInZone, sameClock, timezoneOptions, zoneAbbreviation, zoneLabel } from './timezone-label.util';
 
 describe('timezone-label.util', () => {
   const summerNoonUtc = new Date('2026-07-15T19:00:00Z');   // 12:00 in Vancouver (PDT)
@@ -31,5 +31,20 @@ describe('timezone-label.util', () => {
     expect(sameClock('America/Vancouver', 'America/Vancouver', summerNoonUtc)).toBeTrue();
     expect(sameClock('America/Vancouver', 'America/Los_Angeles', summerNoonUtc)).toBeTrue();
     expect(sameClock('America/Vancouver', 'UTC', summerNoonUtc)).toBeFalse();
+  });
+});
+
+describe('timezoneOptions', () => {
+  it('lists zones sorted, and always includes the saved one even if the browser does not know it', () => {
+    const zones = timezoneOptions('Mars/Olympus_Mons');
+    expect(zones.length).toBeGreaterThan(5);
+    expect(zones).toContain('Mars/Olympus_Mons');
+    expect(zones).toContain('America/Vancouver');
+    expect([...zones].sort((a, b) => a.localeCompare(b))).toEqual(zones);
+    expect(new Set(zones).size).toBe(zones.length);
+  });
+
+  it('works with nothing saved', () => {
+    expect(timezoneOptions(null)).toContain('America/Vancouver');
   });
 });

@@ -204,9 +204,42 @@ instead).
 
 ---
 
+## Planned later: bring your own payment platform (BYOP)
+
+**Not built. Canada comes first; this is a later version, recorded here so the model and the spec don't get lost.** Berliz's own checkout (Stripe) stays the default. Providers who sell in places where Stripe-style checkout isn't the norm (the owner's gyms in Nigeria and Morocco) can opt in to take payment on a platform of their own.
+
+- **Already modelled:** `paymentMode: 'DIRECT'` on trainers and centers and `paymentStatus: 'DIRECT'` on bookings. A DIRECT provider's bookings are kept on record but never charged, refunded or paid out by Berliz, and the client is told "Pay <provider> directly". That is the "tracked but not charged" half; the rest below is what's still to build.
+- **Opt-in, per provider.** A provider connects their platform and pays Berliz a **monthly platform fee** for the listing and booking flow. **The fee amount is open: the owner sets it. Do not guess it.**
+- **Liability moves to the provider:** refunds, chargebacks, failed payments, tax and payment data. This goes in the provider terms (not just a toggle), and checkout must say "Payments processed by <provider>" so the client knows who took their money.
+- **Proof before going live:** the provider completes one test payment through their platform.
+- **Staying in sync:** the provider's platform sends a payment confirmation (receipt) back to Berliz, and the booking stays pending until it arrives. For this rail the equivalent of "nothing is charged until confirmed" is: client pays the provider, the provider confirms to Berliz, then the booking confirms.
+- **Support:** clients contact Berliz first when something breaks, so the provider dashboard must show payment status per booking and hand payment issues to the provider.
+- **Pilot first** with the known gyms in Nigeria and Morocco, then open to all providers.
+- **Done when:** one provider is onboarded end to end on their own platform (connect, test payment, booking with confirmation back, provider-owned refund path, disclosure visible) and one provider on default Berliz checkout, both rails working side by side.
+
 ## Changelog
 
-Newest first. Each entry: what shipped, which surfaces, PR/commit.
+Newest first.
+
+### Unreleased — Booking page: policy, direct payment, request hold, timezones; trainer fields; center dead ends
+
+- **Booking summary:** shows the trainer's own **booking policy** (plain text) beside the generated terms; a DIRECT-payment provider gets "Pay <provider> directly. Berliz keeps the booking on record" with no pay-after-confirm or refund lines; and a line says how long a request is held (released after 2 days unanswered, nothing charged) next to the 24-hour pay window (kept at 24 hours; the deadline never runs past 2 hours before the session).
+- **Timezones:** the booking page says which clock the offered times are on (the provider's zone, from the slots response) and, for a client in another zone, what the picked slot is on theirs. Trainers choose their zone in the availability editor (it used to be set silently from the browser).
+- **Trainer editor:** trial session price (empty = the platform's CA$100) and a 4,000-character booking policy; the policy shows under Booking terms on public and dashboard trainer pages.
+- **Centers:** the "plan a month" promo only shows when the provider has availability, and the Book button / sticky bar only appear once the center's hours are known (or could not be checked), so they no longer flash and vanish.
+- **Videos:** a trimmed clip labelled `video/webm;codecs=vp9` was rejected as an unsupported type (MIME parameters now ignored); the album Comment minimum is 50 characters instead of 900, so albums can be saved without rewriting the comment.
+- **Sidebar:** Hub is a top-level row again; the sign-up pages send signed-in users to the dashboard.
+
+ Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Test-mode earnings tracking, a plan-code request path, and the last native confirm() dialogs
+
+Continuation of the owner's Nov 3 fix list plus a few ad hoc asks (a Muse email-research doc, "add a request-code button"); see `docs/ISSUE_LOG.md` for full status, including several items that turned out to already be shipped: star ratings, calendar link, provider insights, waitlist, sidebar groups, hide-my-achievements, and — found mid-session, right as it was about to be built from scratch — the entire Admin Billing section (`/dashboard/billing`: Overview/Payouts/Connect-accounts, line 129 below).
+
+- **Stripe test-mode money can no longer count as real earnings** (PY-17). `Payment`/`Payout` now carry Stripe's own `livemode` flag, set at the moment each payment is recorded; billing-summary sums exclude anything explicitly marked test-mode. Historical contaminated rows (4 known, Oct 27) still need manual identification — no DB/Stripe-dashboard access from here.
+- **A Plan tier (Basic/Plus/Exclusive-style) can now be requested without a code.** Plans have no trainer to ask first, unlike a booking or package, so there was no "I don't have a code" path at all. Every plan card now has "No code? Request one," going straight to the administration's queue (`PlanCodeRequest`, backend `/bypassCode/requestCode` + `/bypassCode/codeRequests`).
+- **Trainer payment-notification email now says something.** It used to read only "X paid for their session" — no amount, currency, date, booking reference, or which account received it. Now states all of those, and that the figure is gross, not the net payout.
+- **The last two raw `window.confirm()` dialogs replaced** with the app's own `PromptModalComponent` (payment-codes revoke, weekly-subscriptions cancel), plus removal of a dead, unused `AuthenticationGuard` that unconditionally `alert()`'d.
 
 ### Unreleased — Drop-in fee cap, commission-tier fix, sign-up 500s, and a silent client-link crash
 

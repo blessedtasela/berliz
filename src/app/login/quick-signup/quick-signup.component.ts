@@ -23,6 +23,8 @@ export class QuickSignupComponent implements AfterViewInit {
   submitError: string | null = null;
   /** True once the official "Sign in with Google" button has actually rendered. */
   googleReady = false;
+  /** Gates every sign-up path here (email/password, Google, Facebook) -- not part of the reactive form since it also covers the two social buttons, which bypass that form entirely. */
+  agreedToTerms = false;
 
   /** From a shared referral link (?ref=<userId>) -- passed through to quickAdd/social signup so both sides get a reward once this account activates. */
   private referredBy: string | null = null;
@@ -66,6 +68,10 @@ export class QuickSignupComponent implements AfterViewInit {
 
   quickSignup(): void {
     this.submitError = null;
+    if (!this.agreedToTerms) {
+      this.submitError = 'You must agree to the Terms and Privacy Policy to create an account.';
+      return;
+    }
     if (this.quickSignupForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
@@ -114,6 +120,10 @@ export class QuickSignupComponent implements AfterViewInit {
   }
 
   private handleGoogleCredential(idToken: string): void {
+    if (!this.agreedToTerms) {
+      this.submitError = 'You must agree to the Terms and Privacy Policy to create an account.';
+      return;
+    }
     this.ngxService.start();
     this.userService.loginWithGoogle(idToken, this.referredBy).subscribe({
       next: (response: any) => this.handleSocialAuthResponse(response),
@@ -123,6 +133,10 @@ export class QuickSignupComponent implements AfterViewInit {
 
   loginWithFacebook(): void {
     this.submitError = null;
+    if (!this.agreedToTerms) {
+      this.submitError = 'You must agree to the Terms and Privacy Policy to create an account.';
+      return;
+    }
     this.socialAuthService.loginWithFacebook()
       .then((accessToken) => {
         this.ngxService.start();

@@ -6,6 +6,7 @@ import { Subject, of, throwError } from 'rxjs';
 
 import { StripeService } from 'src/app/services/stripe.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PayoutService } from 'src/app/services/payout.service';
 import { StripeConnectStatus } from 'src/app/models/stripe.model';
 
 import { EarningsViewComponent } from './earnings-view.component';
@@ -25,6 +26,7 @@ describe('EarningsViewComponent', () => {
   let store: MockStore;
   let stripe: jasmine.SpyObj<StripeService>;
   let snackBar: jasmine.SpyObj<SnackBarService>;
+  let payoutService: jasmine.SpyObj<PayoutService>;
 
   const notSetUp: StripeConnectStatus = { configured: true, connected: false, detailsSubmitted: false, chargesEnabled: false, payoutsEnabled: false, ready: false };
   let actions$: Subject<any>;
@@ -60,6 +62,8 @@ describe('EarningsViewComponent', () => {
     stripe = jasmine.createSpyObj<StripeService>('StripeService', ['getConnectStatus', 'createConnectOnboardingLink']);
     stripe.getConnectStatus.and.returnValue(of({ message: '', data: notSetUp, success: true, statusCode: 200 } as any));
     snackBar = jasmine.createSpyObj<SnackBarService>('SnackBarService', ['openSnackBar']);
+    payoutService = jasmine.createSpyObj<PayoutService>('PayoutService', ['getMyUpcomingPaidEarnings']);
+    payoutService.getMyUpcomingPaidEarnings.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 } as any));
 
     actions$ = new Subject<any>();
     TestBed.configureTestingModule({
@@ -69,6 +73,7 @@ describe('EarningsViewComponent', () => {
       providers: [
         { provide: StripeService, useValue: stripe },
         { provide: SnackBarService, useValue: snackBar },
+        { provide: PayoutService, useValue: payoutService },
         { provide: Actions, useValue: actions$ },
         provideMockStore({
           selectors: [
@@ -103,6 +108,39 @@ describe('EarningsViewComponent', () => {
     expect(component.pendingTotal).toBe(85);
     expect(component.paidTotal).toBe(85);
     expect(component.loading).toBeFalse();
+  });
+
+  describe('paid sessions that have not happened yet', () => {
+    const upcoming: Payout = {
+      ...pendingPayout,
+      id: null as any,
+      status: 'UPCOMING',
+      bookingId: 99,
+      description: "Paid and scheduled for Fri, Dec 5, 2026 at 6:00 PM -- recorded as earnings once the session happens.",
+    };
+
+    it('loads them alongside the real payout history', () => {
+      payoutService.getMyUpcomingPaidEarnings.and.returnValue(of({ message: '', data: [upcoming], success: true, statusCode: 200 } as any));
+
+      fixture.detectChanges();
+
+      expect(payoutService.getMyUpcomingPaidEarnings).toHaveBeenCalled();
+      expect(component.upcomingEarnings).toEqual([upcoming]);
+    });
+
+    it('never blanks the real payout list when the upcoming-earnings call fails', () => {
+      payoutService.getMyUpcomingPaidEarnings.and.returnValue(throwError(() => ({ error: { message: 'nope' } })));
+
+      fixture.detectChanges();
+
+      expect(component.upcomingEarnings).toEqual([]);
+      expect(component.payouts.length).toBe(2);
+    });
+
+    it('gives an upcoming row its own status styling, distinct from a real pending payout', () => {
+      expect(component.statusClasses('UPCOMING')).toContain('blue');
+      expect(component.statusClasses('UPCOMING')).not.toEqual(component.statusClasses('PENDING'));
+    });
   });
 
   describe('where an earning came from', () => {

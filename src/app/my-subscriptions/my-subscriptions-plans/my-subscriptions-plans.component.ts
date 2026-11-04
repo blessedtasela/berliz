@@ -47,6 +47,11 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   redeemCode = '';
   redeeming = false;
 
+  // ── Don't have a code? Ask the administration for one, per plan ─────────
+  requestingCodeForPlanId: number | null = null;
+  /** Plan ids with an OPEN request already -- persisted across reloads via getMyCodeRequests. */
+  codeRequestedPlanIds = new Set<number>();
+
   private destroy$ = new Subject<void>();
 
   /** True while waiting on the Stripe checkout-session request, after selectPlan already succeeded -- distinct from selectingPlanId so the card can show "Redirecting to payment..." instead of just going quiet. */
@@ -123,6 +128,17 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     watchLoadError(this.actions$, loadPlansFailure, [loadPlans, loadPlansSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadPlans());
+
+    this.bypassCodeService.getMyCodeRequests()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.codeRequestedPlanIds = new Set(
+            (res.data ?? []).filter(r => r.status === 'OPEN').map(r => r.planId)
+          );
+        },
+        error: () => { /* non-critical -- the request button just won't show "already asked" yet */ },
+      });
 
     this.store.select(selectPlans)
       .pipe(takeUntil(this.destroy$))
@@ -279,6 +295,30 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
           this.redeeming = false;
           if (isUnauthorizedHttpError(err)) { this.handleSessionExpired(); return; }
           this.redeemError = err?.error?.message || 'Could not redeem that code.';
+        }
+      });
+  }
+
+  hasRequestedCodeFor(plan: Plan): boolean {
+    return this.codeRequestedPlanIds.has(plan.id);
+  }
+
+  /** "I don't have a code" -- asks the administration directly for this plan (no trainer to go through first). */
+  requestCode(plan: Plan): void {
+    if (this.requestingCodeForPlanId != null || this.hasRequestedCodeFor(plan)) return;
+    this.requestingCodeForPlanId = plan.id;
+    this.bypassCodeService.requestCode({ planId: plan.id })
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.requestingCodeForPlanId = null;
+          this.codeRequestedPlanIds.add(plan.id);
+          this.snackBar.openSnackBar(res?.message || `Your request was sent to the administration.`, '');
+        },
+        error: err => {
+          this.requestingCodeForPlanId = null;
+          if (isUnauthorizedHttpError(err)) { this.handleSessionExpired(); return; }
+          this.snackBar.openSnackBar(err?.error?.message || 'Could not send that request — try again.', 'error');
         }
       });
   }

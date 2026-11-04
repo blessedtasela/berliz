@@ -14,7 +14,7 @@ export class AvailabilityEffects {
 
   setMyAvailability$ = createEffect(() => this.actions$.pipe(
     ofType(A.setMyAvailability),
-    mergeMap(({ days }) => this.svc.setMyAvailability(days).pipe(
+    mergeMap(({ days, timezone }) => this.svc.setMyAvailability(days, timezone).pipe(
       map(response => A.setMyAvailabilitySuccess({ response })),
       catchError(e => of(A.setMyAvailabilityFailure({ error: e?.error?.message || 'Failed to update your availability' })))
     ))

@@ -7,6 +7,7 @@ describe('WeeklySubscriptionsComponent', () => {
   let page: any;
   let weekly: Record<string, jasmine.Spy>;
   let snackBar: { openSnackBar: jasmine.Spy };
+  let dialog: { open: jasmine.Spy };
 
   const sub = (over: Partial<WeeklySubscription> = {}): WeeklySubscription => ({
     subscriptionId: 70, packageName: 'Twice a week', sessionsPerWeek: 2, sessionMinutes: 60, status: 'true', paused: false, autoRenew: true,
@@ -23,9 +24,11 @@ describe('WeeklySubscriptionsComponent', () => {
       resume: jasmine.createSpy('resume').and.returnValue(of({ message: 'Resumed', data: sub() })),
       cancel: jasmine.createSpy('cancel').and.returnValue(of({ message: 'Cancelled', data: sub() })),
     };
+    dialog = { open: jasmine.createSpy('open') };
     page = Object.create(WeeklySubscriptionsComponent.prototype);
     page.weekly = weekly;
     page.snackBar = snackBar;
+    page.dialog = dialog;
     page.weekdays = [{ value: 1, label: 'Monday' }, { value: 2, label: 'Tuesday' }];
     page.editing = {};
     page.errors = {};
@@ -93,11 +96,14 @@ describe('WeeklySubscriptionsComponent', () => {
       expect(weekly['resume']).toHaveBeenCalledWith(70);
     });
 
-    it('cancels only after the person confirms', () => {
-      spyOn(window, 'confirm').and.returnValue(false);
+    it('cancels only after the person confirms via the prompt modal, not window.confirm', () => {
+      dialog.open.and.returnValue({ afterClosed: () => of(false) } as any);
       page.cancel(sub());
+      expect(dialog.open).toHaveBeenCalled();
+      expect((dialog.open.calls.mostRecent().args[1] as any)?.data?.confirmation).toBeTrue();
       expect(weekly['cancel']).not.toHaveBeenCalled();
-      (window.confirm as jasmine.Spy).and.returnValue(true);
+
+      dialog.open.and.returnValue({ afterClosed: () => of(true) } as any);
       page.cancel(sub());
       expect(weekly['cancel']).toHaveBeenCalledWith(70);
     });

@@ -15,7 +15,7 @@ const KNOWN_ENTITY_TYPES = new Set([
   'workout', 'run', 'task', 'faq', 'payment', 'subscription', 'payout',
   'partnership', 'centerProfile', 'trainerProfile', 'accountSettings',
   'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake', 'clientOnboarding',
-  'testimonial', 'category', 'referralSlot', 'groupPack',
+  'testimonial', 'category', 'referralSlot', 'groupPack', 'paymentCode',
 ]);
 
 /** True when this notification's entityType is one navigateToNotificationEntity can actually route (and, for the types that need one, it has an entityId too). */
@@ -85,6 +85,11 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
 
     case 'faq':
       router.navigate(['/dashboard/my-faqs'], notification.entityId ? { queryParams: { faqId: notification.entityId } } : {});
+      return true;
+
+    // A payment code was asked for, approved, rejected, issued or used: the codes page shows it.
+    case 'paymentCode':
+      router.navigate(['/dashboard/payment-codes']);
       return true;
 
     case 'payment':

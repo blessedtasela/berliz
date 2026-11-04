@@ -86,6 +86,7 @@ describe('QuickSignupComponent', () => {
     tick();
 
     const onCredential = socialAuthService.renderGoogleButton.calls.mostRecent().args[1] as (t: string) => void;
+    component.agreedToTerms = true;
     onCredential('the-google-id-token');
 
     expect(userService.loginWithGoogle).toHaveBeenCalledWith('the-google-id-token', null);
@@ -105,6 +106,7 @@ describe('QuickSignupComponent', () => {
         password: 'password123',
         confirmPassword: 'password123',
       });
+      component.agreedToTerms = true;
 
       component.quickSignup();
 
@@ -123,6 +125,7 @@ describe('QuickSignupComponent', () => {
       fixture.detectChanges();
       tick();
 
+      component.agreedToTerms = true;
       component.loginWithFacebook();
       tick();
 
@@ -137,11 +140,46 @@ describe('QuickSignupComponent', () => {
       fixture.detectChanges();
       tick();
 
+      component.agreedToTerms = true;
       component.loginWithFacebook();
       tick();
 
       expect(router.navigate).not.toHaveBeenCalledWith(['/dashboard']);
       expect(component.submitError).toBe('Invalid Facebook token');
+    }));
+  });
+
+  describe('Terms and Privacy agreement (SG-06)', () => {
+    it('blocks quickSignup until the box is checked, even with a valid form', () => {
+      fixture.detectChanges();
+      component.quickSignupForm.setValue({
+        email: 'new.user@example.com',
+        password: 'password123',
+        confirmPassword: 'password123',
+      });
+
+      component.quickSignup();
+
+      expect(userService.quickAdd).not.toHaveBeenCalled();
+      expect(component.submitError).toContain('Terms and Privacy Policy');
+    });
+
+    it('blocks Facebook sign-up until the box is checked', () => {
+      fixture.detectChanges();
+      component.loginWithFacebook();
+      expect(socialAuthService.loginWithFacebook).not.toHaveBeenCalled();
+      expect(component.submitError).toContain('Terms and Privacy Policy');
+    });
+
+    it('blocks the Google credential callback until the box is checked', fakeAsync(() => {
+      fixture.detectChanges();
+      tick();
+      const onCredential = socialAuthService.renderGoogleButton.calls.mostRecent().args[1] as (t: string) => void;
+
+      onCredential('the-google-id-token');
+
+      expect(userService.loginWithGoogle).not.toHaveBeenCalled();
+      expect(component.submitError).toContain('Terms and Privacy Policy');
     }));
   });
 });

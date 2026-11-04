@@ -9,6 +9,7 @@ import { StripeService } from 'src/app/services/stripe.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 import { Payout } from 'src/app/models/payout.model';
+import { PayoutService } from 'src/app/services/payout.service';
 import { loadMyPayouts, loadMyPayoutsFailure, loadMyPayoutsSuccess } from 'src/app/state/payout/payout.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
@@ -36,6 +37,9 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
   pendingTotal = 0;
   paidTotal = 0;
 
+  /** Paid sessions that haven't happened yet -- no real Payout row exists for these, so without this they'd look like missing money. */
+  upcomingEarnings: Payout[] = [];
+
   /** ?payoutId=<id> from a notification deep link, set by the parent tab host. Scrolled to (and briefly highlighted) once its row has actually rendered. */
   @Input() deepLinkPayoutId: number | null = null;
   highlightedPayoutId: number | null = null;
@@ -60,6 +64,7 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private stripeService: StripeService,
     private snackBar: SnackBarService,
+    private payoutService: PayoutService,
   ) { }
 
   toggleDetails(id: number): void {
@@ -82,6 +87,7 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     watchLoadError(this.actions$, loadMyPayoutsFailure, [loadMyPayouts, loadMyPayoutsSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyPayouts());
     this.loadConnectStatus();
+    this.loadUpcomingEarnings();
 
     this.store.select(selectMyPayouts)
       .pipe(takeUntil(this.destroy$))
@@ -101,6 +107,14 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     this.store.select(selectMyPaidTotal)
       .pipe(takeUntil(this.destroy$))
       .subscribe(total => this.paidTotal = total);
+  }
+
+  private loadUpcomingEarnings(): void {
+    this.payoutService.getMyUpcomingPaidEarnings().pipe(take(1)).subscribe({
+      next: res => { this.upcomingEarnings = res?.data ?? []; },
+      // Non-critical -- the real payout history above is unaffected either way.
+      error: () => { this.upcomingEarnings = []; },
+    });
   }
 
   private loadConnectStatus(): void {
@@ -165,6 +179,7 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     switch (status) {
       case 'PAID': return 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900';
       case 'FAILED': return 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900';
+      case 'UPCOMING': return 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900';
       default: return 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'; // PENDING
     }
   }

@@ -88,7 +88,8 @@ describe('SignupComponent', () => {
     },
     email: 'john.doe@example.com',
     password: 'password123',
-    confirmPassword: 'password123'
+    confirmPassword: 'password123',
+    agreeToTerms: true
   };
 
   it('should submit form successfully when valid', () => {
@@ -156,6 +157,26 @@ describe('SignupComponent', () => {
       component.submitForm();
       expect(userServiceMock.signup).toHaveBeenCalled();
       expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
+    });
+  });
+
+  describe('Terms and Privacy agreement (SG-06)', () => {
+    it('step 3 is invalid until the agreement checkbox is checked', () => {
+      component.signupForm.setValue({ ...validSignupFormValue, agreeToTerms: false });
+      expect(component.isStepValid(2)).toBeFalse();
+
+      component.signupForm.patchValue({ agreeToTerms: true });
+      expect(component.isStepValid(2)).toBeTrue();
+    });
+
+    it('never sends agreeToTerms to the backend -- it is a client-only gate', () => {
+      userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
+      component.signupForm.setValue(validSignupFormValue);
+
+      component.submitForm();
+
+      const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
+      expect(sentFormData.has('agreeToTerms')).toBeFalse();
     });
   });
 });

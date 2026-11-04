@@ -23,6 +23,11 @@ export class PayoutService {
     return this.httpClient.get<ApiResponse<Payout[]>>(this.url + "/payout/getAllPayouts");
   }
 
+  /** Paid sessions that haven't happened yet -- projected (status "UPCOMING"), not a real Payout row. */
+  getMyUpcomingPaidEarnings() {
+    return this.httpClient.get<ApiResponse<Payout[]>>(this.url + "/payout/getMyUpcomingPaidEarnings");
+  }
+
   /** Admin triggers the real Stripe Connect transfer for a PENDING payout. */
   payOutViaStripe(id: number) {
     return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/pay/${id}`, null);

@@ -7,6 +7,7 @@ describe('PaymentCodesComponent', () => {
   let page: any;
   let codes: Record<string, jasmine.Spy>;
   let snackBar: { openSnackBar: jasmine.Spy };
+  let dialog: { open: jasmine.Spy };
 
   const request = (over: Partial<PaymentCodeRequest> = {}): PaymentCodeRequest => ({
     id: 11, status: 'PENDING', targetType: 'BOOKING', targetLabel: 'booking BK-000050', bookingId: 50, packageId: null, subscriptionId: null,
@@ -30,9 +31,11 @@ describe('PaymentCodesComponent', () => {
       adminRequests: jasmine.createSpy('adminRequests').and.returnValue(of({ data: [] })),
       adminCodes: jasmine.createSpy('adminCodes').and.returnValue(of({ data: [] })),
     };
+    dialog = { open: jasmine.createSpy('open') };
     page = Object.create(PaymentCodesComponent.prototype);
     page.codes = codes;
     page.snackBar = snackBar;
+    page.dialog = dialog;
     page.user = { id: 2, role: 'trainer' };
     page.isSuperAdmin = false;
     page.myCodes = []; page.myRequests = []; page.adminRequests = []; page.adminCodes = [];
@@ -117,12 +120,15 @@ describe('PaymentCodesComponent', () => {
       expect(codes['reject']).toHaveBeenCalledWith(11, { note: 'Please pay' });
     });
 
-    it('does not revoke a code until the admin confirms', () => {
+    it('does not revoke a code until the admin confirms via the prompt modal, not window.confirm', () => {
       const code: any = { id: 4, state: 'ACTIVE' };
-      spyOn(window, 'confirm').and.returnValue(false);
+      dialog.open.and.returnValue({ afterClosed: () => of(false) } as any);
       page.revoke(code);
+      expect(dialog.open).toHaveBeenCalled();
+      expect((dialog.open.calls.mostRecent().args[1] as any)?.data?.confirmation).toBeTrue();
       expect(codes['revoke']).not.toHaveBeenCalled();
-      (window.confirm as jasmine.Spy).and.returnValue(true);
+
+      dialog.open.and.returnValue({ afterClosed: () => of(true) } as any);
       page.revoke(code);
       expect(codes['revoke']).toHaveBeenCalledWith(4);
     });
