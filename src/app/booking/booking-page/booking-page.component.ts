@@ -82,6 +82,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   contactEmail: string | null = null;
   contactPhone: string | null = null;
   providerPhotoUrl: string | null = null;
+  /** What this provider trains in -- empty until categories load, so the badge row stays hidden rather than showing nothing useful. */
+  providerCategoryNames: string[] = [];
 
   /** What this provider sells (only used to point at the Level Up page, which is where plans are bought). */
   packages: ProviderPackage[] = [];
@@ -399,6 +401,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.providerId = provider.id;
         this.providerName = provider.name;
         this.providerPhotoUrl = provider.photoUrl;
+        this.providerCategoryNames = provider.categoryNames ?? [];
         this.contactEmail = provider.contactEmail ?? null;
         this.contactPhone = provider.contactPhone ?? null;
         this.trialPrice = provider.trialPrice ?? DEFAULT_TRIAL_PRICE;

@@ -29,6 +29,8 @@ export interface Centers {
   userId: number;
   partnerId: number;
   categoryIds: number[];
+  /** Same categories as categoryIds, by name. */
+  categoryNames?: string[];
   date: Date;
   lastUpdate: Date;
   /** True when this center currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */

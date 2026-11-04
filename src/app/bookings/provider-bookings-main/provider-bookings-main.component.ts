@@ -29,6 +29,7 @@ import {
 
 import { genericError } from 'src/validators/form-validators.module';
 import { ClientOnboardingService } from 'src/app/services/client-onboarding.service';
+import { ClientIntakeService } from 'src/app/services/client-intake.service';
 
 /**
  * Trainer/Center-facing "Bookings" page — every session a client has
@@ -54,6 +55,8 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   bookings: Booking[] = [];
   /** Onboarding completion (0-100) by client user id, for the clients on pending and confirmed requests. */
   onboardingByClient: Record<number, number> = {};
+  /** This client's existing intake form id, by client user id, if one has already been started or submitted. */
+  intakeIdByClient: Record<number, number> = {};
   loading = false;
   /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
   loadError: string | null = null;
@@ -75,6 +78,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private onboardingService: ClientOnboardingService,
+    private clientIntakeService: ClientIntakeService,
   ) { }
 
   /** Whether each requesting or booked client has finished onboarding, so the card can flag it before the trainer confirms. */
@@ -86,6 +90,22 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.onboardingService.getCompletion(ids).pipe(take(1)).subscribe({
       next: map => { this.onboardingByClient = map; },
       error: () => { this.onboardingByClient = {}; },
+    });
+  }
+
+  /**
+   * BK-24: a client's intake answers were invisible once submitted -- "Fill Together" always opened
+   * a blank new form, with no way back to what they already sent. Looked up once here so the booking
+   * card can link straight to the existing one instead.
+   */
+  private loadIntakeFlags(): void {
+    this.clientIntakeService.getMyIntakes().pipe(take(1)).subscribe({
+      next: res => {
+        const byClient: Record<number, number> = {};
+        for (const intake of res?.data ?? []) byClient[intake.clientId] = intake.id;
+        this.intakeIdByClient = byClient;
+      },
+      error: () => { this.intakeIdByClient = {}; },
     });
   }
 
@@ -108,6 +128,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
       .subscribe(bookings => {
         this.bookings = bookings ?? [];
         this.loadOnboardingFlags();
+        this.loadIntakeFlags();
       });
     this.store.select(selectBookingLoading)
       .pipe(takeUntil(this.destroy$))
@@ -209,6 +230,13 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   }
 
   onStartIntakeRequested(event: { clientId: number; clientName: string }): void {
+    // BK-24: this client may already have submitted (or started) an intake -- open that one instead
+    // of always starting a blank form, which is how a submitted intake became invisible.
+    const existingId = this.intakeIdByClient[event.clientId];
+    if (existingId) {
+      this.router.navigate(['/dashboard/client-intake', existingId]);
+      return;
+    }
     this.router.navigate(['/dashboard/client-intake/new', event.clientId], {
       queryParams: { clientName: event.clientName }
     });
