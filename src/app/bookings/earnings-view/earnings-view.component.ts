@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil, timer } from 'rxjs';
 
 import { StripeConnectStatus } from 'src/app/models/stripe.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -117,12 +117,29 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadConnectStatus(): void {
+  /**
+   * Stripe's own `payoutsEnabled`/`detailsSubmitted` flags can take a couple of seconds to flip true
+   * right after someone finishes onboarding -- landing back on `?payoutSetup=return` the instant
+   * Stripe redirects here can read them before Stripe itself has caught up, so the banner still says
+   * "Finish setting up payouts" even though setup is actually done (fixed by reloading the page, or
+   * just waiting). Retried a few times, a couple of seconds apart, instead of making the provider
+   * notice and refresh it themselves.
+   */
+  private readonly CONNECT_STATUS_RETRY_DELAYS_MS = [2000, 3000, 4000];
+
+  private loadConnectStatus(retriesLeft = this.payoutSetupReturn === 'return' ? this.CONNECT_STATUS_RETRY_DELAYS_MS.length : 0): void {
     this.stripeService.getConnectStatus().pipe(take(1)).subscribe({
       next: res => {
         this.connect = res?.data ?? null;
         // Stripe says the onboarding link expired: hand out a fresh one for the SAME account (the server reuses it).
-        if (this.payoutSetupReturn === 'refresh' && this.connect?.configured && !this.connect.ready) this.startPayoutSetup();
+        if (this.payoutSetupReturn === 'refresh' && this.connect?.configured && !this.connect.ready) {
+          this.startPayoutSetup();
+          return;
+        }
+        if (this.payoutSetupReturn === 'return' && this.connect?.configured && !this.connect.ready && retriesLeft > 0) {
+          const delay = this.CONNECT_STATUS_RETRY_DELAYS_MS[this.CONNECT_STATUS_RETRY_DELAYS_MS.length - retriesLeft];
+          timer(delay).pipe(takeUntil(this.destroy$)).subscribe(() => this.loadConnectStatus(retriesLeft - 1));
+        }
       },
       // Failing to read status just hides the banner; earnings themselves are unaffected.
       error: () => { this.connect = null; },
