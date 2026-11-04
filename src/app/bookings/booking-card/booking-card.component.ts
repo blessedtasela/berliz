@@ -35,6 +35,8 @@ export class BookingCardComponent {
   @Input() booking!: Booking;
   /** The client's onboarding completion (0-100) for the provider view; undefined while unknown, so nothing is shown. */
   @Input() onboardingPercent: number | null | undefined;
+  /** Whether this client already has an intake form started or submitted -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send Intake Form" (nothing left to ask for). */
+  @Input() hasIntake = false;
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();

@@ -35,11 +35,28 @@ Source: owner's Nov 3 fix list (money bugs first, per his own priority order).
 
 `BookingServiceImplement#ensureClientRelationship` -- the exact "client booked before -> automatically part of the trainer's network" behavior the owner asked about -- **already exists in code**, but was crashing with a `StackOverflowError` on every single call (Lombok `@Data` on both `Client` and `Subscription` created a circular hashCode through their bidirectional relationship). It was silently swallowed by a try/catch, so the feature has never actually worked in production. **Fixed** (excluded the cycle from equals/hashCode/toString) and covered by a new regression test. This answers the owner's standing question: the feature exists, it just needs this fix to actually run.
 
-### Not started this session (in priority order)
+### Booking correctness (continued, 2026-11-04)
 
-Booking correctness: BK-24 (item 19, intake/onboarding disconnect), BK-19 (discipline + what-to-bring), BK-20 (selections sticking), BK-21 (location dropdown), BK-22 (24h auto-cancel), BK-23 (early-arrival wording), CT-06 (center video gallery).
+| ID | Item | Status |
+|---|---|---|
+| BK-24 (item 19) | Intake/onboarding disconnect | **Partially fixed.** The concrete, reported bug -- a trainer couldn't see a client's already-submitted intake form, because "Fill Together" always opened a blank `/client-intake/new/:clientId` regardless of whether one existed -- is fixed: it now looks up and routes to the existing one, and the button relabels to "View Intake Form" (hiding the now-redundant "Send Intake Form"). **Not fixed, flagged as a bigger question:** `ClientOnboarding` and `ClientIntake` remain two separate, never-cross-referenced systems collecting near-identical medical/injury/training-history data -- a client can fill out the same health questions twice. Consolidating them is a real feature decision, not a quick fix. |
+| BK-19 | Discipline + what-to-bring | **Half fixed.** The booking page showed no discipline/category at all; it now shows badges of what the provider trains in (added `categoryNames` to `CenterResponse` so centers have it the same way trainers already did). "What to bring" stays unbuilt -- there's no trainer-authored content anywhere to show; needs a profile-editor field before the display is worth building. |
+| BK-20 | Selections sticking | **Investigated, no bug found.** Date/slot reset, location-picker restore-vs-user-pick, and guest-draft lifecycle all read correctly from static review. Needs the original ticket text or a live repro to pin down what "sticking" actually means here. |
+| BK-21 | Location dropdown | **Investigated, no bug found.** The country→state→city cascade correctly clears/reloads at each level. Possibly refers to a different "location dropdown" (profile editing, admin filters) not covered by this phrase search. |
+| BK-22 | 24h auto-cancel | **Investigated, already correct.** `BookingPaymentScheduler`'s 24h window, instant-based date handling, and the partial-payment-on-extension edge case all match spec. |
+| BK-23 | Early-arrival wording | **Investigated, can't confirm.** No "arrive early"/"show up early"/"minutes early" copy exists anywhere in the app, frontend or backend -- either it lives somewhere a text search didn't guess, or it was already removed. |
+| CT-06 | Center video gallery | **Investigated, already built and wired.** `CenterVideoGalleryComponent` renders correctly on the public center profile with proper error handling. |
+| SG-06 | No terms/privacy checkbox at signup | **Fixed.** Neither the full signup wizard nor quick-signup (including the Google/Facebook buttons) ever asked for this, despite `/terms`/`/privacy` already existing. Both now require it before an account can be created. |
 
-Remaining bugs: PF-24 (negative price), BK-17/18 (bookings list hides money), PF-23/25/26/27 (dashboard-vs-public-profile contradictions), SG-06 (no terms/privacy checkbox), VD-11 (wrong too-short message), PF-06, GN-05 (home counters), PF-30, PF-31 (demo content), GN-20, PF-29, PF-28, PF-14, PF-32, SG-03, GN-09, CT-11, GN-21.
+### Live bugs found from real usage, 2026-11-04 (not on the original list)
+
+- **Stripe Connect "Continue setup" failing for everyone** -- every connected Express account defaulted to country "US" (nothing in the app ever sent a country), and this platform's own Stripe account (CA) never enabled Express for US, so the very next step always failed with a generic "Stripe request failed." Found via Railway logs. Fixed: defaults to the platform's own merchant country now, and self-heals any partner already stuck on a broken US account by creating a fresh one in the right country on their next attempt.
+- **Earnings "Paid, not yet earned" showing an inflated number** -- it recomputed a theoretical full-rate price instead of reading what was actually collected, so a session with a discount and a partial refund showed $125 instead of the real $50. Fixed to use `booking.amountPaid` directly. **Flagged, not fixed:** the authoritative payout-at-completion calculation has a related edge case -- a partial refund on a booking that stays "confirmed" (not cancelled) never flips `paymentStatus` to `PARTIALLY_REFUNDED`, so the real payout could still use stale pre-refund numbers at session completion. Needs the owner's policy call first: does a Berliz-funded discount reduce the provider's payout, or only the provider's own promo code?
+- **Pre-November Stripe test data** -- owner confirmed everything dated before 2026-11-01 was test-mode activity. Backfill migration (V94) marks those Payment/Payout rows `livemode=false` (excluded from earnings) without touching anything the new webhook code already recorded correctly. Flags, doesn't delete -- preserves the audit trail of real Stripe records; outright deletion was explicitly not requested.
+
+### Remaining bugs, not yet investigated
+
+PF-24 (negative price), BK-17/18 (bookings list hides money), PF-23/25/26/27 (dashboard-vs-public-profile contradictions), VD-11 (wrong too-short message), PF-06, GN-05 (home counters), PF-30, PF-31 (demo content), GN-20, PF-29, PF-28, PF-14, PF-32, SG-03, GN-09, CT-11, GN-21.
 
 Features (owner's stated order): GN-26 itself (this file is the stand-in), CT-12 (super admin center builder), PR-01/PR-02 (Programs), CM-01 (connected clients + real messaging), EM-01/02/03 (notification email rebuild — the Universal Header Block idea from the Muse research belongs here).
 
@@ -71,3 +88,9 @@ Features (owner's stated order): GN-26 itself (this file is the stand-in), CT-12
 - Backend branch `feat/payment-receipt-pdf` -> a PDF receipt emailed for every booking payment.
 - Backend + frontend branches `fix/earnings-paid-upcoming-visibility` -> the Earnings tab's "Paid, not yet earned" section.
 - GN-23 investigated, not fixed -- see the P0s table above.
+- Frontend branch `fix/sg06-terms-checkbox` -> SG-06, terms/privacy agreement required at signup (both flows).
+- Backend branch `fix/py17-backfill-test-data` (migration V94) -> pre-November rows marked test-mode.
+- Backend branch `fix/connect-onboarding-country-default` -> Stripe Connect onboarding fixed for everyone.
+- Backend branch `fix/upcoming-earnings-use-amount-paid` -> earnings projection uses the real amount paid.
+- Frontend branch `fix/bk24-intake-visibility` -> BK-24, a submitted intake is reachable again.
+- Backend + frontend branches `fix/bk19-discipline-display*` -> BK-19, discipline badges on the booking page.

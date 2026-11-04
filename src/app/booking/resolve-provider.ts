@@ -18,6 +18,8 @@ export interface ResolvedProvider {
   trialPrice?: number | null;
   /** A trainer's own price per person in a group session; null = the platform's CA$75. */
   groupPrice?: number | null;
+  /** What this provider trains in -- shown on the booking page so a client knows what they're booking before they pick a time. */
+  categoryNames?: string[];
 }
 
 /** "Jo Smith" <-> "Jo-Smith": the provider's name is its URL segment. */
@@ -54,6 +56,11 @@ export function resolveProviderBySlug(
           contactPhone: match.contactPhone || null,
           trialPrice: match.trialPrice ?? null,
           groupPrice: match.groupPrice ?? null,
+          // Trainers carry full category objects; centers only ever got the names added alongside
+          // their existing categoryIds (see CenterResponse) -- normalise both to a plain name list.
+          categoryNames: kind === 'trainer'
+            ? (match.categories ?? []).map((c: { name: string }) => c.name).filter(Boolean)
+            : (match.categoryNames ?? []).filter(Boolean),
         }
         : null;
     }),

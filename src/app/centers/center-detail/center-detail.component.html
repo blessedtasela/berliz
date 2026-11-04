@@ -103,6 +103,13 @@
                         </div>
                     </div>
 
+                    <!-- The price is stated before anyone is asked to book -->
+                    <p *ngIf="bookingOffered && center.hourlyRate" class="text-sm text-zinc-300" data-testid="session-price">
+                        <span class="text-lg font-bold text-white">{{ center.hourlyRate | currency:'CAD':'symbol':'1.0-2' }}</span>
+                        per hour
+                        <span class="text-xs text-zinc-500">· nothing is charged until {{ center.name }} confirms</span>
+                    </p>
+
                     <div class="flex flex-col sm:flex-row gap-3 pt-1">
                         <button *ngIf="bookingOffered" type="button" (click)="bookSession()"
                             class="px-7 py-3 rounded-xl bg-red-600 text-white text-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.35)]
@@ -139,15 +146,15 @@
 
             <app-promo-badge-list ownerType="center" [ownerId]="centerId"></app-promo-badge-list>
 
-            <app-center-introduction [centerIntroduction]="centerIntro"></app-center-introduction>
+            <app-center-introduction *ngIf="loaded.intro && centerIntro?.introduction" [centerIntroduction]="centerIntro"></app-center-introduction>
 
-            <app-center-categories [centerCategories]="centerCategories"></app-center-categories>
+            <app-center-categories *ngIf="centerCategories.length" [centerCategories]="centerCategories"></app-center-categories>
 
-            <app-center-locations [centerLocations]="centerLocation"></app-center-locations>
+            <app-center-locations *ngIf="loaded.locations && centerLocation.length" [centerLocations]="centerLocation"></app-center-locations>
 
-            <app-center-equipments [centerEquipments]="centerEquipment"></app-center-equipments>
+            <app-center-equipments *ngIf="loaded.equipment && centerEquipment.length" [centerEquipments]="centerEquipment"></app-center-equipments>
 
-            <app-center-trainers [centerTrainers]="centerTrainer"></app-center-trainers>
+            <app-center-trainers *ngIf="loaded.trainers && centerTrainer.length" [centerTrainers]="centerTrainer"></app-center-trainers>
 
             <!-- PLANS & PRICING -->
             <div id="plans" class="scroll-mt-24 flex flex-col gap-6">
@@ -202,10 +209,10 @@
 
             <app-how-it-works providerLabel="this center"></app-how-it-works>
 
-            <app-center-announcements [centerAnnouncements]="centerAnnouncements"></app-center-announcements>
+            <app-center-announcements *ngIf="centerAnnouncements.length" [centerAnnouncements]="centerAnnouncements"></app-center-announcements>
 
             <!-- PROOF -->
-            <app-center-review [centerReviews]="centerReview"></app-center-review>
+            <app-center-review *ngIf="reviewsLoaded && centerReview.length" [centerReviews]="centerReview"></app-center-review>
 
             <!-- ── WHAT PEOPLE SAY ───────────────────────────────────────── -->
             <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
@@ -264,9 +271,9 @@
                 [freeCancelHours]="center.freeCancelHours" [lateCancelRefundPercent]="center.lateCancelRefundPercent">
             </app-provider-terms>
 
-            <app-center-album [centerAlbums]="centerAlbums"></app-center-album>
+            <app-center-album *ngIf="loaded.albums && centerAlbums.length" [centerAlbums]="centerAlbums"></app-center-album>
 
-            <app-center-video-gallery [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
+            <app-center-video-gallery *ngIf="loaded.videos && centerVideoAlbums.length" [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
 
             <app-profile-cta *ngIf="bookingOffered" [name]="center.name" providerLabel="this center" (book)="bookSession()"
                 [bookLink]="['/centers', center.name.split(' ').join('-'), 'book']">

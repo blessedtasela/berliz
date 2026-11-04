@@ -1,4 +1,4 @@
-import { completePaymentLink, subscriptionState, subscriptionStatusClasses, subscriptionStatusLabel } from './subscription-status.util';
+import { completePaymentLink, subscriptionEndedText, subscriptionState, subscriptionStatusClasses, subscriptionStatusLabel, subscriptionTitle } from './subscription-status.util';
 
 describe('subscription status', () => {
   it('maps every server status to what a person sees', () => {
@@ -38,5 +38,24 @@ describe('subscription status', () => {
     expect(completePaymentLink({ trainer: { name: 'X' } } as any)).toBeNull();
     expect(completePaymentLink({ providerPackage: { id: 1 } } as any)).toBeNull();
     expect(completePaymentLink(null)).toBeNull();
+  });
+});
+
+describe('subscriptionTitle and subscriptionEndedText', () => {
+  const fmt = (d: Date | string) => `<${d}>`;
+
+  it('names a row by its plan, else its package, else who it is with, and never leaves it bare', () => {
+    expect(subscriptionTitle({ plan: '5-Session Starter Pack' })).toBe('5-Session Starter Pack');
+    expect(subscriptionTitle({ plan: '  ', providerPackage: { name: 'Group session pack' } })).toBe('Group session pack');
+    expect(subscriptionTitle({ plan: '', trainer: { name: 'Blessed Fit' } })).toBe('Plan with Blessed Fit');
+    expect(subscriptionTitle({ center: { name: 'M Fitness Sources' } })).toBe('Plan with M Fitness Sources');
+    expect(subscriptionTitle({})).toBe('Subscription (no plan name recorded)');
+    expect(subscriptionTitle(null)).toBe('Subscription (no plan name recorded)');
+  });
+
+  it('says when an end date was never recorded instead of printing a blank', () => {
+    expect(subscriptionEndedText({ endDate: '2026-12-22' }, fmt)).toBe('Ended: <2026-12-22>');
+    expect(subscriptionEndedText({ endDate: null }, fmt)).toBe('No end date recorded');
+    expect(subscriptionEndedText(undefined, fmt)).toBe('No end date recorded');
   });
 });
