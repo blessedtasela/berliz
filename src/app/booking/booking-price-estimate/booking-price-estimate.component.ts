@@ -66,7 +66,7 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
       </p>
       <p *ngIf="e.dropInFee > 0" class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="gym-dropin-line">
         <i-feather name="map-pin" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-        Pay at the gym: about {{ e.dropInFee | currency:'CAD':'symbol':'1.2-2' }} drop-in, paid to the gym at the door. It is not part of the total above.
+        Gym drop-in about {{ e.dropInFee | currency:'CAD':'symbol':'1.2-2' }}, paid to the gym directly, not included in your payment to Berliz.
       </p>
       <ng-container *ngIf="!direct; else directNote">
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="payment-timing">
@@ -186,7 +186,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
     const percent = this.lateCancelRefundPercent ?? DEFAULT_LATE_CANCEL_REFUND_PERCENT;
     if (!(total > 0) || percent <= 0 || percent >= 100) return '';
     const back = Math.round(total * percent) / 100;
-    return `That is ${percent}% of what you paid: e.g. $${back.toFixed(2)} back on $${total.toFixed(2)}.`;
+    return `That is ${percent}% of what you paid: e.g. CA$${back.toFixed(2)} back on CA$${total.toFixed(2)}.`;
   }
 
   /** What the client is agreeing to if they later cancel, in the provider's own terms. */
