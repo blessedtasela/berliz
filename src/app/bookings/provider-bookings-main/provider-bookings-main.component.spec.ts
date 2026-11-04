@@ -1,5 +1,6 @@
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -8,6 +9,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 
 import { ProviderBookingsMainComponent } from './provider-bookings-main.component';
+import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { selectBookingError, selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
@@ -77,6 +79,54 @@ describe('ProviderBookingsMainComponent', () => {
       fixture.detectChanges();
       expect(el().querySelector('app-bookings-empty')).not.toBeNull();
       expect(el().querySelector('app-load-error')).toBeNull();
+    });
+  });
+
+  describe('intake visibility (BK-24: a submitted intake must not disappear)', () => {
+    const confirmedBooking = { id: 1, clientId: 5, status: 'confirmed', clientFirstname: 'Sam', clientLastname: 'Client' } as unknown as Booking;
+
+    function initWithBooking(): HttpTestingController {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectProviderBookings, [confirmedBooking]);
+      store.refreshState();
+      fixture.detectChanges();
+
+      const httpMock = TestBed.inject(HttpTestingController);
+      // loadOnboardingFlags() also fires for a confirmed booking -- let it through untouched.
+      httpMock.match(r => r.url.includes('/client-onboarding/')).forEach(req => req.flush({ data: {} }));
+      return httpMock;
+    }
+
+    it('looks up existing intakes once bookings load, keyed by client id', () => {
+      const httpMock = initWithBooking();
+
+      const req = httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes'));
+      req.flush({ data: [{ id: 42, clientId: 5 }] });
+
+      expect(component.intakeIdByClient[5]).toBe(42);
+      httpMock.verify();
+    });
+
+    it('opens the existing intake instead of starting a blank one', () => {
+      const httpMock = initWithBooking();
+      httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes')).flush({ data: [{ id: 42, clientId: 5 }] });
+      const navigate = spyOn(TestBed.inject(Router), 'navigate');
+
+      component.onStartIntakeRequested({ clientId: 5, clientName: 'Sam Client' });
+
+      expect(navigate).toHaveBeenCalledWith(['/dashboard/client-intake', 42]);
+      httpMock.verify();
+    });
+
+    it('starts a new intake when this client has none yet', () => {
+      const httpMock = initWithBooking();
+      httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes')).flush({ data: [] });
+      const navigate = spyOn(TestBed.inject(Router), 'navigate');
+
+      component.onStartIntakeRequested({ clientId: 5, clientName: 'Sam Client' });
+
+      expect(navigate).toHaveBeenCalledWith(['/dashboard/client-intake/new', 5], { queryParams: { clientName: 'Sam Client' } });
+      httpMock.verify();
     });
   });
 });

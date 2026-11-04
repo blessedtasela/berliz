@@ -462,4 +462,29 @@ describe('BookingCardComponent', () => {
       expect(dialogSpy.open).not.toHaveBeenCalled();
     });
   });
+
+  describe('intake form button (BK-24: a submitted intake must stay reachable)', () => {
+    beforeEach(() => {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'confirmed' } as Booking;
+    });
+
+    it('offers "Fill Together" and "Send Intake Form" when no intake exists yet', () => {
+      component.hasIntake = false;
+      fixture.detectChanges();
+
+      const fillButton = fixture.nativeElement.querySelector('[data-testid="intake-fill-or-view"]') as HTMLElement;
+      expect(fillButton.textContent).toContain('Fill Together');
+      expect(fixture.nativeElement.textContent).toContain('Send Intake Form');
+    });
+
+    it('switches to "View Intake Form" and hides "Send Intake Form" once one exists', () => {
+      component.hasIntake = true;
+      fixture.detectChanges();
+
+      const fillButton = fixture.nativeElement.querySelector('[data-testid="intake-fill-or-view"]') as HTMLElement;
+      expect(fillButton.textContent).toContain('View Intake Form');
+      expect(fixture.nativeElement.textContent).not.toContain('Send Intake Form');
+    });
+  });
 });
