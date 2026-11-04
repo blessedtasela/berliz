@@ -94,6 +94,9 @@
             <div>
                 <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Ready to train?</h2>
                 <p *ngIf="bookingOffered" class="text-xs text-gray-400 dark:text-gray-500">Book a session at {{ center?.name }} — pick a date and time that works for you.</p>
+                <p *ngIf="bookingOffered && center?.hourlyRate" class="text-xs text-gray-600 dark:text-gray-300 mt-1" data-testid="session-price">
+                    <span class="font-bold text-gray-900 dark:text-gray-100">{{ center?.hourlyRate | currency:'CAD':'symbol':'1.0-2' }}</span> per hour · nothing is charged until {{ center?.name }} confirms
+                </p>
                 <p *ngIf="acceptingBookings === false" class="text-xs text-gray-400 dark:text-gray-500">{{ center?.name }} hasn't opened online booking yet.</p>
             </div>
         </div>
