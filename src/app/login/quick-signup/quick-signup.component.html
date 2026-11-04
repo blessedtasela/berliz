@@ -78,11 +78,21 @@
             </p>
           </div>
 
+          <!-- Terms / Privacy -->
+          <label class="flex items-start gap-2 text-[11px] text-gray-600 dark:text-gray-400 cursor-pointer">
+            <input type="checkbox" [(ngModel)]="agreedToTerms" [ngModelOptions]="{standalone: true}" aria-label="Agree to the Terms and Privacy Policy"
+              class="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500 shrink-0" />
+            <span>
+              I agree to Berliz's <a routerLink="/terms" target="_blank" class="font-semibold text-red-600 hover:underline">Terms</a>
+              and <a routerLink="/privacy" target="_blank" class="font-semibold text-red-600 hover:underline">Privacy Policy</a>.
+            </span>
+          </label>
+
           <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
 
           <!-- Submit -->
-          <button type="submit" [disabled]="quickSignupForm.invalid"
-            [ngClass]="{ 'opacity-50 cursor-not-allowed': quickSignupForm.invalid }" class="w-full py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold
+          <button type="submit" [disabled]="quickSignupForm.invalid || !agreedToTerms"
+            [ngClass]="{ 'opacity-50 cursor-not-allowed': quickSignupForm.invalid || !agreedToTerms }" class="w-full py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold
                      hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2">
             <i-feather name="user-plus" style="width:14px;height:14px;"></i-feather>
             Sign up
@@ -99,7 +109,7 @@
         <div class="pt-4 border-t border-gray-200 dark:border-gray-800 flex flex-col items-center gap-3">
           <p class="text-[11px] text-gray-400 dark:text-gray-500 uppercase tracking-wide font-semibold">Or sign up with</p>
 
-          <div class="flex justify-center gap-3">
+          <div class="flex justify-center gap-3" [class.opacity-50]="!agreedToTerms" [class.pointer-events-none]="!agreedToTerms">
             <!-- Google Identity Services renders its official button into this div once
                  configured; the plain icon button underneath is the fallback shown until then. -->
             <div class="relative w-11 h-11">
@@ -113,11 +123,12 @@
               </button>
             </div>
 
-            <button type="button" (click)="loginWithFacebook()" aria-label="Sign up with Facebook" class="w-11 h-11 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center
+            <button type="button" (click)="loginWithFacebook()" [disabled]="!agreedToTerms" aria-label="Sign up with Facebook" class="w-11 h-11 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center
                        hover:border-red-500 hover:bg-white dark:hover:bg-gray-900 transition">
               <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5" />
             </button>
           </div>
+          <p *ngIf="!agreedToTerms" class="text-[10px] text-gray-400 dark:text-gray-500 -mt-1">Agree to the Terms and Privacy Policy above to sign up with Google or Facebook.</p>
         </div>
 
         <!-- Footer note -->
