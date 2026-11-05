@@ -225,6 +225,7 @@ Newest first.
 ### Unreleased — Booking page: policy, direct payment, request hold, timezones; trainer fields; center dead ends
 
 - **Booking summary:** shows the trainer's own **booking policy** (plain text) beside the generated terms; a DIRECT-payment provider gets "Pay <provider> directly. Berliz keeps the booking on record" with no pay-after-confirm or refund lines; and a line says how long a request is held (released after 2 days unanswered, nothing charged) next to the 24-hour pay window (kept at 24 hours; the deadline never runs past 2 hours before the session).
+- **Idle tabs:** the live connection now refreshes an expired login before reconnecting, so a tab left open keeps getting private messages.
 - **Live connection and logout:** the WebSocket restarts on login so private messages arrive straight away. When a signed-in user logs out or changes, including from another tab, the page reloads, which closes their connection and clears their data from memory.
 - **Session refresh:** the 59-minute refresh after login read the wrong response fields and overwrote both saved tokens with the text "undefined", which would log the user out on their next request. It now stores the real tokens, and keeps the current ones if the refresh is rejected.
 - **Availability timezone:** when the browser reports no timezone (seen with Windows' newer "British Columbia Standard Time" zone), the availability editor now asks the trainer to choose one and won't save without it, so their hours are no longer read as UTC.

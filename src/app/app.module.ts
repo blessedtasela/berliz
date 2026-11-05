@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule, PLATFORM_ID, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { ErrorHandler, Injector, NgModule, PLATFORM_ID, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { DemoBannerComponent } from './shared/demo/demo-banner.component';
 import { ProductTourComponent } from './shared/demo/product-tour.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -262,7 +262,7 @@ const dbConfig: DBConfig = {
         {
             provide: RxStompService,
             useFactory: rxStompServiceFactory,
-            deps: [PLATFORM_ID],
+            deps: [PLATFORM_ID, Injector],
         },
         {
             provide: UrlSerializer,
