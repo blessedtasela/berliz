@@ -95,8 +95,8 @@ interface LocationGroup {
             <span class="flex flex-col min-w-0">
               <span class="text-xs font-semibold text-gray-800 dark:text-gray-100 break-words">{{ spotName(loc) }}</span>
               <span *ngIf="spotDetail(loc)" class="text-[11px] text-gray-500 dark:text-gray-400 break-words">{{ spotDetail(loc) }}</span>
-              <span *ngIf="loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Drop-in at this gym: CA&#36;{{ loc.dropInFee | number:'1.2-2' }}, paid to the gym when you arrive</span>
-              <span *ngIf="!loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Drop-in up to CA&#36;25, paid at the gym</span>
+              <span *ngIf="loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Estimated drop-in at this gym: CA&#36;{{ loc.dropInFee | number:'1.2-2' }}, paid to the gym when you arrive</span>
+              <span *ngIf="!loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Estimated drop-in up to CA&#36;25, paid at the gym</span>
             </span>
           </span>
           <span class="shrink-0 text-[11px] font-semibold text-right"
