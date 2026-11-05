@@ -83,6 +83,24 @@ describe('AuthInterceptor forceLogout routing', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login'], jasmine.any(Object));
     request$.unsubscribe();
   });
+
+  /**
+   * CM-03: a 403 used to navigate to /dashboard unconditionally, so hitting a genuine permission bug
+   * (e.g. messaging a connection) silently bounced the user away from whatever they were doing instead
+   * of letting them see what happened. It now just bubbles, like every error besides 401.
+   */
+  it('does not navigate anywhere on a 403 -- it bubbles to the caller', () => {
+    spyOn(router, 'navigate');
+    Object.defineProperty(router, 'url', { value: '/dashboard/messages', configurable: true });
+    let caught: any = null;
+
+    const request$ = http.get('/api/message/getConversation').subscribe({ error: err => { caught = err; } });
+    httpMock.expectOne('/api/message/getConversation').flush('Forbidden', { status: 403, statusText: 'Forbidden' });
+
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(caught?.status).toBe(403);
+    request$.unsubscribe();
+  });
 });
 
 /**

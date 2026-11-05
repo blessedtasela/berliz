@@ -153,13 +153,11 @@ export class AuthInterceptor implements HttpInterceptor {
           return this.handleExpiredToken(request, next, error);
         }
 
-        // 403 -> forbidden, but no logout
-        if (error.status === 403) {
-          this.router.navigate(['/dashboard']);
-          return throwError(() => error);
-        }
-
-        // all other errors: just bubble
+        // 403 (forbidden) used to navigate to /dashboard unconditionally -- CM-03: a user who hit a
+        // genuine permission bug (e.g. messaging someone they ARE connected to, root cause separate
+        // from this) got silently bounced away from whatever they were doing instead of seeing what
+        // happened, with no way back to try again. Every other error already bubbles to the caller's
+        // own handling (a snackbar, an inline message); 403 does the same now instead of being special-cased.
         return throwError(() => error);
       })
     );
