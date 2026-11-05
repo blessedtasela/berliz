@@ -107,15 +107,32 @@ describe('PaymentCodesComponent', () => {
   describe('the super admin', () => {
     it('approves with the chosen uses and validity, and reloads', () => {
       page.isSuperAdmin = true;
-      page.decision[11] = { uses: 3, validDays: 30, note: 'ok' };
+      page.decision[11] = { uses: 3, validDays: 30, note: 'ok', discountType: 'FULL_BYPASS', discountValue: null };
       page.approve(request());
-      expect(codes['approve']).toHaveBeenCalledWith(11, { uses: 3, validDays: 30, note: 'ok' });
+      expect(codes['approve']).toHaveBeenCalledWith(11,
+        { uses: 3, validDays: 30, note: 'ok', discountType: 'FULL_BYPASS', discountValue: null });
       expect(codes['adminRequests']).toHaveBeenCalled();
       expect(page.busyId).toBeNull();
     });
 
+    it('approves a booking-target request with an amount-off or percent-off discount', () => {
+      page.isSuperAdmin = true;
+      page.decision[11] = { uses: 1, validDays: 14, note: '', discountType: 'AMOUNT_OFF', discountValue: 15 };
+      page.approve(request({ targetType: 'BOOKING' }));
+      expect(codes['approve']).toHaveBeenCalledWith(11,
+        jasmine.objectContaining({ discountType: 'AMOUNT_OFF', discountValue: 15 }));
+    });
+
+    it('never sends a discount for a package/subscription request, even if one was picked before switching targets', () => {
+      page.isSuperAdmin = true;
+      page.decision[11] = { uses: 1, validDays: 14, note: '', discountType: 'AMOUNT_OFF', discountValue: 15 };
+      page.approve(request({ targetType: 'PACKAGE' }));
+      expect(codes['approve']).toHaveBeenCalledWith(11,
+        jasmine.objectContaining({ discountType: 'FULL_BYPASS', discountValue: null }));
+    });
+
     it('rejects with a note', () => {
-      page.decision[11] = { uses: 1, validDays: 14, note: 'Please pay' };
+      page.decision[11] = { uses: 1, validDays: 14, note: 'Please pay', discountType: 'FULL_BYPASS', discountValue: null };
       page.reject(request());
       expect(codes['reject']).toHaveBeenCalledWith(11, { note: 'Please pay' });
     });
@@ -135,7 +152,7 @@ describe('PaymentCodesComponent', () => {
 
     it('tells the admin when an action failed', () => {
       codes['approve'].and.returnValue(throwError(() => ({ error: { message: 'That request has already been handled.' } })));
-      page.decision[11] = { uses: 1, validDays: 14, note: '' };
+      page.decision[11] = { uses: 1, validDays: 14, note: '', discountType: 'FULL_BYPASS', discountValue: null };
       page.approve(request());
       expect(snackBar.openSnackBar).toHaveBeenCalledWith('That request has already been handled.', 'error');
     });

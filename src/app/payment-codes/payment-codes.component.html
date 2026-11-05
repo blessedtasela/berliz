@@ -54,6 +54,22 @@
           <input type="text" [(ngModel)]="decision[r.id].note" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
         </label>
       </div>
+      <div *ngIf="r.targetType === 'BOOKING'" class="grid grid-cols-1 sm:grid-cols-2 gap-2" data-test="discount-fields">
+        <label class="text-xs text-gray-600 dark:text-gray-400">What the code does
+          <select [(ngModel)]="decision[r.id].discountType" data-test="discount-type"
+            class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
+            <option value="FULL_BYPASS">Covers the whole amount (no payment needed)</option>
+            <option value="AMOUNT_OFF">Takes a flat amount off</option>
+            <option value="PERCENT_OFF">Takes a percent off</option>
+          </select>
+        </label>
+        <label *ngIf="decision[r.id].discountType !== 'FULL_BYPASS'" class="text-xs text-gray-600 dark:text-gray-400">
+          {{ decision[r.id].discountType === 'PERCENT_OFF' ? 'Percent off (0-100)' : 'Amount off (CA$)' }}
+          <input type="number" min="0" [max]="decision[r.id].discountType === 'PERCENT_OFF' ? 100 : null"
+            [(ngModel)]="decision[r.id].discountValue" data-test="discount-value"
+            class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+      </div>
       <div class="flex gap-2">
         <button type="button" (click)="approve(r)" [disabled]="busyId === r.id" data-test="approve"
           class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">Approve and send the code</button>
