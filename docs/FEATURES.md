@@ -224,6 +224,7 @@ Newest first.
 ### Unreleased — Booking page: policy, direct payment, request hold, timezones; trainer fields; center dead ends
 
 - **Booking summary:** shows the trainer's own **booking policy** (plain text) beside the generated terms; a DIRECT-payment provider gets "Pay <provider> directly. Berliz keeps the booking on record" with no pay-after-confirm or refund lines; and a line says how long a request is held (released after 2 days unanswered, nothing charged) next to the 24-hour pay window (kept at 24 hours; the deadline never runs past 2 hours before the session).
+- **Availability timezone:** when the browser reports no timezone (seen with Windows' newer "British Columbia Standard Time" zone), the availability editor now asks the trainer to choose one and won't save without it, so their hours are no longer read as UTC.
 - **Timezones:** the booking page says which clock the offered times are on (the provider's zone, from the slots response) and, for a client in another zone, what the picked slot is on theirs. Trainers choose their zone in the availability editor (it used to be set silently from the browser).
 - **Trainer editor:** trial session price (empty = the platform's CA$100) and a 4,000-character booking policy; the policy shows under Booking terms on public and dashboard trainer pages.
 - **Centers:** the "plan a month" promo only shows when the provider has availability, and the Book button / sticky bar only appear once the center's hours are known (or could not be checked), so they no longer flash and vanish.
