@@ -101,17 +101,29 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
+  /**
+   * PF-37: a stray floating-point rounding artifact somewhere upstream (799.989990234375,
+   * 0.029999999999999999 and friends) was showing raw in this form instead of the clean decimal
+   * a trainer actually typed. Rounds to 2 decimal places on the way in and out, so neither loading
+   * an existing value nor saving it can ever show or send one of these again.
+   */
+  private clean(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === '') return null;
+    const n = Number(value);
+    return isNaN(n) ? null : Math.round(n * 100) / 100;
+  }
+
   updateFormValues(trainerPricing: TrainerPricing) {
     this.updateTrainerPricingForm.patchValue({
       id: trainerPricing.id,
-      priceOnline: trainerPricing.priceOnline,
-      pricePersonal: trainerPricing.pricePersonal,
-      priceHybrid: trainerPricing.priceHybrid,
-      discount3Months: trainerPricing.discount3Months,
-      discount6Months: trainerPricing.discount6Months,
-      discount9Months: trainerPricing.discount9Months,
-      discount12Months: trainerPricing.discount12Months,
-      discount2Programs: trainerPricing.discount2Programs
+      priceOnline: this.clean(trainerPricing.priceOnline),
+      pricePersonal: this.clean(trainerPricing.pricePersonal),
+      priceHybrid: this.clean(trainerPricing.priceHybrid),
+      discount3Months: this.clean(trainerPricing.discount3Months),
+      discount6Months: this.clean(trainerPricing.discount6Months),
+      discount9Months: this.clean(trainerPricing.discount9Months),
+      discount12Months: this.clean(trainerPricing.discount12Months),
+      discount2Programs: this.clean(trainerPricing.discount2Programs)
     });
   }
 
@@ -125,7 +137,18 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
       return; // Exit early if the form is invalid
     }
 
-    const trainerPricing = this.updateTrainerPricingForm.value;
+    const raw = this.updateTrainerPricingForm.value;
+    const trainerPricing = {
+      ...raw,
+      priceOnline: this.clean(raw.priceOnline),
+      pricePersonal: this.clean(raw.pricePersonal),
+      priceHybrid: this.clean(raw.priceHybrid),
+      discount3Months: this.clean(raw.discount3Months),
+      discount6Months: this.clean(raw.discount6Months),
+      discount9Months: this.clean(raw.discount9Months),
+      discount12Months: this.clean(raw.discount12Months),
+      discount2Programs: this.clean(raw.discount2Programs),
+    };
 
     this.ngxService.start();
     if (this.trainerPricing?.id) {
