@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -43,6 +44,7 @@ type SessionsTab = 'client' | 'personal' | 'collaborations';
 })
 export class MySessionsComponent implements OnInit {
 
+  private tabUrl = tabInUrl<SessionsTab>(['client', 'personal', 'collaborations'], 'personal');
   activeTab: SessionsTab = 'personal';
   isProvider = false;
 
@@ -67,13 +69,16 @@ export class MySessionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.isProvider = this.authService.isTrainer() || this.authService.isCenter();
-    this.activeTab = this.isProvider ? 'client' : 'personal';
+    const startTab: SessionsTab = this.isProvider ? 'client' : 'personal';
+    const fromUrl = this.tabUrl.fromUrl();
+    this.activeTab = fromUrl === 'client' && !this.isProvider ? startTab : fromUrl ?? startTab;
     this.load();
     this.loadRuns();
   }
 
   setTab(tab: SessionsTab): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab, this.isProvider ? 'client' : 'personal');
   }
 
   refresh(): void {

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -48,7 +49,8 @@ import { EquipmentFormModalComponent } from './equipment-form-modal/equipment-fo
 })
 export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
-  activeTab: 'exercises' | 'equipment' = 'exercises';
+  private tabUrl = tabInUrl<'exercises' | 'equipment'>(['exercises', 'equipment'], 'exercises');
+  activeTab: 'exercises' | 'equipment' = this.tabUrl.fromUrl() ?? 'exercises';
 
   exercises: PublicExercise[] = [];
   categories: Categories[] = [];
@@ -140,6 +142,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'exercises' | 'equipment'): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab);
   }
 
   get isCenter(): boolean {

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -48,7 +49,8 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
 
   /** Admin-curated public templates — only fetched the first time the tab opens. */
   templates: WorkoutResponse[] = [];
-  activeTab: 'mine' | 'templates' = 'mine';
+  private tabUrl = tabInUrl<'mine' | 'templates'>(['mine', 'templates'], 'mine');
+  activeTab: 'mine' | 'templates' = this.tabUrl.fromUrl() ?? 'mine';
   private templatesRequested = false;
   cloningTemplateId: number | null = null;
 
@@ -73,6 +75,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
 
     // Every selected slice is paired with its load dispatch.
     this.refresh();
+    if (this.activeTab === 'templates') this.setTab('templates');
 
     this.subscriptions.push(
       this.store.select(selectMyWorkouts).subscribe(w => this.myWorkouts = w ?? []),
@@ -88,7 +91,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.actions$.pipe(ofType(cloneWorkoutTemplateSuccess)).subscribe(({ response }) => {
         this.cloningTemplateId = null;
-        this.activeTab = 'mine';
+        this.setTab('mine');
         this.snackbar.openSnackBar(
           `"${response?.data?.name ?? 'Template'}" added to your workouts`, '');
       }),
@@ -137,6 +140,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'mine' | 'templates'): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab);
 
     // Fetch once, on first activation — every selected slice stays paired with
     // its dispatch.

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -39,7 +40,8 @@ type ProviderTab = 'trainers' | 'centers' | 'categories';
 })
 export class FindProvidersComponent implements OnInit, OnDestroy {
 
-  tab: ProviderTab = 'trainers';
+  private tabUrl = tabInUrl<ProviderTab>(['trainers', 'centers', 'categories'], 'trainers');
+  tab: ProviderTab = this.tabUrl.fromUrl() ?? 'trainers';
   searchQuery = '';
   /** Filters + sort applied after the text search, separately per tab (trainers/centers). */
   criteria: ProviderFilterCriteria = { ...DEFAULT_PROVIDER_CRITERIA };
@@ -97,6 +99,7 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   setTab(tab: ProviderTab): void {
     this.tab = tab;
+    this.tabUrl.remember(tab);
     this.searchQuery = '';
     this.criteria = { ...DEFAULT_PROVIDER_CRITERIA };
   }

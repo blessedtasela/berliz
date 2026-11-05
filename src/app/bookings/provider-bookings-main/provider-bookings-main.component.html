@@ -23,25 +23,25 @@
 
     <!-- Tabs -->
     <div class="flex items-center gap-1 border-b border-gray-100 dark:border-gray-800">
-        <button type="button" (click)="activeTab = 'bookings'"
+        <button type="button" (click)="setTab('bookings')"
             class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
             [ngClass]="activeTab === 'bookings' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'">
             <i-feather name="layout" style="width:13px;height:13px;"></i-feather>
             Bookings
         </button>
-        <button type="button" (click)="activeTab = 'availability'"
+        <button type="button" (click)="setTab('availability')"
             class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
             [ngClass]="activeTab === 'availability' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'">
             <i-feather name="clock" style="width:13px;height:13px;"></i-feather>
             My Availability
         </button>
-        <button type="button" (click)="activeTab = 'earnings'"
+        <button type="button" (click)="setTab('earnings')"
             class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
             [ngClass]="activeTab === 'earnings' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'">
             <i-feather name="dollar-sign" style="width:13px;height:13px;"></i-feather>
             Earnings
         </button>
-        <button type="button" (click)="activeTab = 'insights'"
+        <button type="button" (click)="setTab('insights')"
             class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
             [ngClass]="activeTab === 'insights' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'">
             <i-feather name="bar-chart-2" style="width:13px;height:13px;"></i-feather>

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -44,7 +45,8 @@ export class MyTasksComponent implements OnInit, OnDestroy {
    * its own NgRx wiring in ngOnInit, so switching tabs destroys/recreates it
    * and it re-fetches on its own. No workout state is duplicated here.
    */
-  activeTab: 'tasks' | 'workouts' = 'tasks';
+  private tabUrl = tabInUrl<'tasks' | 'workouts'>(['tasks', 'workouts'], 'tasks');
+  activeTab: 'tasks' | 'workouts' = this.tabUrl.fromUrl() ?? 'tasks';
 
   role = '';
   loading = false;
@@ -98,6 +100,7 @@ export class MyTasksComponent implements OnInit, OnDestroy {
   // ── TABS ────────────────────────────────────────────────────────────────
   setTab(tab: 'tasks' | 'workouts'): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab);
   }
 
   // ── ROLE ────────────────────────────────────────────────────────────────
