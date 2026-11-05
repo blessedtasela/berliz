@@ -9,6 +9,7 @@ import { RxStompService } from './rx-stomp.service';
  * The socket opens once at app start, and its identity is fixed by the token sent on CONNECT. Without this, a
  * logged-out tab kept receiving that user's private messages, and a fresh login missed them, until the next reconnect.
  * Compares the user rather than the token, so a routine token refresh doesn't drop the connection.
+ * When a signed-in user leaves, the page reloads instead, which also clears their data from the store.
  */
 @Injectable({ providedIn: 'root' })
 export class StompSessionService {
@@ -37,6 +38,13 @@ export class StompSessionService {
   private sync(): void {
     const current = this.authService.getCurrentUserEmail();
     if (current === this.connectedAs) return;
+
+    // Nothing resets the store on logout, so the only safe way to drop the previous user's data is a fresh page.
+    if (this.connectedAs) {
+      this.reloadPage();
+      return;
+    }
+
     this.connectedAs = current;
 
     // Chained so a quick logout and login can't call activate() while the old socket is still closing.
@@ -44,5 +52,9 @@ export class StompSessionService {
       .then(() => this.rxStomp.deactivate({ force: true }))
       .then(() => this.rxStomp.activate())
       .catch(err => console.error('Could not restart the live connection', err));
+  }
+
+  private reloadPage(): void {
+    window.location.reload();
   }
 }
