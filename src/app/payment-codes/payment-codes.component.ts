@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import jwt_decode from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 
-import { PaymentCode, PaymentCodeRequest, PaymentCodeTargetType } from 'src/app/models/payment-code.model';
+import { PaymentCode, PaymentCodeDiscountType, PaymentCodeRequest, PaymentCodeTargetType } from 'src/app/models/payment-code.model';
 import { Users } from 'src/app/models/users.interface';
 import { PaymentCodeService } from 'src/app/services/payment-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -40,8 +40,12 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
   adminRequests: PaymentCodeRequest[] = [];
   adminCodes: PaymentCode[] = [];
 
-  /** Per-request inputs while reviewing: how many uses, how many days, and the note. */
-  decision: Record<number, { uses: number; validDays: number; note: string }> = {};
+  /**
+   * Per-request inputs while reviewing: how many uses, how many days, the note, and what the code
+   * does -- discountType/discountValue only take effect for a BOOKING-target request; the admin
+   * review form hides the picker for package/subscription requests, which stay full-bypass-only.
+   */
+  decision: Record<number, { uses: number; validDays: number; note: string; discountType: PaymentCodeDiscountType; discountValue: number | null }> = {};
 
   /** The provider's "ask the administration" form. */
   form: { targetType: PaymentCodeTargetType; bookingId: number | null; packageId: number | null; subscriptionId: number | null; clientId: number | null; uses: number; reason: string }
@@ -86,7 +90,7 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
         next: r => {
           this.adminRequests = r.data ?? [];
           for (const req of this.adminRequests) {
-            if (!this.decision[req.id]) this.decision[req.id] = { uses: req.usesRequested || 1, validDays: 14, note: '' };
+            if (!this.decision[req.id]) this.decision[req.id] = { uses: req.usesRequested || 1, validDays: 14, note: '', discountType: 'FULL_BYPASS', discountValue: null };
           }
         }, error: () => this.adminRequests = []
       });
@@ -169,8 +173,14 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
 
   approve(req: PaymentCodeRequest): void {
     const d = this.decision[req.id];
-    this.run(req.id, this.codes.approve(req.id, { uses: d.uses, validDays: d.validDays, note: d.note }),
-      'Approved: the code was sent to the trainer and the client');
+    // The discount picker only applies to a BOOKING-target request (packages/subscriptions stay
+    // full-bypass-only, matching what the backend accepts) -- never send one for anything else.
+    const isBooking = req.targetType === 'BOOKING';
+    this.run(req.id, this.codes.approve(req.id, {
+      uses: d.uses, validDays: d.validDays, note: d.note,
+      discountType: isBooking ? d.discountType : 'FULL_BYPASS',
+      discountValue: isBooking && d.discountType !== 'FULL_BYPASS' ? d.discountValue : null,
+    }), 'Approved: the code was sent to the trainer and the client');
   }
 
   reject(req: PaymentCodeRequest): void {
