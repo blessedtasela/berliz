@@ -114,7 +114,11 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
         this.submitError = null;
         this.snackBar.openSnackBar(response?.message || 'Client intake saved', '');
         if (response?.data?.id) {
-          this.router.navigate(['/client-intake', response.data.id]);
+          // replaceUrl: a fresh intake's URL (.../client-intake/new/:clientId) is swapped for its real
+          // id here -- without it, going back would land on that now-pointless "new" form instead of
+          // wherever the trainer came from. Also fixes a wrong route: this used to navigate to
+          // '/client-intake/:id', which only exists nested under '/dashboard', breaking back-navigation.
+          this.router.navigate(['/dashboard/client-intake', response.data.id], { replaceUrl: true });
         }
       });
 

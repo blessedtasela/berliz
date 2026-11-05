@@ -18,7 +18,7 @@ import {
 import { selectAvailabilityLoading, selectMyAvailability } from 'src/app/state/availability/availability.selectors';
 
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { timezoneOptions } from 'src/app/utils/timezone-label.util';
+import { timezoneOptions, viewerZone } from 'src/app/utils/timezone-label.util';
 import { genericError } from 'src/validators/form-validators.module';
 
 interface TimeBlock {
@@ -67,13 +67,9 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   timezone = '';
   timezones: string[] = [];
 
-  /** Shown so a trainer/center understands their hours are zone-aware -- see AvailabilityService.setMyAvailability's own doc comment for the bug this closes. */
-  get detectedTimezone(): string {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } catch {
-      return 'your local time';
-    }
+  /** This browser's zone, or null when it can't say (e.g. Windows' newer "British Columbia Standard Time" zone) -- the trainer then has to pick one. */
+  get detectedTimezone(): string | null {
+    return viewerZone();
   }
 
   /** The platform default every provider starts on until they override it — mirrors the backend's own AvailabilityServiceImplement.DEFAULT_LEAD_TIME_MINUTES. */
@@ -104,7 +100,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.timezone = this.detectedTimezone;
+    this.timezone = this.detectedTimezone ?? '';
     this.timezones = timezoneOptions(this.timezone);
     watchLoadError(this.actions$, loadMyAvailabilityFailure, [loadMyAvailability, loadMyAvailabilitySuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyAvailability());
@@ -229,6 +225,12 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   save(): void {
     if (this.saving) return;
     this.submitError = null;
+
+    // Saving without a zone would leave the hours read as server time (UTC).
+    if (!this.timezone) {
+      this.submitError = 'Choose the timezone your hours are in.';
+      return;
+    }
 
     let hasError = false;
     for (const day of this.days) {

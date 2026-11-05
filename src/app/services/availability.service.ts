@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
 import { Availability, AvailabilityDay, AvailableSlotsResponse } from '../models/availability.model';
+import { viewerZone } from '../utils/timezone-label.util';
 
 @Injectable({
   providedIn: 'root'
@@ -28,19 +29,10 @@ export class AvailabilityService {
   setMyAvailability(days: AvailabilityDay[], timezone?: string) {
     return this.httpClient.post<ApiResponse<Availability[]>>(this.url + "/availability/setMine", {
       days,
-      timezone: timezone || this.browserTimezone(),
+      timezone: timezone || viewerZone() || undefined,
     }, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
-  }
-
-  /** Undefined in a pre-Intl-API environment (practically never in a real browser) -- the backend just leaves the stored zone untouched when omitted. */
-  private browserTimezone(): string | undefined {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } catch {
-      return undefined;
-    }
   }
 
   getMyAvailability() {

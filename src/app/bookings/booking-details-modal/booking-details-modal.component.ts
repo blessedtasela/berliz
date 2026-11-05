@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { Booking } from 'src/app/models/booking.model';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
-import { amountToPay, canClientPay, directPaymentNote, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
+import { canClientPay, directPaymentNote, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
 
 export interface BookingDetailsModalData {
   booking: Booking;
@@ -109,12 +109,6 @@ export class BookingDetailsModalComponent {
   /** What to say about payment, or null when there is nothing to say (never priced, nothing to pay, or still pending). */
   get paymentLabel(): string | null {
     return paymentBadge(this.booking, this.mode)?.label ?? null;
-  }
-
-  /** The amount that goes with {@link paymentLabel}: what is still owed while unpaid, otherwise what was paid / agreed. */
-  get paymentAmount(): number | null {
-    if (this.booking.paymentStatus === 'UNPAID') return amountToPay(this.booking) || null;
-    return this.booking.amountPaid ?? this.booking.amountDue ?? null;
   }
 
   get payByText(): string | null {

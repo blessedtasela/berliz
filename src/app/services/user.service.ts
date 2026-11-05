@@ -378,8 +378,11 @@ export class UserService {
       if (refreshToken) {
         this.refreshToken({ token: refreshToken }).subscribe({
           next: (response: any) => {
-            localStorage.setItem('token', response.access_token);
-            localStorage.setItem('refresh_token', response.refresh_token);
+            // The backend answers 200 with null tokens when it rejects a refresh, so keep the current ones then.
+            const auth = response?.data;
+            if (!auth?.accessToken) return;
+            localStorage.setItem('token', auth.accessToken);
+            if (auth.refreshToken) localStorage.setItem('refresh_token', auth.refreshToken);
           },
           error: (err) => {
             console.error('Token refresh failed:', err);

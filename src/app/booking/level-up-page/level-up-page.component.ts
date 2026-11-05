@@ -20,6 +20,10 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { TrainerPricing } from 'src/app/models/trainers.interface';
+import {
+  TRAINER_PLAN_MONTHS, TrainerPlanMode, TrainerPlanQuote, caMoney, offeredModes, trainerPlanQuote,
+} from 'src/app/utils/trainer-plan-pricing.util';
 import { Users } from 'src/app/models/users.interface';
 import {
   PLAN_KIND_BLURB, PLAN_KIND_LABEL, PlanGroup, groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote,
@@ -71,8 +75,9 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
   /** "I have a unique code": the box is shown, and what was typed. A valid code replaces the payment. */
   showCodeBox = false;
   paymentCode = '';
-  askingTrainer = false;
-  askSent = false;
+  /** "No code? Request one" is offered on every plan card (not just whichever one is selected), so both the asking state and whether it was already sent are tracked per plan id rather than as one flag. */
+  askingTrainerForPlanId: number | null = null;
+  private askSentPlanIds = new Set<number>();
 
   /** A visitor who is not signed in asked to pay: show the log in / create account choice. */
   showAuthPrompt = false;
@@ -198,6 +203,7 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
 
         this.updateSeoTags();
         this.fetchPlans();
+        this.fetchTrainerPricing();
         if (this.user?.email) {
           this.fetchOwned();
           if (loadGuestDraft(this.kind, this.providerId)) clearGuestDraft();
@@ -217,6 +223,113 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
       this.groups = groupPlansByKind(this.plans);
       this.plansLoaded = true;
       this.preselectPlan();
+    });
+  }
+
+  // ── Monthly plans (a trainer's online / hybrid / personal rates) ─────────────────────────
+
+  /** The trainer's own pricing; null for a center or a trainer who has not set any. */
+  trainerPricing: TrainerPricing | null = null;
+  planMode: TrainerPlanMode | null = null;
+  planMonths = 3;
+  planTwoPrograms = false;
+  buyingMonthly = false;
+  monthlyError: string | null = null;
+  readonly monthChoices = TRAINER_PLAN_MONTHS;
+  readonly money = caMoney;
+
+  private fetchTrainerPricing(): void {
+    if (this.kind !== 'trainer') return;
+    this.trainerService.getTrainerPricingByTrainerId(this.providerId).pipe(take(1), catchError(() => of(null))).subscribe(res => {
+      this.trainerPricing = res?.data ?? null;
+      const modes = this.monthlyModes;
+      if (modes.length > 0 && !modes.some(m => m.mode === this.planMode)) this.planMode = modes[0].mode;
+      if (modes.length === 0) this.planMode = null;
+    });
+  }
+
+  /** The monthly modes this trainer actually prices. */
+  get monthlyModes() {
+    return offeredModes(this.trainerPricing);
+  }
+
+  get hasMonthlyPlans(): boolean {
+    return this.kind === 'trainer' && this.monthlyModes.length > 0;
+  }
+
+  get offersTwoPrograms(): boolean {
+    return Number(this.trainerPricing?.discount2Programs) > 0;
+  }
+
+  /** The price of one choice, as it will be charged. */
+  quoteFor(months: number): TrainerPlanQuote | null {
+    return this.planMode ? trainerPlanQuote(this.trainerPricing, this.planMode, months, this.planTwoPrograms) : null;
+  }
+
+  get monthlyQuote(): TrainerPlanQuote | null {
+    return this.quoteFor(this.planMonths);
+  }
+
+  /** The one-month monthly rate of a mode, shown on its card. */
+  quoteForMode(mode: TrainerPlanMode): number {
+    return trainerPlanQuote(this.trainerPricing, mode, 1, false)?.total ?? 0;
+  }
+
+  pickMode(mode: TrainerPlanMode): void {
+    this.planMode = mode;
+    this.monthlyError = null;
+  }
+
+  pickMonths(months: number): void {
+    this.planMonths = months;
+    this.monthlyError = null;
+  }
+
+  /** Buys the chosen monthly plan: the server prices it again from the trainer's own pricing, then Stripe Checkout takes the payment. */
+  buyMonthly(): void {
+    const quote = this.monthlyQuote;
+    if (!quote || this.buyingMonthly || this.buyingPlanId != null) return;
+    if (this.isGuest) {
+      this.promptToSignIn();
+      return;
+    }
+    this.monthlyError = null;
+    this.buyingMonthly = true;
+    this.subscriptionService.purchaseTrainerPlan(this.providerId, quote.mode, quote.months, this.planTwoPrograms).subscribe({
+      next: res => {
+        const purchase = res?.data;
+        if (!purchase?.subscriptionId) {
+          this.buyingMonthly = false;
+          this.monthlyError = res?.message || 'Could not start that purchase — try again.';
+          return;
+        }
+        this.stripeService.createCheckoutSession({
+          subscriptionId: purchase.subscriptionId,
+          amount: purchase.price,
+          currency: purchase.currency,
+          productName: purchase.packageName,
+          // The whole committed term is paid now, once.
+          recurring: false,
+        }).subscribe({
+          next: checkoutRes => {
+            const checkoutUrl = checkoutRes.data?.checkoutUrl;
+            if (!checkoutUrl) {
+              this.buyingMonthly = false;
+              this.monthlyError = 'Could not start checkout — try again.';
+              return;
+            }
+            window.location.href = checkoutUrl;
+          },
+          error: err => {
+            this.buyingMonthly = false;
+            if (!this.handleSessionExpired(err)) this.monthlyError = 'Could not start checkout — try again.';
+          }
+        });
+      },
+      error: err => {
+        this.buyingMonthly = false;
+        if (!this.handleSessionExpired(err)) this.monthlyError = err?.error?.message || 'Could not start that purchase — try again.';
+      }
     });
   }
 
@@ -347,26 +460,31 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  hasAskedFor(plan: ProviderPackage): boolean {
+    return this.askSentPlanIds.has(plan.id);
+  }
+
   /**
    * "Request a code from my trainer": a client without a code tells the trainer they would like one for this plan. The trainer
-   * takes it from there (asks the administration); the client hears back by email and in their inbox.
+   * takes it from there (asks the administration); the client hears back by email and in their inbox. Offered on every plan
+   * card, not just whichever one happens to be selected, so `plan` is passed in rather than read off `selectedPlan`.
    */
-  askTrainerForCode(): void {
-    const plan = this.selectedPlan;
-    if (!plan || this.askingTrainer || this.askSent) return;
+  askTrainerForCode(plan: ProviderPackage, event?: Event): void {
+    event?.stopPropagation();
+    if (this.askingTrainerForPlanId === plan.id || this.askSentPlanIds.has(plan.id)) return;
     if (this.isGuest) {
       this.promptToSignIn();
       return;
     }
     this.submitError = null;
-    this.askingTrainer = true;
+    this.askingTrainerForPlanId = plan.id;
     this.paymentCodeService.askTrainer({ targetType: 'PACKAGE', packageId: plan.id }).subscribe({
       next: () => {
-        this.askingTrainer = false;
-        this.askSent = true;
+        this.askingTrainerForPlanId = null;
+        this.askSentPlanIds.add(plan.id);
       },
       error: err => {
-        this.askingTrainer = false;
+        this.askingTrainerForPlanId = null;
         if (!this.handleSessionExpired(err)) this.submitError = err?.error?.message || 'Could not ask your trainer — try again.';
       }
     });

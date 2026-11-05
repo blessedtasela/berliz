@@ -59,9 +59,9 @@ describe('BookingLocationPickerComponent', () => {
     expect(text).toContain('Austin, TX, USA');
     expect(text).toContain("Mike's Gym");
     expect(text).toContain('12 Main St');
-    expect(text).toContain('+CA$15.00');
+    expect(text).toContain('Travel fee +CA$15.00');
     expect(text).toContain('Anywhere in Dallas');
-    expect(text).toContain('No extra trainer fee');
+    expect(text).toContain('No travel fee');
     expect(text).toContain('my own place');
     expect(text).toContain('+CA$25.00');
   });

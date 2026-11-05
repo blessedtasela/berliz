@@ -94,3 +94,40 @@ Features (owner's stated order): GN-26 itself (this file is the stand-in), CT-12
 - Backend branch `fix/upcoming-earnings-use-amount-paid` -> earnings projection uses the real amount paid.
 - Frontend branch `fix/bk24-intake-visibility` -> BK-24, a submitted intake is reachable again.
 - Backend + frontend branches `fix/bk19-discipline-display*` -> BK-19, discipline badges on the booking page.
+
+### Continued, 2026-11-04 (batch-2/batch-3 owner lists)
+
+| ID | Item | Status |
+|---|---|---|
+| BK-17/18 | Bookings list hides the payment amount | **Fixed.** Pay/Paid/Partly-refunded badges now embed their own amount (e.g. "Pay CA$115.00", "Paid CA$115.00") instead of showing a bare `$` figure alongside a separately-computed label that could drift out of sync. Removed the now-redundant `paymentAmount` getter in `booking-details-modal` and fixed two spots there that rendered a bare `$` instead of the CAD currency pipe. |
+| (unlisted, reported live) | "Finish setting up payouts" banner needed two round-trips after Connect onboarding | **Fixed.** Stripe's `payoutsEnabled`/`detailsSubmitted` flags can lag a couple seconds after onboarding; `?payoutSetup=return` now retries `getConnectStatus` up to 3x (2s/3s/4s) while setup reads unfinished, instead of requiring the provider to leave and come back. |
+| (unlisted, reported live) | Poppins/Google Fonts blocked by CSP (report-only) | **Fixed.** `font-src` now allows `fonts.gstatic.com`. Report-only today, but the policy is slated to become enforced -- this would have broken for real once it did. |
+| (unlisted, reported live) | Payment-received email showed the wrong day for an evening booking | **Fixed.** `BookingReference.when()` formatted with the JVM's own default zone (UTC on Railway) instead of Pacific, so a 6:30pm Thursday booking appeared as "Fri ... 1:30 AM". Now always formats in `America/Vancouver`, matching the zone `PayoutServiceImplement` already uses for its weekly cutoffs. |
+| Fix 4 / BK-16 follow-up | "No code? Request a code from my trainer" only reachable after selecting a plan | **Fixed.** The prior session's note above says this one "already existed, not touched" -- true, but it only showed inside the single checkout summary for whichever one plan was selected, so a client browsing monthly/pack/membership options with nothing selected yet had no visible way to ask. Now shown on every plan card in the Level Up grid, for every kind, tracked per-plan so asking about one plan doesn't mark every other plan as "already asked." |
+
+Bonus fix found while verifying the above: 3 pre-existing, unrelated Karma failures in `ProviderBookingsMainComponent`'s spec (Angular dev-mode NG0306 false positive from an un-declared `app-booking-card` stub meeting a recently-added `[onboardingPercent]` binding -- test-only, no production impact). Fixed so the suite is fully green again.
+
+**Still open from the owner's batch-2/batch-3 lists, not yet started:**
+- **BK-14/15/25** -- owner says this is still broken live (screenshot evidence, Nov 4) despite an earlier "already fixed in code" claim in this file -- needs a fresh live re-investigation, not a re-read of the old conclusion. Top priority.
+- **PY-21** -- the Earnings tab's *own* pending/paid totals (NgRx `selectMyPendingTotal`/`selectMyPaidTotal`, summed client-side from `getMyPayouts()`) have no livemode filter -- a different code path than the admin Billing summary already fixed under PY-17, so the $360 test-mode figure still shows there.
+- **PY-19** -- commission-rate inconsistency on old entries, a missing refund line (Earnings + booking-detail), booking-detail line items not summing to the displayed "Paid" figure, an unexplained "5% booking fee" with no matching charge.
+- **PF-34** -- member directory default-visibility (should default public, hidden only if explicitly made private).
+- **PF-35** -- consolidate the two divergent bio fields (dashboard BIO vs public Introduction).
+- **PF-33** -- persist the active tab across a page refresh on `/dashboard/my-bookings` and other tabbed screens.
+- **GN-27** -- no screen should ever show a raw backend/Stripe error string; plain copy + reference code, raw error logged server-side.
+- **GN-28** -- Android session/auth breakage ("JWT expired" everywhere) + full web/mobile field parity.
+- **PY-22** -- automated weekly payouts (Sunday 00:00 Pacific) + an admin payments console reconciling to Stripe.
+- **BK-26** -- per-user promo-usage tracking (available/used-with-reference), enforced once at checkout.
+- Admin sortable column headers on the bookings hub list.
+
+## Batch 4 (owner's Nov 4-5 list), started 2026-11-05
+
+Full batch-1-to-3 status report delivered to the owner in chat per his instruction before starting
+this batch; see that message, not duplicated here.
+
+| ID | Item | Status |
+|---|---|---|
+| PY-21 (item 1) | Delete pre-November test data from production money + EM-04 notification cleanup | **Done, live.** Owner pulled the exact rows from the DB himself (this session's own safety layer blocks both reading DB credentials and direct production reads, even read-only -- had to work from what he supplied). Deleted bookings 1, 2, 6, 8 and payouts 1-4 (the 4 test earnings entries), their notifications, Jul-2024 test-era notifications, repeated "Olives Fit" alerts, and exact-duplicate notifications platform-wide (confirmed with the owner first since the blast radius wasn't scoped to one account). Every row snapshotted into a new `removed_test_data_audit` table before deletion -- recoverable, not a silent loss. Also added a write-time dedupe guard (`JWTFilter.sendNotifications`) so the same event can't create two identical notifications again. Also answers the "mystery Oct 27 ledger entries" question from the same list: that's the payout's own calculation date, not the booking's session date shown on Earnings -- two different dates on two different screens, not lost data. **Incident during rollout:** the first version of the migration (V96) crashed the app on deploy -- `notification` the table has a column also named `notification`, which shadowed `row_to_json()`'s row reference. Postgres/Flyway ran the whole migration as one transaction, so it rolled back cleanly with zero data loss on that attempt; fixed the alias bug and redeployed within minutes, confirmed healthy. PY-23 (Earnings its own sidebar link/route) not started. |
+| BK-31 (item 17) | Drop-in badged as a fixed "+25" travel fee on gym cards | **Fixed -- wording only.** Investigated the live Evolve Strength report in depth; traced it to the trainer's own "Extra fee" field (separate from drop-in) being set to $25 with no explanation next to it, unlike the drop-in field. Initially over-corrected by making travel fee always zone-based with no override -- the owner corrected this live: trainers are meant to set their own travel price and zone per spot, so that part was reverted in full (backend change discarded, never shipped). What shipped: the fee badge now always says "Travel fee +CA$X" / "No travel fee" explicitly instead of a bare "+CA$X" that only sometimes said "travel", and the drop-in line now has a fallback ("Drop-in up to CA$25, paid at the gym") for a gym with no recorded fee, where before there was none at all. |
+
+**Still open from Batch 4, not yet started:** BK-28 (PAR-Q rebuild), BK-29/BK-30 (booking details modal rebuild + one bookings surface), CM-02 (workout room on connected clients, needs CM-01 first), GN-29 through GN-32, PF-36 through PF-39, VD-12 through VD-15, BK-32 (used-trial messaging), BK-21 amendment (searchable gym dropdown -- confirmed via code read that the base BK-21 dropdown conversion was never built either, contrary to the batch-4 list's assumption that it shipped in batch 1), the two-path code-issuance extension (item 7), and the three owner decisions (Elite wording, gift bookings, footer credit).

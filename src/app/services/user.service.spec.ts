@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { environment } from 'src/environments/environment';
@@ -91,5 +91,39 @@ describe('UserService', () => {
 
       expect(actual).toEqual(mockResponse);
     });
+  });
+
+  describe('startRefreshTokenTimer', () => {
+    const fiftyNineMinutes = 59 * 60 * 1000;
+
+    beforeEach(() => {
+      localStorage.setItem('token', 'old-access');
+      localStorage.setItem('refresh_token', 'old-refresh');
+    });
+
+    afterEach(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refresh_token');
+    });
+
+    it('stores the refreshed tokens from the response body', fakeAsync(() => {
+      service.startRefreshTokenTimer();
+      tick(fiftyNineMinutes);
+      httpMock.expectOne(r => r.url.endsWith('/user/refreshToken'))
+        .flush({ data: { accessToken: 'new-access', refreshToken: 'new-refresh' } });
+
+      expect(localStorage.getItem('token')).toBe('new-access');
+      expect(localStorage.getItem('refresh_token')).toBe('new-refresh');
+    }));
+
+    it('keeps the current tokens when the backend rejects the refresh', fakeAsync(() => {
+      service.startRefreshTokenTimer();
+      tick(fiftyNineMinutes);
+      httpMock.expectOne(r => r.url.endsWith('/user/refreshToken'))
+        .flush({ data: { accessToken: null, refreshToken: null } });
+
+      expect(localStorage.getItem('token')).toBe('old-access');
+      expect(localStorage.getItem('refresh_token')).toBe('old-refresh');
+    }));
   });
 });

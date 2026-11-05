@@ -259,7 +259,7 @@ describe('BookingCardComponent', () => {
       component.booking.balanceDue = 50;
       component.booking.paymentDueAt = new Date(Date.now() + 5 * 3600_000);
 
-      expect(component.payButtonLabel).toBe('Pay extra $50.00');
+      expect(component.payButtonLabel).toBe('Pay extra CA$50.00');
       expect(component.payByText).toContain('Pay the extra by');
     });
   });
@@ -307,11 +307,12 @@ describe('BookingCardComponent', () => {
 
     it('labels the badge differently for each side', () => {
       component.mode = 'client';
-      expect(component.paymentBadge?.label).toBe('Payment due');
+      expect(component.paymentBadge?.label).toBe('Payment due CA$115.00');
       component.mode = 'provider';
-      expect(component.paymentBadge?.label).toBe('Awaiting payment');
+      expect(component.paymentBadge?.label).toBe('Awaiting payment CA$115.00');
       component.booking.paymentStatus = 'PAID';
-      expect(component.paymentBadge?.label).toBe('Paid');
+      component.booking.amountPaid = 115;
+      expect(component.paymentBadge?.label).toBe('Paid CA$115.00');
       component.booking.paymentStatus = 'REFUNDED';
       expect(component.paymentBadge?.label).toBe('Refunded');
     });
@@ -327,7 +328,7 @@ describe('BookingCardComponent', () => {
     it('renders a Pay button with the amount for the client', () => {
       component.mode = 'client';
       fixture.detectChanges();
-      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Pay $115.00');
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Pay CA$115.00');
     });
   });
 

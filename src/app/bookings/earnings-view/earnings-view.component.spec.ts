@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Actions } from '@ngrx/effects';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -274,6 +274,50 @@ describe('EarningsViewComponent', () => {
 
       expect(stripe.createConnectOnboardingLink).not.toHaveBeenCalled();
     });
+
+    it('a "return" with setup still unfinished retries, a few seconds apart, until it reads ready', fakeAsync(() => {
+      component.payoutSetupReturn = 'return';
+      stripe.getConnectStatus.and.returnValues(
+        of({ data: { ...notSetUp, connected: true } } as any),
+        of({ data: { ...notSetUp, connected: true } } as any),
+        of({ data: { ...notSetUp, connected: true, ready: true, detailsSubmitted: true, payoutsEnabled: true } } as any),
+      );
+
+      fixture.detectChanges();
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(1);
+      expect(component.connect?.ready).toBeFalse();
+
+      tick(2000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(2);
+      expect(component.connect?.ready).toBeFalse();
+
+      tick(3000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(3);
+      expect(component.connect?.ready).toBeTrue();
+
+      tick(4000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(3);
+    }));
+
+    it('a "return" that never reads ready stops retrying once the delays run out', fakeAsync(() => {
+      component.payoutSetupReturn = 'return';
+      answer({ connected: true });
+
+      fixture.detectChanges();
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(1);
+
+      tick(2000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(2);
+
+      tick(3000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(3);
+
+      tick(4000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(4);
+
+      tick(10000);
+      expect(stripe.getConnectStatus).toHaveBeenCalledTimes(4);
+    }));
   });
 
   it('cleans up subscriptions on destroy', () => {
