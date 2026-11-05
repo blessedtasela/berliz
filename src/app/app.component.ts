@@ -14,6 +14,7 @@ import { ThemeService } from './services/theme.service';
 import { installImageFallback } from './utils/image-fallback';
 import { installDoubleSubmitGuard } from './utils/double-submit-guard';
 import { RequestActivityService } from './services/request-activity.service';
+import { StompSessionService } from './services/stomp-session.service';
 
 @Component({
     selector: 'app-root',
@@ -46,6 +47,7 @@ export class AppComponent implements OnInit {
     private themeService: ThemeService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private requestActivity: RequestActivityService,
+    private stompSession: StompSessionService,
   ) {
     // Applied once, up front, same as every other per-device display
     // preference in this constructor — before the sidebar layout (the only
@@ -107,6 +109,7 @@ export class AppComponent implements OnInit {
     // are refreshed silently by AuthInterceptor while the user is active; this
     // is what ends a session that has genuinely been left unattended.
     this.inactivityService.start();
+    this.stompSession.start();
     // Keeps your scroll position across a hard refresh -- see the service
     // doc comment for why this doesn't just come from the browser for free.
     this.scrollRestoration.init();

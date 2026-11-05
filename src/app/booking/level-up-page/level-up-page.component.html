@@ -134,9 +134,10 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <button type="button" *ngFor="let plan of group.plans" (click)="choose(plan)"
+        <div *ngFor="let plan of group.plans" role="button" tabindex="0" (click)="choose(plan)"
+          (keydown.enter)="choose(plan)" (keydown.space)="$event.preventDefault(); choose(plan)"
           [attr.aria-pressed]="selectedPlan?.id === plan.id" [attr.data-testid]="'plan-' + plan.id"
-          class="text-left p-4 rounded-2xl border transition flex flex-col gap-2.5"
+          class="text-left p-4 rounded-2xl border transition flex flex-col gap-2.5 cursor-pointer"
           [ngClass]="selectedPlan?.id === plan.id
             ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 ring-1 ring-red-300 dark:ring-red-800'
             : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
@@ -170,7 +171,15 @@
               Valid for {{ plan.durationDays }} days
             </span>
           </span>
-        </button>
+
+          <!-- "No code? Request one" -- on every card, for every plan kind (monthly/subscription, weekly, pack, membership), not just whichever one is selected -->
+          <button *ngIf="!isGuest && !isOwned(plan)" type="button" (click)="askTrainerForCode(plan, $event)"
+            [disabled]="askingTrainerForPlanId === plan.id || hasAskedFor(plan)"
+            [attr.data-testid]="'ask-trainer-' + plan.id"
+            class="self-start text-[11px] text-gray-500 dark:text-gray-400 underline disabled:no-underline disabled:opacity-70">
+            {{ hasAskedFor(plan) ? 'Code requested — we\'ll be in touch' : askingTrainerForPlanId === plan.id ? 'Asking…' : 'No code? Request one' }}
+          </button>
+        </div>
       </div>
     </section>
 
@@ -251,11 +260,11 @@
               class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm font-mono uppercase tracking-wider" data-testid="code-input" />
           </div>
           <div class="flex flex-col gap-1">
-            <button type="button" (click)="askTrainerForCode()" [disabled]="askingTrainer || askSent" data-testid="ask-trainer"
+            <button type="button" (click)="askTrainerForCode(plan)" [disabled]="askingTrainerForPlanId === plan.id || hasAskedFor(plan)" data-testid="ask-trainer"
               class="self-start text-[11px] text-gray-600 dark:text-gray-300 underline disabled:opacity-50 disabled:no-underline">
-              {{ askSent ? 'Your trainer was asked for a code' : askingTrainer ? 'Asking…' : 'No code? Request a code from my trainer' }}
+              {{ hasAskedFor(plan) ? 'Your trainer was asked for a code' : askingTrainerForPlanId === plan.id ? 'Asking…' : 'No code? Request a code from my trainer' }}
             </button>
-            <span *ngIf="askSent" class="text-[11px] text-emerald-700 dark:text-emerald-400" data-testid="ask-sent">
+            <span *ngIf="hasAskedFor(plan)" class="text-[11px] text-emerald-700 dark:text-emerald-400" data-testid="ask-sent">
               {{ providerName }} has been told. If they agree, they ask the administration and you both receive the code by email and in your inbox.
             </span>
           </div>

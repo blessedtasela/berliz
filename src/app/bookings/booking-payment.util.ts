@@ -50,7 +50,7 @@ export function canClientPay(b: Booking, mode: BookingMode): boolean {
 }
 
 export function payLabel(b: Booking): string {
-  return `${isExtensionBalance(b) ? 'Pay extra' : 'Pay'} $${money(amountToPay(b))}`;
+  return `${isExtensionBalance(b) ? 'Pay extra' : 'Pay'} CA$${money(amountToPay(b))}`;
 }
 
 /** 'no_show' reads as "No-show"; everything else is just title-cased. */
@@ -67,11 +67,17 @@ export function paymentBadge(b: Booking, mode: BookingMode): PaymentBadge | null
 
   switch (b.paymentStatus) {
     case 'PAID':
-      return { label: 'Paid', classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900' };
+      return {
+        label: `Paid CA$${money(b.amountPaid ?? 0)}`,
+        classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900',
+      };
     case 'REFUNDED':
       return { label: 'Refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
     case 'PARTIALLY_REFUNDED':
-      return { label: 'Partly refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
+      return {
+        label: `Partly refunded · kept CA$${money(b.amountPaid ?? 0)}`,
+        classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700',
+      };
     case 'DIRECT':
       // Berliz tracks the booking but never takes money for it: the client pays the provider themselves.
       return {
@@ -81,7 +87,7 @@ export function paymentBadge(b: Booking, mode: BookingMode): PaymentBadge | null
     case 'UNPAID':
       if (b.status === 'pending') return null;
       return {
-        label: mode === 'provider' ? 'Awaiting payment' : (isExtensionBalance(b) ? 'Balance due' : 'Payment due'),
+        label: `${mode === 'provider' ? 'Awaiting payment' : (isExtensionBalance(b) ? 'Balance due' : 'Payment due')} CA$${money(amountToPay(b))}`,
         classes: 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900',
       };
     default:

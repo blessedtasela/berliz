@@ -167,7 +167,7 @@ describe('ClientIntakeFormComponent', () => {
     }));
 
     expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Client intake submitted successfully', '');
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/client-intake', 42]);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard/client-intake', 42], { replaceUrl: true });
   });
 
   // ── SUBMIT / LOAD ERROR HANDLING ──

@@ -75,8 +75,9 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
   /** "I have a unique code": the box is shown, and what was typed. A valid code replaces the payment. */
   showCodeBox = false;
   paymentCode = '';
-  askingTrainer = false;
-  askSent = false;
+  /** "No code? Request one" is offered on every plan card (not just whichever one is selected), so both the asking state and whether it was already sent are tracked per plan id rather than as one flag. */
+  askingTrainerForPlanId: number | null = null;
+  private askSentPlanIds = new Set<number>();
 
   /** A visitor who is not signed in asked to pay: show the log in / create account choice. */
   showAuthPrompt = false;
@@ -459,26 +460,31 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  hasAskedFor(plan: ProviderPackage): boolean {
+    return this.askSentPlanIds.has(plan.id);
+  }
+
   /**
    * "Request a code from my trainer": a client without a code tells the trainer they would like one for this plan. The trainer
-   * takes it from there (asks the administration); the client hears back by email and in their inbox.
+   * takes it from there (asks the administration); the client hears back by email and in their inbox. Offered on every plan
+   * card, not just whichever one happens to be selected, so `plan` is passed in rather than read off `selectedPlan`.
    */
-  askTrainerForCode(): void {
-    const plan = this.selectedPlan;
-    if (!plan || this.askingTrainer || this.askSent) return;
+  askTrainerForCode(plan: ProviderPackage, event?: Event): void {
+    event?.stopPropagation();
+    if (this.askingTrainerForPlanId === plan.id || this.askSentPlanIds.has(plan.id)) return;
     if (this.isGuest) {
       this.promptToSignIn();
       return;
     }
     this.submitError = null;
-    this.askingTrainer = true;
+    this.askingTrainerForPlanId = plan.id;
     this.paymentCodeService.askTrainer({ targetType: 'PACKAGE', packageId: plan.id }).subscribe({
       next: () => {
-        this.askingTrainer = false;
-        this.askSent = true;
+        this.askingTrainerForPlanId = null;
+        this.askSentPlanIds.add(plan.id);
       },
       error: err => {
-        this.askingTrainer = false;
+        this.askingTrainerForPlanId = null;
         if (!this.handleSessionExpired(err)) this.submitError = err?.error?.message || 'Could not ask your trainer — try again.';
       }
     });

@@ -3,7 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -16,6 +16,16 @@ import { selectBookingError, selectBookingLoading, selectProviderBookings } from
 import { loadMyProviderBookings } from 'src/app/state/booking/booking.actions';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
+/**
+ * A real stub for the one @Input (`onboardingPercent`) whose name starts with "on" -- left to
+ * NO_ERRORS_SCHEMA's generic unknown-element handling, Angular's dev-mode security guard
+ * (NG0306) mistakes it for a native "on..." event-handler DOM property and throws.
+ */
+@Component({ selector: 'app-booking-card', template: '', standalone: false })
+class BookingCardStubComponent {
+  @Input() onboardingPercent: number | null | undefined;
+}
+
 describe('ProviderBookingsMainComponent', () => {
   let component: ProviderBookingsMainComponent;
   let fixture: ComponentFixture<ProviderBookingsMainComponent>;
@@ -24,7 +34,7 @@ describe('ProviderBookingsMainComponent', () => {
     const mockSnackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
-    declarations: [ProviderBookingsMainComponent],
+    declarations: [ProviderBookingsMainComponent, BookingCardStubComponent],
     schemas: [NO_ERRORS_SCHEMA],
     imports: [RouterTestingModule, MatDialogModule, LoadErrorComponent],
     providers: [

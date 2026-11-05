@@ -46,9 +46,23 @@ describe('MyAvailabilityEditorComponent', () => {
 
   describe('timezone', () => {
     it('starts from the browser zone, and offers a list that includes it', () => {
+      spyOn(Intl, 'DateTimeFormat').and.returnValue({ resolvedOptions: () => ({ timeZone: 'America/Vancouver' }) } as any);
       fixture.detectChanges();
-      expect(component.timezone).toBe(component.detectedTimezone);
+      expect(component.timezone).toBe('America/Vancouver');
       expect(component.timezones).toContain(component.timezone);
+    });
+
+    it('makes the trainer pick a zone when the browser reports none, and will not save without one', () => {
+      spyOn(Intl, 'DateTimeFormat').and.returnValue({ resolvedOptions: () => ({ timeZone: undefined }) } as any);
+      const store = TestBed.inject(MockStore);
+      const dispatch = spyOn(store, 'dispatch');
+      fixture.detectChanges();
+      expect(component.timezone).toBe('');
+
+      component.save();
+
+      expect(component.submitError).toContain('timezone');
+      expect(dispatch.calls.allArgs().some(a => (a[0] as any).type === '[Availability] Set Mine')).toBeFalse();
     });
 
     it('shows the zone the trainer saved, even if this device is somewhere else', () => {
