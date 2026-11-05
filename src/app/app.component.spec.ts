@@ -12,6 +12,7 @@ import { InactivityService } from './services/inactivity.service';
 import { SeoService } from './services/seo.service';
 import { ScrollRestorationService } from './services/scroll-restoration.service';
 import { AuthService } from './services/auth.service';
+import { StompSessionService } from './services/stomp-session.service';
 
 describe('AppComponent', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
@@ -44,7 +45,8 @@ describe('AppComponent', () => {
         { provide: InactivityService, useValue: inactivityServiceSpy },
         { provide: SeoService, useValue: seoServiceSpy },
         { provide: ScrollRestorationService, useValue: scrollRestorationSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: StompSessionService, useValue: jasmine.createSpyObj('StompSessionService', ['start']) }
       ]
     });
   });
