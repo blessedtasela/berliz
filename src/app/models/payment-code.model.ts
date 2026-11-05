@@ -1,6 +1,8 @@
 export type PaymentCodeTargetType = 'BOOKING' | 'PACKAGE' | 'SUBSCRIPTION';
 export type PaymentCodeRequestStatus = 'ASKED' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 export type PaymentCodeState = 'ACTIVE' | 'USED_UP' | 'EXPIRED' | 'REVOKED';
+/** What the code does: covers the whole amount, or just takes a chunk off it (bookings only). */
+export type PaymentCodeDiscountType = 'FULL_BYPASS' | 'AMOUNT_OFF' | 'PERCENT_OFF';
 
 export interface PaymentCodeRequestInput {
   targetType: PaymentCodeTargetType;
@@ -66,12 +68,16 @@ export interface PaymentCode {
   issuedByName: string | null;
   revokedAt: string | null;
   redemptions: PaymentCodeRedemption[];
+  discountType: PaymentCodeDiscountType;
+  discountValue: number | null;
 }
 
 export interface PaymentCodeDecisionInput {
   uses?: number | null;
   validDays?: number | null;
   note?: string | null;
+  discountType?: PaymentCodeDiscountType | null;
+  discountValue?: number | null;
 }
 
 export interface PaymentCodeRedeemInput {
