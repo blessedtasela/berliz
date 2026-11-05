@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 
 type BillingTab = 'overview' | 'payouts' | 'connect';
 
@@ -9,9 +10,11 @@ type BillingTab = 'overview' | 'payouts' | 'connect';
   standalone: false
 })
 export class BillingComponent {
-  activeTab: BillingTab = 'overview';
+  private tabUrl = tabInUrl<BillingTab>(['overview', 'payouts', 'connect'], 'overview');
+  activeTab: BillingTab = this.tabUrl.fromUrl() ?? 'overview';
 
   setTab(tab: BillingTab): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab);
   }
 }

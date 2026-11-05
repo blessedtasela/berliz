@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -50,7 +51,8 @@ interface RunStats {
 })
 export class RunsComponent implements OnInit {
 
-  activeTab: RunsTab = 'discover';
+  private tabUrl = tabInUrl<RunsTab>(['discover', 'mine', 'history', 'leaderboard'], 'discover');
+  activeTab: RunsTab = this.tabUrl.fromUrl() ?? 'discover';
 
   city = '';
   discoverable: RunEventResponse[] = [];
@@ -90,13 +92,14 @@ export class RunsComponent implements OnInit {
 
     const raw = this.route.snapshot.queryParamMap.get('logId');
     this.deepLinkLogId = raw ? Number(raw) : null;
-    if (this.deepLinkLogId) this.activeTab = 'history';
+    if (this.deepLinkLogId) this.setTab('history');
 
     this.refreshHistory();
   }
 
   setTab(tab: RunsTab): void {
     this.activeTab = tab;
+    this.tabUrl.remember(tab);
   }
 
   // ── Discover ─────────────────────────────────────────────────────────────

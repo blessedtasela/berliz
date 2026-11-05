@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -24,7 +25,10 @@ import { Users } from 'src/app/models/users.interface';
 })
 export class ManageBookingsComponent implements OnInit, OnDestroy {
 
-  view: 'mine' | 'requests' = 'mine';
+  private tabUrl = tabInUrl<'mine' | 'requests'>(['mine', 'requests'], 'mine');
+  /** A view named in the address (refresh, shared link) beats the role-based default below. */
+  private viewFromUrl = this.tabUrl.fromUrl();
+  view: 'mine' | 'requests' = this.viewFromUrl ?? 'mine';
   user: Users | null = null;
   pendingRequestCount = 0;
 
@@ -51,7 +55,7 @@ export class ManageBookingsComponent implements OnInit, OnDestroy {
           // sessions.
           if (!this.defaultedToRequests) {
             this.defaultedToRequests = true;
-            this.view = 'requests';
+            if (!this.viewFromUrl) this.view = 'requests';
           }
         }
       });

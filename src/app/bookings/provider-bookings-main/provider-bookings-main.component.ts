@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { tabInUrl } from 'src/app/utils/tab-in-url';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
@@ -50,7 +51,13 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   @Input() embedded = false;
 
 
-  activeTab: 'bookings' | 'availability' | 'earnings' | 'insights' = 'bookings';
+  private tabUrl = tabInUrl<'bookings' | 'availability' | 'earnings' | 'insights'>(['bookings', 'availability', 'earnings', 'insights'], 'bookings');
+  activeTab: 'bookings' | 'availability' | 'earnings' | 'insights' = this.tabUrl.fromUrl() ?? 'bookings';
+
+  setTab(tab: 'bookings' | 'availability' | 'earnings' | 'insights'): void {
+    this.activeTab = tab;
+    this.tabUrl.remember(tab);
+  }
 
   bookings: Booking[] = [];
   /** Onboarding completion (0-100) by client user id, for the clients on pending and confirmed requests. */
@@ -113,13 +120,13 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     const rawSetup = this.route.snapshot.queryParamMap.get('payoutSetup');
     if (rawSetup === 'return' || rawSetup === 'refresh') {
       this.payoutSetupReturn = rawSetup;
-      this.activeTab = 'earnings';
+      this.setTab('earnings');
     }
 
     const rawPayoutId = this.route.snapshot.queryParamMap.get('payoutId');
     if (rawPayoutId) {
       this.deepLinkPayoutId = Number(rawPayoutId);
-      this.activeTab = 'earnings';
+      this.setTab('earnings');
     }
 
     this.store.dispatch(loadMyProviderBookings());
