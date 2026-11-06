@@ -6,6 +6,8 @@ Method: every endpoint in the backend `rest/*Rest.java` (716 on 2026-11-05) was 
 
 Status: `todo` / `doing` / `done`.
 
+Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pushed to master): group sessions and packs (backend, web, mobile, trainer controls), accept-referral switch (web + mobile), booking notice and session length (mobile), weekly subscriptions and payment codes (mobile). Everything marked `todo` is next, in the order listed: promo-code preview, trainer monthly plans, the Shop on mobile (largest), monthly booking plans, exercise progress and workout-log sharing, client progress view, center trainers, then the web admin screens. Worktrees to know about: `.claude/worktrees/group-web` (web, branch feat/web-group-sessions, clean, equals master) and `.claude/worktrees/audit-web`; remove them when done.
+
 ## Needs both web and mobile (nobody has either)
 
 | Feature | Backend | Web | Mobile | Owner | Status |
@@ -17,29 +19,29 @@ Status: `todo` / `doing` / `done`.
 
 | Feature | Backend | Owner | Status |
 |---|---|---|---|
-| Payment codes: request, ask trainer, my codes/requests, check/redeem; trainer forward/decline/cancel; admin approve/reject/revoke/codes; a "unique code" field in the booking form | `/payment-code/*`, `/bypassCode/*`, `paymentCode` on booking create and purchasePackage | booking-bugs session | todo |
-| Weekly fixed-time subscriptions: mine, view, set schedule, pause, resume, cancel | `/weekly-subscription/*` | booking-bugs session | todo |
-| Trainer monthly coaching plans (buy a trainer plan) | `POST /subscription/purchaseTrainerPlan` | booking-bugs session | todo |
-| Referral claim (free-session reward claim / waitlist) | `/referral-claim/*` | booking-bugs session | todo |
-| Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | booking-bugs session | todo |
-| Monthly booking plans: preview, mine, view, respond | `/booking/plan/*` | booking-bugs session | todo |
-| Promo code preview when buying a plan | `POST /discountCode/preview` | booking-bugs session | todo |
+| Payment codes: request, ask trainer, my codes/requests, check/redeem; trainer forward/decline/cancel; admin approve/reject/revoke/codes; a "unique code" field in the booking form | `/payment-code/*`, `/bypassCode/*`, `paymentCode` on booking create and purchasePackage | booking-bugs session | done (mobile: PaymentCodesScreen, plan-card code box + ask, booking-form field) |
+| Weekly fixed-time subscriptions: mine, view, set schedule, pause, resume, cancel | `/weekly-subscription/*` | booking-bugs session | done (mobile: WeeklySubscriptionsScreen) |
+| Trainer monthly coaching plans (buy a trainer plan) | `POST /subscription/purchaseTrainerPlan` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Referral claim (free-session reward claim / waitlist) | `/referral-claim/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Monthly booking plans: preview, mine, view, respond | `/booking/plan/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Promo code preview when buying a plan | `POST /discountCode/preview` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Provider settings: booking notice, session length | `/availability/leadTime`, `/availability/slotDuration` | booking-bugs session | done (mobile: Booking settings card) |
-| Exercise progress chart; share a workout log with a user | `/workoutLog/getExerciseProgress/{id}`, `/workoutLog/{id}/share/{userId}` | booking-bugs session | todo |
-| Trainer views a client's progress entries | `/progress-entry/client/{clientId}` | booking-bugs session | todo |
-| Center: manage affiliated trainers, photo | `/center/updateMyCenterTrainers`, `/center/updatePhoto` | booking-bugs session | todo |
+| Exercise progress chart; share a workout log with a user | `/workoutLog/getExerciseProgress/{id}`, `/workoutLog/{id}/share/{userId}` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Trainer views a client's progress entries | `/progress-entry/client/{clientId}` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Center: manage affiliated trainers, photo | `/center/updateMyCenterTrainers`, `/center/updatePhoto` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Passkeys (WebAuthn) | `/webauthn/*` | unclaimed: needs a native passkey module, decide with the owner | todo |
 
 ## Backend has it, web has no screen
 
 | Feature | Backend | Owner | Status |
 |---|---|---|---|
-| Admin: Brands | `/brand/*` | booking-bugs session (after the hub-route dedupe merges) | todo |
-| Admin: Drivers | `/driver/*` | booking-bugs session | todo |
-| Admin: Bills | `/bill/*` | booking-bugs session | todo |
-| Admin: Products, Orders, Stores (all, any status) | `/product/*`, `/order/*`, `/store/*` admin endpoints | booking-bugs session | todo |
-| Center owner: members (add, status, remove, my members, my memberships) and a member's own views | `/center/addMember`, `/center/updateMemberStatus/{id}`, `/center/removeMember/{id}`, `/center/getMyCenterMembers`, `/center/getMyCenterMemberships`, `/member/getMy*` | booking-bugs session | todo |
-| A client's own trainer reviews | `/client/getMyTrainerReviews` | booking-bugs session | todo |
+| Admin: Brands | `/brand/*` | Berliz Angular Project Overview (handed over 2026-11-06) (after the hub-route dedupe merges) | todo |
+| Admin: Drivers | `/driver/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Admin: Bills | `/bill/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Admin: Products, Orders, Stores (all, any status) | `/product/*`, `/order/*`, `/store/*` admin endpoints | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Center owner: members (add, status, remove, my members, my memberships) and a member's own views | `/center/addMember`, `/center/updateMemberStatus/{id}`, `/center/removeMember/{id}`, `/center/getMyCenterMembers`, `/center/getMyCenterMemberships`, `/member/getMy*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| A client's own trainer reviews | `/client/getMyTrainerReviews` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Admin: set a user's password | `PUT /user/changePasswordAdmin` | unclaimed (security-sensitive: ask the owner) | todo |
 
 ## Not a gap on purpose
