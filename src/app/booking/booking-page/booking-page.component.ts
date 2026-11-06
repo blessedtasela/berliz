@@ -24,6 +24,7 @@ import { WaitlistService } from 'src/app/services/waitlist.service';
 import { BookingService } from 'src/app/services/booking.service';
 import { GroupSessionService } from 'src/app/services/group-session.service';
 import { DEFAULT_GROUP_PRICE, GROUP_SIZE_OPTIONS } from 'src/app/models/group-session.model';
+import { TrialStatus } from 'src/app/models/booking.model';
 import { GroupSessionsListComponent } from '../group-sessions-list/group-sessions-list.component';
 import { GroupPacksListComponent } from '../group-packs-list/group-packs-list.component';
 import { GroupPack } from 'src/app/models/group-pack.model';
@@ -179,8 +180,29 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   }
 
   chooseSessionType(type: 'SINGLE' | 'TRIAL' | 'GROUP'): void {
+    // BK-32: the trial option shows its own used-state (see the template) and is disabled there --
+    // this is the defensive backstop in case it's clicked anyway (e.g. a tap that landed before the
+    // status finished loading).
+    if (type === 'TRIAL' && this.trialStatus?.used) return;
     this.sessionType = type;
     if (type !== 'SINGLE' && this.selectedOption.kind !== 'single') this.selectedOption = { kind: 'single' };
+  }
+
+  /** "Already used — Nov 5, 2026" for the trial option; null while unknown or not yet used. */
+  get trialUsedNote(): string | null {
+    if (!this.trialStatus?.used || !this.trialStatus.usedAt) return null;
+    return 'Already used — ' + new Date(this.trialStatus.usedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  /** BK-32: the submit-time rejection's one-tap recovery -- switches to a regular session with the same trainer, gym and discipline picks already on screen, instead of leaving the client stuck on a dead end. */
+  bookRegularInstead(): void {
+    this.submitError = null;
+    this.chooseSessionType('SINGLE');
+  }
+
+  /** True while submitError is specifically the "you already used your trial" rejection -- shown with its own one-tap recovery instead of the generic inline alert. */
+  get isTrialAlreadyUsedError(): boolean {
+    return !!this.submitError?.includes('already used your trial session');
   }
 
   private loadNewMemberOffer(): void {
@@ -189,6 +211,18 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.bookingService.getNewMemberOffer().pipe(take(1), catchError(() => of(null))).subscribe(res => {
       const offer = res?.data;
       if (offer) this.newMemberPercent = offer.eligible ? offer.percent : null;
+    });
+  }
+
+  /** BK-32: whether this client already used their once-per-trainer trial with this provider -- shown on the trial option itself, before it's even picked. */
+  trialStatus: TrialStatus | null = null;
+  private trialStatusRequested = false;
+
+  private loadTrialStatus(): void {
+    if (this.trialStatusRequested || this.kind !== 'trainer' || !this.user?.email || !this.providerId) return;
+    this.trialStatusRequested = true;
+    this.bookingService.getMyTrialStatus(this.providerId).pipe(take(1), catchError(() => of(null))).subscribe(res => {
+      if (res?.data) this.trialStatus = res.data;
     });
   }
 
@@ -334,6 +368,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.store.select(selectUser).pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
       if (user?.email) this.loadNewMemberOffer();
+      this.loadTrialStatus();
       // The profile can arrive after the provider does (back from sign-in): pick the saved choice up then.
       if (user?.email && this.providerId && this.restoreGuestDraft()) {
         this.fetchSlotsForSelectedDate();
@@ -406,6 +441,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.contactPhone = provider.contactPhone ?? null;
         this.trialPrice = provider.trialPrice ?? DEFAULT_TRIAL_PRICE;
         this.groupPrice = provider.groupPrice ?? DEFAULT_GROUP_PRICE;
+        this.loadTrialStatus();
 
         this.updateSeoTags();
         this.fetchPackages();

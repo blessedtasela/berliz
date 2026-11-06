@@ -172,3 +172,13 @@ export interface NewMemberOffer {
   /** The trial price when a trainer has not set their own. */
   defaultTrialPrice: number;
 }
+
+/** GET /booking/myTrialStatus: whether this client has already used their once-per-trainer trial with this trainer. */
+export interface TrialStatus {
+  used: boolean;
+  /** When the trial was scheduled for; only set when used. */
+  usedAt: string | null;
+  bookingId: number | null;
+  /** BK-000123 style; only set when used. */
+  bookingReference: string | null;
+}
