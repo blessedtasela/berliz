@@ -32,4 +32,9 @@ export class PayoutService {
   payOutViaStripe(id: number) {
     return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/pay/${id}`, null);
   }
+
+  /** Admin only — PY-24: recomputes a not-yet-paid-out payout from the booking's real amountPaid. */
+  recalculatePayout(bookingId: number) {
+    return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/recalculate/${bookingId}`, null);
+  }
 }

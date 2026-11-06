@@ -35,4 +35,12 @@ export class PayoutEffects {
       catchError(e => of(A.payOutViaStripeFailure({ error: e?.error?.message || 'Failed to send payout' })))
     ))
   ));
+
+  recalculatePayout$ = createEffect(() => this.actions$.pipe(
+    ofType(A.recalculatePayout),
+    mergeMap(({ bookingId }) => this.svc.recalculatePayout(bookingId).pipe(
+      map(response => A.recalculatePayoutSuccess({ response })),
+      catchError(e => of(A.recalculatePayoutFailure({ error: e?.error?.message || 'Failed to recalculate payout' })))
+    ))
+  ));
 }

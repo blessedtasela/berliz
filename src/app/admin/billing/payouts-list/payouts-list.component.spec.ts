@@ -68,4 +68,37 @@ describe('PayoutsListComponent', () => {
     component.payOut(pendingPayout);
     expect(dialogSpy.open).not.toHaveBeenCalled();
   });
+
+  // PY-24: a "Recalculate" action for a payout created before the real-payment basis fix.
+  describe('recalculate', () => {
+    const withBooking: Payout = { ...pendingPayout, bookingId: 17 };
+
+    it('opens the confirm dialog for a not-yet-paid-out payout with a bookingId', () => {
+      fixture.detectChanges();
+      dialogSpy.open.and.returnValue({ componentInstance: { onEmitStatusChange: of() } } as any);
+
+      component.recalculate(withBooking);
+
+      expect(dialogSpy.open).toHaveBeenCalled();
+    });
+
+    it('refuses a payout already paid out', () => {
+      fixture.detectChanges();
+      component.recalculate({ ...withBooking, status: 'PAID' });
+      expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+
+    it('refuses a payout with no bookingId', () => {
+      fixture.detectChanges();
+      component.recalculate(pendingPayout);
+      expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+
+    it('does not open a second dialog while one recalculation is already in flight', () => {
+      fixture.detectChanges();
+      component.recalculatingId = 99;
+      component.recalculate(withBooking);
+      expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+  });
 });

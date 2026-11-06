@@ -15,10 +15,10 @@ function upsert<T extends { id?: any }>(list: T[], item: T): T[] {
 export const payoutReducer = createReducer(
   initialPayoutState,
 
-  on(A.loadMyPayouts, A.loadAllPayouts, A.payOutViaStripe, state => ({ ...state, loading: true, error: null })),
+  on(A.loadMyPayouts, A.loadAllPayouts, A.payOutViaStripe, A.recalculatePayout, state => ({ ...state, loading: true, error: null })),
 
   on(
-    A.loadMyPayoutsFailure, A.loadAllPayoutsFailure, A.payOutViaStripeFailure,
+    A.loadMyPayoutsFailure, A.loadAllPayoutsFailure, A.payOutViaStripeFailure, A.recalculatePayoutFailure,
     (state, { error }) => ({ ...state, loading: false, error })
   ),
 
@@ -30,7 +30,7 @@ export const payoutReducer = createReducer(
     ...s, loading: false, allPayouts: response.data ?? []
   })),
 
-  on(A.payOutViaStripeSuccess, (s, { response }) => ({
+  on(A.payOutViaStripeSuccess, A.recalculatePayoutSuccess, (s, { response }) => ({
     ...s, loading: false,
     myPayouts: response.data ? upsert(s.myPayouts, response.data) : s.myPayouts,
     allPayouts: response.data ? upsert(s.allPayouts, response.data) : s.allPayouts,

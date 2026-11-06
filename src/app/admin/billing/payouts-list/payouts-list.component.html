@@ -16,10 +16,16 @@
           Gross {{ payout.grossAmount | currency }} &middot; Payout {{ payout.payoutAmount | currency }}
         </p>
       </div>
-      <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
-        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
-        {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
-      </button>
+      <div class="shrink-0 flex items-center gap-1.5">
+        <button type="button" *ngIf="payout.status !== 'PAID' && payout.bookingId" (click)="recalculate(payout)" [disabled]="!!recalculatingId"
+          class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-60 transition">
+          {{ recalculatingId === payout.id ? 'Recalculating…' : 'Recalculate' }}
+        </button>
+        <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+          class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
+          {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+        </button>
+      </div>
     </div>
   </div>
 
@@ -51,10 +57,16 @@
           <td class="px-4 py-3 text-gray-500 dark:text-gray-400 truncate max-w-[160px]" [title]="payout.stripeTransferId || ''">{{ payout.stripeTransferId || '—' }}</td>
           <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ payout.lastUpdate | date:'dd/MM/yyyy' }}</td>
           <td class="px-4 py-3 text-right">
-            <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
-              class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
-              {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
-            </button>
+            <div class="flex items-center justify-end gap-1.5">
+              <button type="button" *ngIf="payout.status !== 'PAID' && payout.bookingId" (click)="recalculate(payout)" [disabled]="!!recalculatingId"
+                class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-60 transition">
+                {{ recalculatingId === payout.id ? 'Recalculating…' : 'Recalculate' }}
+              </button>
+              <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+                class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
+                {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

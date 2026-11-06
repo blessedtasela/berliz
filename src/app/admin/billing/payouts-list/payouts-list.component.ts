@@ -11,6 +11,7 @@ import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
   loadAllPayouts, loadAllPayoutsFailure, loadAllPayoutsSuccess,
   payOutViaStripe, payOutViaStripeFailure, payOutViaStripeSuccess,
+  recalculatePayout, recalculatePayoutFailure, recalculatePayoutSuccess,
 } from 'src/app/state/payout/payout.actions';
 import { selectAllPayouts, selectPayoutLoading } from 'src/app/state/payout/payout.selectors';
 
@@ -27,6 +28,8 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
   loadError: string | null = null;
   /** The payout currently mid "Pay out" call, so only its own button shows a spinner/disabled state. */
   payingId: number | null = null;
+  /** The payout currently mid "Recalculate" call. */
+  recalculatingId: number | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -54,6 +57,16 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
 
     this.actions$.pipe(ofType(payOutViaStripeFailure), takeUntil(this.destroy$)).subscribe(({ error }) => {
       this.payingId = null;
+      this.snackBar.openSnackBar(error, 'error');
+    });
+
+    this.actions$.pipe(ofType(recalculatePayoutSuccess), takeUntil(this.destroy$)).subscribe(({ response }) => {
+      this.recalculatingId = null;
+      this.snackBar.openSnackBar(response?.message || 'Payout recalculated', '');
+    });
+
+    this.actions$.pipe(ofType(recalculatePayoutFailure), takeUntil(this.destroy$)).subscribe(({ error }) => {
+      this.recalculatingId = null;
       this.snackBar.openSnackBar(error, 'error');
     });
   }
@@ -84,6 +97,24 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
       this.payingId = payout.id;
       this.store.dispatch(payOutViaStripe({ id: payout.id }));
       dialogRef.close('paying out');
+    });
+  }
+
+  /** PY-24: recompute this payout from the booking's real amountPaid -- for a payout that was
+   *  created before the basis fix shipped and still carries the wrong figures. */
+  recalculate(payout: Payout): void {
+    if (payout.status === 'PAID' || this.recalculatingId || !payout.bookingId) return;
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      message: `Recompute this payout from the booking's actual paid amount? This replaces the gross/commission/payout figures shown below with the real numbers.`,
+      confirmation: true,
+      disableClose: true,
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.recalculatingId = payout.id;
+      this.store.dispatch(recalculatePayout({ bookingId: payout.bookingId as number }));
+      dialogRef.close('recalculating');
     });
   }
 

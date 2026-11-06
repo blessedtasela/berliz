@@ -17,3 +17,8 @@ export const loadAllPayoutsFailure = createAction('[Payout] Load All Failure', p
 export const payOutViaStripe = createAction('[Payout] Pay Via Stripe', props<Id>());
 export const payOutViaStripeSuccess = createAction('[Payout] Pay Via Stripe Success', props<Res<Payout>>());
 export const payOutViaStripeFailure = createAction('[Payout] Pay Via Stripe Failure', props<Err>());
+
+/** Admin only — PY-24: recompute a not-yet-paid-out payout from the booking's real amountPaid. */
+export const recalculatePayout = createAction('[Payout] Recalculate', props<{ bookingId: number }>());
+export const recalculatePayoutSuccess = createAction('[Payout] Recalculate Success', props<Res<Payout>>());
+export const recalculatePayoutFailure = createAction('[Payout] Recalculate Failure', props<Err>());
