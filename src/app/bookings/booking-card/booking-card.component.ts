@@ -165,8 +165,33 @@ export class BookingCardComponent {
     return this.mode === 'provider' && this.booking.status === 'pending';
   }
 
+  /** The session's scheduled end (start + duration) -- the earliest moment it can be marked completed (BK-33). */
+  private get scheduledEnd(): Date | null {
+    if (!this.booking.scheduledAt) return null;
+    const minutes = this.booking.durationMinutes ?? 0;
+    return new Date(new Date(this.booking.scheduledAt).getTime() + minutes * 60_000);
+  }
+
+  private get hasEnded(): boolean {
+    const end = this.scheduledEnd;
+    return !!end && end.getTime() <= Date.now();
+  }
+
+  /** BK-33: a trainer must not be able to complete a session that hasn't happened yet. */
   get canProviderComplete(): boolean {
-    return this.mode === 'provider' && this.booking.status === 'confirmed';
+    return this.mode === 'provider' && this.booking.status === 'confirmed' && this.hasEnded;
+  }
+
+  /** True while a confirmed session is still ahead of its scheduled end -- shows the disabled
+   *  button with a note instead of just hiding "Mark completed" outright. */
+  get completionLocked(): boolean {
+    return this.mode === 'provider' && this.booking.status === 'confirmed' && !this.hasEnded;
+  }
+
+  get completionUnlockNote(): string {
+    const end = this.scheduledEnd;
+    if (!end) return '';
+    return `Unlocks at ${end.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
   }
 
   get canProviderCancel(): boolean {
@@ -193,6 +218,25 @@ export class BookingCardComponent {
    *  reach out directly if they still want to work something out with this client. */
   get canFollowUp(): boolean {
     return this.mode === 'provider' && this.booking.status === 'cancelled' && !!this.booking.clientId;
+  }
+
+  /** GN-33: every consequential action confirms first, completion included -- this one also
+   *  releases the payout calculation, so it says so and can't be undone from this dialog. */
+  private confirmComplete(): void {
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Mark this session completed?',
+        message: `This marks your session with ${this.counterpartyName} as completed and releases the payout calculation. This can't be undone from here.`,
+        confirmText: 'Mark completed',
+        cancelText: 'Go back',
+        icon: 'check-circle'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.statusChangeRequested.emit({ id: this.booking.id, status: 'completed' });
+    });
   }
 
   /** Provider recording that the client never came -- confirmed first, since it keeps their payment. */
@@ -286,6 +330,10 @@ export class BookingCardComponent {
     }
     if (this.mode === 'provider' && status === 'confirmed') {
       this.reviewAndConfirm();
+      return;
+    }
+    if (this.mode === 'provider' && status === 'completed') {
+      this.confirmComplete();
       return;
     }
     this.statusChangeRequested.emit({ id: this.booking.id, status });

@@ -488,4 +488,63 @@ describe('BookingCardComponent', () => {
       expect(fixture.nativeElement.textContent).not.toContain('Send Intake Form');
     });
   });
+
+  // BK-33: "Mark completed" must stay time-locked until the session's scheduled end.
+  describe('canProviderComplete (BK-33 time lock)', () => {
+    beforeEach(() => {
+      component.mode = 'provider';
+      component.booking.status = 'confirmed';
+    });
+
+    it('is false while the session is still ahead of its scheduled end', () => {
+      component.booking.scheduledAt = new Date(Date.now() + 60 * 60 * 1000);
+      component.booking.durationMinutes = 60;
+
+      expect(component.canProviderComplete).toBeFalse();
+      expect(component.completionLocked).toBeTrue();
+    });
+
+    it('is true once the scheduled end has passed', () => {
+      component.booking.scheduledAt = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      component.booking.durationMinutes = 60;
+
+      expect(component.canProviderComplete).toBeTrue();
+      expect(component.completionLocked).toBeFalse();
+    });
+
+    it('stays locked for a client, or a non-confirmed booking, regardless of time', () => {
+      component.booking.scheduledAt = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      component.mode = 'client';
+      expect(component.canProviderComplete).toBeFalse();
+
+      component.mode = 'provider';
+      component.booking.status = 'pending';
+      expect(component.canProviderComplete).toBeFalse();
+    });
+  });
+
+  // GN-33: Mark completed must confirm before it executes, same as no-show/cancel/delete.
+  describe('marking completed asks for confirmation first (GN-33)', () => {
+    it('asks before completing, then emits the completed status', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
+      const emitted: { id: number; status: string }[] = [];
+      component.statusChangeRequested.subscribe(e => emitted.push(e));
+      component.mode = 'provider';
+
+      component.setStatus('completed');
+
+      expect(emitted).toEqual([{ id: 1, status: 'completed' }]);
+    });
+
+    it('does not complete if the provider backs out', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(false) } as any);
+      const emitted: unknown[] = [];
+      component.statusChangeRequested.subscribe(e => emitted.push(e));
+      component.mode = 'provider';
+
+      component.setStatus('completed');
+
+      expect(emitted).toEqual([]);
+    });
+  });
 });
