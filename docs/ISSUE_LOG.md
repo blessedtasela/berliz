@@ -165,6 +165,15 @@ Worked money-first per the head instruction. Status on every batch 4/5 item was 
 
 ### Owner questions, batched (per the token-efficiency rule -- not asked mid-batch)
 
-1. **PY-24 money fix**: BK-000017's live payout row (CA$125/CA$18.75/CA$106.25) still needs hand-correcting to CA$50/CA$7.50/CA$42.50. Its payout is still PENDING (not released), so nothing's been paid out wrong yet -- but I need the real booking/payout ID to touch the right row, or your go-ahead to add a quick admin "recalculate this payout" action instead of a one-off data edit.
+1. ~~**PY-24 money fix**~~ **Done.** Decoded booking id 17 directly from the "BK-000017" reference (no DB lookup needed) and built a "Recalculate" admin action instead of a one-off data edit -- `PUT /payout/recalculate/{bookingId}`, plus a button next to "Pay out" on the admin Payouts tab. Owner still needs to click it once on BK-000017's row to apply the correction (no admin session on this end to click it).
 2. **BK-33's fuller spec** (client confirmation-of-attendance, no-show reason prompt, 50% charge split, Disputed state) is not built -- only the time-lock and the confirm dialog shipped this pass. Worth its own batch item, or fold into PF-43 since they share the same post-session prompt?
 3. **GN-33 audit**: only found and fixed the one gap (Mark completed). Refund and payout-release actions (admin side) weren't audited this session -- want that as its own pass, or can it wait?
+
+## Batch 7 (owner's Nov 6 morning report)
+
+| ID | Item | Status |
+|---|---|---|
+| CM-05 | A conversation's partner photo never shows until the trainer sends a message | **Done, backend + frontend.** Root cause: a never-messaged contact comes from one of three sources (booking contacts, the client's trainers list, or Connections) -- only Connections carried a photo field; the other two never fetched one at all, so it only appeared once a real Message (and the richer ConversationSummaryResponse) existed. Both now carry it from the same `User.profilePhoto` source that already worked for real conversations. Audited and fixed in both Messages surfaces (`MessagesMainComponent` and the duplicate logic in `MessagePopupComponent`) per the "audit the whole surface" instruction. |
+| CM-04 (re-confirmed still open) | Mobile Messages layout -- composer a scroll away | **Done.** The list and thread were grid columns stacking vertically below `md` (one scrolling page). An open thread is now `fixed inset-0` (a true full-viewport overlay, above the top bar/sidebar, no height arithmetic needed) with its own back control; the list hides underneath rather than unmounting, so its scroll position survives. Desktop (`md` and up) is untouched -- same side-by-side grid as before. |
+
+Also fixed while on the Messages surface (not asked, flagged per rule 1 and done since it was the exact same code path and essentially free): `MessagePopupComponent` had the identical missing-photo bug as `MessagesMainComponent` -- same fix applied to both.
