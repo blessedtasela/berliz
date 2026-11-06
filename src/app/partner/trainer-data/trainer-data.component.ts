@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -65,7 +67,8 @@ export class TrainerDataComponent {
     private trainerService: TrainerService,
     private locationService: LocationService,
     private datePipe: DatePipe,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.handleEmitEvent();
@@ -116,6 +119,7 @@ export class TrainerDataComponent {
       fee: [spot?.fee ?? null, Validators.min(0)],
       dropInFee: [spot?.dropInFee ?? null, [Validators.min(0), Validators.max(25)]],
       mapsUrl: [spot?.mapsUrl ?? '', Validators.maxLength(500)],
+      active: [spot?.active ?? true],
     });
   }
 
@@ -138,8 +142,29 @@ export class TrainerDataComponent {
     this.spotsArray(areaIndex).push(this.newSpot());
   }
 
+  /** GN-33: deleting a spot loses its data for good (unlike pausing it, PF-41) -- confirm first. */
   removeSpot(areaIndex: number, spotIndex: number): void {
-    this.spotsArray(areaIndex).removeAt(spotIndex);
+    const venue = this.spotsArray(areaIndex).at(spotIndex).get('venue')?.value?.trim();
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Remove this spot?',
+        message: `This removes ${venue || 'this spot'} and all its data for good. If you just want to stop offering it for now, use Pause instead.`,
+        confirmText: 'Remove',
+        cancelText: 'Go back',
+        icon: 'trash-2'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.spotsArray(areaIndex).removeAt(spotIndex);
+    });
+  }
+
+  /** PF-41: pause/reactivate a spot without touching its data. */
+  toggleSpotActive(areaIndex: number, spotIndex: number): void {
+    const control = this.spotsArray(areaIndex).at(spotIndex).get('active');
+    control?.setValue(!control.value);
   }
 
   areaLabel(areaIndex: number): string {

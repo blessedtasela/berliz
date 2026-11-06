@@ -40,7 +40,7 @@ describe('trainer-location util', () => {
       expect(areas.length).toBe(2);
       expect(areas[0].city).toBe('Vancouver');
       expect(areas[0].spots.length).toBe(2);
-      expect(areas[0].spots[0]).toEqual({ venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5, dropInFee: null, mapsUrl: '' });
+      expect(areas[0].spots[0]).toEqual({ venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5, dropInFee: null, mapsUrl: '', active: true });
       expect(areas[0].spots[1].precision).toBe('AREA');
       expect(areas[1].city).toBe('Burnaby');
       expect(areas[1].spots).toEqual([], 'a bare row is just "I cover this city", not a spot');

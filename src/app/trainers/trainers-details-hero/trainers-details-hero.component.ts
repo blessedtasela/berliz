@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Trainers } from 'src/app/models/trainers.interface';
+import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { clientPlaceFeeLabel, isApproximateSpot, spotAddress, spotHeading, extraLocationsLabel } from 'src/app/utils/trainer-location.util';
@@ -48,24 +48,29 @@ export class TrainersDetailsHeroComponent {
     event.target.src = 'assets/avatar.png';
   }
 
+  /** PF-41: a paused spot stays in the trainer's own editor but is never shown publicly. */
+  get activeLocations(): TrainerLocation[] {
+    return (this.trainer?.locations ?? []).filter(l => l.active !== false);
+  }
+
   /** "Vancouver, CA" for the first listed location, "+N more" appended in the template. */
   get primaryLocationLabel(): string {
-    const first = this.trainer?.locations?.[0];
+    const first = this.activeLocations[0];
     if (!first) return '—';
     return [first.city, first.country].filter(Boolean).join(', ');
   }
 
   /** After the first location: the second place by name, or "+N more". */
   get extraLocationsText(): string {
-    return extraLocationsLabel(this.trainer?.locations);
+    return extraLocationsLabel(this.activeLocations);
   }
 
   get extraLocationCount(): number {
-    return Math.max(0, (this.trainer?.locations?.length ?? 0) - 1);
+    return Math.max(0, this.activeLocations.length - 1);
   }
 
   get hasLocations(): boolean {
-    return (this.trainer?.locations?.length ?? 0) > 0;
+    return this.activeLocations.length > 0;
   }
 
   /** "Vancouver, British Columbia, Canada" — full label for a row inside the dropdown. */

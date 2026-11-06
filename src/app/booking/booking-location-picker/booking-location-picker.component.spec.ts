@@ -312,6 +312,25 @@ describe('BookingLocationPickerComponent', () => {
     expect(component.customSelected).toBeFalse();
   });
 
+  // PF-41: a paused spot stays in the trainer's own editor, never in the client's picker.
+  it("excludes a paused spot from the picker's options", () => {
+    render(trainer({ locations: [
+      { id: 41, venue: "Mike's Gym", city: 'Austin', stateProvince: 'TX', country: 'USA' },
+      { id: 42, venue: 'Paused Gym', city: 'Austin', stateProvince: 'TX', country: 'USA', active: false },
+    ] as any }));
+
+    expect(component.locations.map(l => l.id)).toEqual([41]);
+  });
+
+  it("ignores a preselect pointing at a now-paused spot", () => {
+    component.preselect = { trainerLocationId: 42 };
+    render(trainer({ locations: [
+      { id: 42, venue: 'Paused Gym', city: 'Austin', stateProvince: 'TX', country: 'USA', active: false },
+    ] as any }));
+
+    expect(component.selectedId).toBeNull();
+  });
+
   describe('locationPayload', () => {
     it('is empty with no choice, and carries every location field otherwise', () => {
       expect(locationPayload(null)).toEqual({});

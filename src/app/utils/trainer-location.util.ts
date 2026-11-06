@@ -20,6 +20,8 @@ export interface TrainerSpot {
   dropInFee: number | null;
   /** Google Maps link of the spot; the server works out the travel zone from it. */
   mapsUrl: string;
+  /** PF-41: false pauses this spot -- kept with all its data, hidden from the public profile and booking picker. Undefined reads as active (true). */
+  active?: boolean;
 }
 
 export interface TrainerArea {
@@ -46,6 +48,7 @@ export interface TrainerLocationPayload {
   mapsUrl: string | null;
   clientLocationAllowed: boolean;
   clientLocationFee: number | null;
+  active: boolean;
 }
 
 /** Case, accents and spacing never decide whether two place names are the same ("Montréal" == "montreal"). */
@@ -109,6 +112,7 @@ export function groupLocations(rows: TrainerLocation[] | null | undefined): Trai
         fee: row.fee ?? null,
         dropInFee: row.dropInFee ?? null,
         mapsUrl: row.mapsUrl ?? '',
+        active: row.active !== false,
       });
     }
   }
@@ -143,7 +147,7 @@ export function flattenAreas(areas: TrainerArea[] | null | undefined): TrainerLo
       s.venue?.trim() || s.address?.trim() || cleanFee(s.fee) !== null || cleanFee(s.dropInFee) !== null || s.mapsUrl?.trim());
 
     if (spots.length === 0) {
-      rows.push({ ...base, venue: null, address: null, locationPrecision: null, fee: null, dropInFee: null, mapsUrl: null });
+      rows.push({ ...base, venue: null, address: null, locationPrecision: null, fee: null, dropInFee: null, mapsUrl: null, active: true });
       continue;
     }
     for (const spot of spots) {
@@ -156,6 +160,7 @@ export function flattenAreas(areas: TrainerArea[] | null | undefined): TrainerLo
         fee: cleanFee(spot.fee),
         dropInFee: cleanFee(spot.dropInFee),
         mapsUrl: spot.mapsUrl?.trim() || null,
+        active: spot.active !== false,
       });
     }
   }

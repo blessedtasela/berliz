@@ -55,6 +55,17 @@ describe('TrainersDetailsHeroComponent', () => {
       expect((fixture.nativeElement as HTMLElement).textContent).not.toContain("+2 more");
     });
 
+    it("excludes a paused spot from the count, the dropdown and the Maps dropdown (PF-41)", () => {
+      component.trainer = {
+        ...trainer,
+        locations: [...trainer.locations, { id: 4, venue: 'Paused Gym', city: 'Richmond', country: 'Canada', active: false }],
+      };
+      fixture.detectChanges();
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain('All 3 gyms');
+      expect(text).not.toContain('Paused Gym');
+    });
+
     it("lists every location with venue and fee once opened", () => {
       const text = open().textContent ?? "";
       expect(text).toContain("Mike's Gym");

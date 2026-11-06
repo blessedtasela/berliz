@@ -126,7 +126,7 @@
                         <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
                             <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
                             <span class="truncate">{{ primaryLocationLabel }}</span>
-                            <span *ngIf="extraLocationCount > 0" class="shrink-0 text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900 px-2 py-0.5 rounded-full">All {{ trainer?.locations?.length }} gyms</span>
+                            <span *ngIf="extraLocationCount > 0" class="shrink-0 text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900 px-2 py-0.5 rounded-full">All {{ activeLocations.length }} gyms</span>
                         </span>
                         <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Open the list to see each gym by name, with a map link</span>
                     </button>
@@ -134,7 +134,7 @@
                     <!-- Dropdown: every location, each linking out to Maps -->
                     <div *ngIf="locationsOpen" class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
                                 bg-zinc-900 border border-zinc-700 rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
-                        <a *ngFor="let loc of trainer?.locations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
+                        <a *ngFor="let loc of activeLocations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
                             class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
                                    border-b border-zinc-800 last:border-b-0 transition">
                             <i-feather name="map-pin" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { provideMockStore } from '@ngrx/store/testing';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { of, throwError } from 'rxjs';
@@ -18,6 +19,7 @@ describe('TrainerDataComponent', () => {
   let ngxService: jasmine.SpyObj<NgxUiLoaderService>;
   let snackbar: jasmine.SpyObj<SnackBarService>;
   let trainerService: jasmine.SpyObj<TrainerService>;
+  let dialogSpy: jasmine.SpyObj<MatDialog>;
 
   beforeEach(() => {
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
@@ -27,6 +29,8 @@ describe('TrainerDataComponent', () => {
     const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getStates', 'getCities'], { countries$: of([]) });
     locationServiceSpy.getStates.and.returnValue(of([]));
     locationServiceSpy.getCities.and.returnValue(of([]));
+    dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
 
     TestBed.configureTestingModule({
       declarations: [TrainerDataComponent],
@@ -39,7 +43,8 @@ describe('TrainerDataComponent', () => {
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: TrainerService, useValue: trainerServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: LocationService, useValue: locationServiceSpy }
+        { provide: LocationService, useValue: locationServiceSpy },
+        { provide: MatDialog, useValue: dialogSpy }
       ]
     });
     ngxService = ngxServiceSpy;
@@ -133,6 +138,54 @@ describe('TrainerDataComponent', () => {
       expect(rows.length).toBe(2);
       expect(rows[0]).toEqual(jasmine.objectContaining({ city: 'Vancouver', venue: "Gold's Gym", locationPrecision: 'EXACT', fee: 5 }));
       expect(rows[1]).toEqual(jasmine.objectContaining({ venue: 'Kits Beach', locationPrecision: 'AREA' }));
+    });
+
+    // GN-33/PF-41: removing a spot for good must confirm first; pausing it is the reversible alternative.
+    it('asks before removing a spot, then removes it', () => {
+      component.addArea(area());
+      component.addSpot(0);
+
+      component.removeSpot(0, 0);
+
+      expect(dialogSpy.open).toHaveBeenCalled();
+      expect(component.spotsArray(0).length).toBe(0);
+    });
+
+    it('does not remove the spot if the trainer backs out', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(false) } as any);
+      component.addArea(area());
+      component.addSpot(0);
+
+      component.removeSpot(0, 0);
+
+      expect(component.spotsArray(0).length).toBe(1);
+    });
+
+    it('a new spot defaults to active, and toggling pauses/reactivates it without touching other fields', () => {
+      component.addArea(area());
+      component.addSpot(0);
+      component.spotsArray(0).at(0).patchValue({ venue: "Gold's Gym" });
+      expect(component.spotsArray(0).at(0).get('active')?.value).toBeTrue();
+
+      component.toggleSpotActive(0, 0);
+
+      expect(component.spotsArray(0).at(0).get('active')?.value).toBeFalse();
+      expect(component.spotsArray(0).at(0).get('venue')?.value).toBe("Gold's Gym");
+
+      component.toggleSpotActive(0, 0);
+
+      expect(component.spotsArray(0).at(0).get('active')?.value).toBeTrue();
+    });
+
+    it('sends active in the saved payload', () => {
+      component.addArea(area());
+      component.addSpot(0);
+      component.spotsArray(0).at(0).patchValue({ venue: 'Gym' });
+      component.toggleSpotActive(0, 0);
+
+      component.updateTrainer();
+
+      expect(sentPayload().locations[0].active).toBeFalse();
     });
 
     it('writes the per-city client-place rule onto each row of that city', () => {

@@ -451,7 +451,8 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
 
   private apply(trainer: Trainers | null, preselectChanged = false): void {
     this.loadedTrainer = trainer;
-    this.locations = trainer?.locations ?? [];
+    // PF-41: a paused spot stays in the trainer's own editor, never in the client's picker.
+    this.locations = (trainer?.locations ?? []).filter(l => l.active !== false);
     this.groups = this.buildGroups(this.locations);
     this.customAllowed = !!trainer?.customLocationAllowed;
     this.customFee = trainer?.customLocationFee ?? null;

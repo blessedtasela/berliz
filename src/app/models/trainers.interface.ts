@@ -85,6 +85,8 @@ export interface TrainerLocation {
   mapsUrl?: string | null;
   /** DOWNTOWN | NEARBY | FAR, from the link's coordinates; null when it carried none. */
   travelZone?: string | null;
+  /** PF-41: false pauses this spot -- kept with all its data in the trainer's own editor, hidden from the public profile and booking picker. Null reads as active. */
+  active?: boolean | null;
 }
 
 export interface UpdateTrainerPhotoRequest {
