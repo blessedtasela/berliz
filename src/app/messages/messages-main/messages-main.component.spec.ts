@@ -134,6 +134,59 @@ describe('MessagesMainComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.markConversationRead({ otherUserId: 7 }));
   });
 
+  // CM-04: on mobile, an open thread is a full-screen view, not the bottom half of a
+  // scrolling page -- the back control returns to the list via the STORE (clearing
+  // activeConversationUserId), not just a local field, so every subscriber (this
+  // component included) agrees no thread is open.
+  it('closeThread dispatches clearActiveConversation', () => {
+    fixture.detectChanges();
+    (store.dispatch as jasmine.Spy).calls.reset();
+
+    component.closeThread();
+
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.clearActiveConversation());
+  });
+
+  describe('mobile full-screen thread (CM-04)', () => {
+    const threadPane = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="thread-pane"]') as HTMLElement;
+    const listPane = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="list-pane"]') as HTMLElement;
+
+    it('hides the list and makes the thread a fixed, full-viewport overlay once a conversation is open', () => {
+      fixture.detectChanges();
+      store.overrideSelector(selectActiveConversationUserId, 5);
+      store.refreshState();
+      fixture.detectChanges();
+
+      expect(listPane().className).toContain('hidden');
+      expect(threadPane().className).toContain('fixed');
+      expect(threadPane().className).toContain('inset-0');
+    });
+
+    it('shows the list normally, and the thread only from md up, with no conversation open', () => {
+      fixture.detectChanges();
+
+      expect(listPane().className).not.toContain('hidden');
+      expect(threadPane().className).toContain('hidden');
+      expect(threadPane().className).not.toContain('fixed');
+    });
+
+    it('shows a back button only once a thread is open, and it closes the thread', () => {
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).querySelector('[aria-label="Back to conversations"]')).toBeNull();
+
+      store.overrideSelector(selectActiveConversationUserId, 5);
+      store.refreshState();
+      fixture.detectChanges();
+      (store.dispatch as jasmine.Spy).calls.reset();
+
+      const back = (fixture.nativeElement as HTMLElement).querySelector('[aria-label="Back to conversations"]') as HTMLElement;
+      expect(back).not.toBeNull();
+      back.click();
+
+      expect(store.dispatch).toHaveBeenCalledWith(MessageActions.clearActiveConversation());
+    });
+  });
+
   it('send dispatches sendMessage for the active conversation', () => {
     fixture.detectChanges();
     component.activeUserId = 5;

@@ -16,8 +16,12 @@
 
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 grid grid-cols-1 md:grid-cols-[300px_1fr] overflow-hidden" style="min-height: 520px;">
 
-        <!-- Conversation list -->
-        <div class="border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 flex flex-col">
+        <!-- Conversation list. CM-04: on mobile, the list and an open thread are two
+             separate full views, not two halves of one scrolling page -- hidden here
+             (not removed: its scroll position is preserved) while a thread is open,
+             always shown side-by-side with the thread from md up regardless. -->
+        <div data-testid="list-pane" class="border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 flex flex-col"
+            [ngClass]="activeUserId != null ? 'hidden md:flex' : 'flex'">
 
             <div *ngIf="loading" class="flex items-center justify-center py-10">
                 <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
@@ -59,8 +63,16 @@
              div below is required — grid/flex items default to min-height:
              auto, so without it a long thread grows past the grid track
              instead of scrolling internally, pushing the compose box below
-             out of view. -->
-        <div class="flex flex-col min-h-0" style="max-height: 520px;">
+             out of view.
+             CM-04: on mobile, an open thread becomes a fixed, full-viewport
+             view (inset-0, above the top bar/sidebar) instead of the bottom
+             half of a scrolling page -- `fixed inset-0` sizes it to the
+             viewport directly, no height arithmetic needed. From md up it's
+             back to being the right-hand grid column, static and in-flow. -->
+        <div data-testid="thread-pane" class="flex-col min-h-0 md:max-h-[520px]"
+            [ngClass]="activeUserId != null
+                ? 'fixed inset-0 z-[60] bg-white dark:bg-gray-900 flex md:static md:z-auto md:bg-transparent'
+                : 'hidden md:flex'">
 
             <div *ngIf="activeUserId == null" class="flex-1 flex flex-col items-center justify-center py-16 gap-2">
                 <i-feather name="message-circle" class="text-gray-200 dark:text-gray-700" style="width:32px;height:32px;"></i-feather>
@@ -70,6 +82,9 @@
             <ng-container *ngIf="activeUserId != null">
 
                 <div class="border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-2.5 shrink-0">
+                    <button type="button" (click)="closeThread()" class="md:hidden p-1 -ml-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0" aria-label="Back to conversations">
+                        <i-feather name="arrow-left" style="width:18px;height:18px;"></i-feather>
+                    </button>
                     <app-chat-thread-header
                         [userId]="activeContact.userId" [name]="activeContact.name" [photo]="activeContact.photo"
                         [role]="activeContact.role" [typing]="activePartyTyping">

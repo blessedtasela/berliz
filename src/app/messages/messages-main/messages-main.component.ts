@@ -197,6 +197,11 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** CM-04: the mobile back control on a full-screen thread -- returns to the list, same list scroll position (nothing about the list itself changed while the thread was open). */
+  closeThread(): void {
+    this.store.dispatch(MessageActions.clearActiveConversation());
+  }
+
   openConversation(otherUserId: number): void {
     this.store.dispatch(MessageActions.loadConversation({ otherUserId }));
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId }));
