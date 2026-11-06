@@ -8,6 +8,8 @@ Status: `todo` / `doing` / `done`.
 
 Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pushed to master): group sessions and packs (backend, web, mobile, trainer controls), accept-referral switch (web + mobile), booking notice and session length (mobile), weekly subscriptions and payment codes (mobile). Everything marked `todo` is next, in the order listed: promo-code preview, trainer monthly plans, the Shop on mobile (largest), monthly booking plans, exercise progress and workout-log sharing, client progress view, center trainers, then the web admin screens. Worktrees to know about: `.claude/worktrees/group-web` (web, branch feat/web-group-sessions, clean, equals master) and `.claude/worktrees/audit-web`; remove them when done.
 
+**Owner instruction, 2026-11-06 morning: PAUSED, not dropped** -- Shop/Product/Order/Store and the admin Brand/Driver/Bill screens (every row below marked `paused`). Focus narrows to trainers, clients, centers and users until the owner says otherwise. Don't pick these up even though they're next in the stated order above.
+
 ## Needs both web and mobile (nobody has either)
 
 | Feature | Backend | Web | Mobile | Owner | Status |
@@ -23,7 +25,7 @@ Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pus
 | Weekly fixed-time subscriptions: mine, view, set schedule, pause, resume, cancel | `/weekly-subscription/*` | booking-bugs session | done (mobile: WeeklySubscriptionsScreen) |
 | Trainer monthly coaching plans (buy a trainer plan) | `POST /subscription/purchaseTrainerPlan` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Referral claim (free-session reward claim / waitlist) | `/referral-claim/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
-| Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
 | Monthly booking plans: preview, mine, view, respond | `/booking/plan/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Promo code preview when buying a plan | `POST /discountCode/preview` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Provider settings: booking notice, session length | `/availability/leadTime`, `/availability/slotDuration` | booking-bugs session | done (mobile: Booking settings card) |
@@ -36,10 +38,10 @@ Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pus
 
 | Feature | Backend | Owner | Status |
 |---|---|---|---|
-| Admin: Brands | `/brand/*` | Berliz Angular Project Overview (handed over 2026-11-06) (after the hub-route dedupe merges) | todo |
-| Admin: Drivers | `/driver/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
-| Admin: Bills | `/bill/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
-| Admin: Products, Orders, Stores (all, any status) | `/product/*`, `/order/*`, `/store/*` admin endpoints | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Admin: Brands | `/brand/*` | Berliz Angular Project Overview (handed over 2026-11-06) (after the hub-route dedupe merges) | paused (owner, 2026-11-06) |
+| Admin: Drivers | `/driver/*` | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
+| Admin: Bills | `/bill/*` | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
+| Admin: Products, Orders, Stores (all, any status) | `/product/*`, `/order/*`, `/store/*` admin endpoints | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
 | Center owner: members (add, status, remove, my members, my memberships) and a member's own views | `/center/addMember`, `/center/updateMemberStatus/{id}`, `/center/removeMember/{id}`, `/center/getMyCenterMembers`, `/center/getMyCenterMemberships`, `/member/getMy*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | A client's own trainer reviews | `/client/getMyTrainerReviews` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Admin: set a user's password | `PUT /user/changePasswordAdmin` | unclaimed (security-sensitive: ask the owner) | todo |
