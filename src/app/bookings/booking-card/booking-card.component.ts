@@ -130,16 +130,37 @@ export class BookingCardComponent {
     return this.mode === 'client' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
   }
 
+  /** BK-24: the onboarding questionnaire and the signed intake are two separate records that were
+   *  never unified -- a client could have a completed, signed intake on file while this tracker
+   *  still read 0%, so the chip told the trainer the opposite of the truth. A real intake on file
+   *  always wins: it is the one client-readiness signal that is actually true until BK-28 merges
+   *  the two into one record. */
   get onboardingChip(): { label: string; classes: string } | null {
-    if (this.mode !== 'provider' || this.onboardingPercent == null) return null;
+    if (this.mode !== 'provider') return null;
     if (this.booking.status !== 'pending' && this.booking.status !== 'confirmed') return null;
+    if (this.hasIntake) {
+      return { label: 'Intake complete', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' };
+    }
+    if (this.onboardingPercent == null) return null;
     return this.onboardingPercent >= 100
       ? { label: 'Onboarding complete', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' }
       : { label: 'Onboarding incomplete', classes: 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900' };
   }
 
+  get onboardingChipTitle(): string {
+    return this.hasIntake
+      ? 'Signed intake form on file. Tap to read it.'
+      : `${this.onboardingPercent}% of the required onboarding answers. Tap to read them.`;
+  }
+
   openOnboarding(event: Event): void {
     event.stopPropagation();
+    // A real intake on file is the actual readiness record -- send the trainer to the signed
+    // answers (same route "View Intake Form" already opens), not the separate onboarding tracker.
+    if (this.hasIntake) {
+      this.startIntake();
+      return;
+    }
     this.router.navigate(['/dashboard/clients', this.booking.clientId, 'onboarding']);
   }
 

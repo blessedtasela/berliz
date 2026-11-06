@@ -462,6 +462,36 @@ describe('BookingCardComponent', () => {
       expect(navigate).toHaveBeenCalledWith(['/dashboard/clients', 1, 'onboarding']);
       expect(dialogSpy.open).not.toHaveBeenCalled();
     });
+
+    // BK-24 (Nov 5 escalation): the questionnaire tracker and the signed intake are two separate
+    // records -- a client could have a completed, signed intake while this tracker still read 0%,
+    // so the chip told the trainer the opposite of the truth. The intake now always wins.
+    it('shows "Intake complete" -- never "Onboarding incomplete" -- when a signed intake is on file', () => {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'pending' } as Booking;
+      component.onboardingPercent = 0;
+      component.hasIntake = true;
+      fixture.detectChanges();
+
+      const chip = fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement;
+      expect(chip.textContent).toContain('Intake complete');
+      expect(chip.textContent).not.toContain('incomplete');
+    });
+
+    it('routes the intake-complete chip to the signed intake, not the separate onboarding tracker', () => {
+      const startIntakeEmitted: unknown[] = [];
+      component.startIntakeRequested.subscribe(e => startIntakeEmitted.push(e));
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'pending' } as Booking;
+      component.hasIntake = true;
+      fixture.detectChanges();
+      const navigate = spyOn(TestBed.inject(Router), 'navigate');
+
+      (fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement).click();
+
+      expect(startIntakeEmitted.length).toBe(1);
+      expect(navigate).not.toHaveBeenCalledWith(['/dashboard/clients', 1, 'onboarding']);
+    });
   });
 
   describe('intake form button (BK-24: a submitted intake must stay reachable)', () => {
