@@ -47,6 +47,8 @@ export interface MyTrainerSummary {
   /** The underlying User id — messaging targets a User, not a Trainer/Center profile. Trainer entries only (center messaging is out of scope). */
   userId: number | null;
   name: string;
+  /** CM-05: so a conversation with this trainer can show their photo before any message exists. */
+  photo?: string | null;
   status: string;
   lastBookingAt: Date;
   bookingCount: number;

@@ -44,7 +44,7 @@ describe('MessagesMainComponent', () => {
 
   const myTrainers: MyTrainerSummary[] = [
     { type: 'trainer', id: 9, userId: 5, name: 'Coach Sam', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 2 },
-    { type: 'trainer', id: 10, userId: 6, name: 'Coach Alex', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 1 },
+    { type: 'trainer', id: 10, userId: 6, name: 'Coach Alex', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 1, photo: 'coach-alex-photo' },
   ];
 
   const messages: Message[] = [
@@ -52,7 +52,7 @@ describe('MessagesMainComponent', () => {
   ];
 
   const connections: Connection[] = [
-    { id: 1, otherUserId: 7, otherUserName: 'Jordan Lee', otherUserRole: 'user', direction: 'incoming', status: 'accepted', date: new Date() }
+    { id: 1, otherUserId: 7, otherUserName: 'Jordan Lee', otherUserRole: 'user', direction: 'incoming', status: 'accepted', date: new Date(), otherUserPhoto: 'jordan-photo' }
   ];
 
   beforeEach(() => {
@@ -240,6 +240,24 @@ describe('MessagesMainComponent', () => {
       fixture.detectChanges();
       expect(component.startableContacts.filter(c => c.userId === 6).length).toBe(1);
       expect(component.startableContacts.some(c => c.userId === 5)).toBeFalse();
+    });
+
+    // CM-05: a never-messaged contact's photo must be there on open, not only after a send.
+    it('carries the photo through for a contact from each of the three sources', () => {
+      bookingContacts = [{ userId: 31, name: 'Jane Doe', role: 'user', relation: 'client', photo: 'jane-photo' }];
+      fixture.detectChanges();
+
+      expect(component.startableContacts.find(c => c.userId === 6)?.photo).toBe('coach-alex-photo'); // myTrainers
+      expect(component.startableContacts.find(c => c.userId === 31)?.photo).toBe('jane-photo'); // bookingContacts
+      expect(component.startableContacts.find(c => c.userId === 7)?.photo).toBe('jordan-photo'); // connections
+    });
+
+    it('shows a never-messaged contact\'s photo in the header immediately, before any message is sent', () => {
+      fixture.detectChanges();
+      store.overrideSelector(selectActiveConversationUserId, 6); // Coach Alex -- no conversation yet
+      store.refreshState();
+
+      expect(component.activeContact.photo).toBe('coach-alex-photo');
     });
 
     it('tells a client with no trainer how to get one, instead of an empty list', () => {

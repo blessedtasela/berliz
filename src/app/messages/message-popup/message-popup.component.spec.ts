@@ -42,7 +42,7 @@ describe('MessagePopupComponent', () => {
 
   const myTrainers: MyTrainerSummary[] = [
     { type: 'trainer', id: 9, userId: 5, name: 'Coach Sam', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 2 },
-    { type: 'trainer', id: 10, userId: 6, name: 'Coach Alex', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 1 },
+    { type: 'trainer', id: 10, userId: 6, name: 'Coach Alex', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 1, photo: 'coach-alex-photo' },
   ];
 
   const messages: Message[] = [
@@ -130,6 +130,18 @@ describe('MessagePopupComponent', () => {
     fixture.detectChanges();
 
     expect(component.startableContacts.map(c => c.userId)).toEqual([6, 7]);
+  });
+
+  // CM-05: a never-messaged contact's photo must be there on open, not only after a send.
+  it('carries the photo through for a startable contact, in the list and in the header', () => {
+    setup({ messagePopupEnabled: true } as Partial<Users>);
+    fixture.detectChanges();
+
+    expect(component.startableContacts.find(c => c.userId === 6)?.photo).toBe('coach-alex-photo');
+
+    store.overrideSelector(selectActiveConversationUserId, 6);
+    store.refreshState();
+    expect(component.activeContact.photo).toBe('coach-alex-photo');
   });
 
   it('openConversation dispatches loadConversation and markConversationRead, and switches to thread view', () => {

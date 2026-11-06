@@ -74,4 +74,6 @@ export interface MessageContact {
   role: string;
   /** 'trainer' = this person is your trainer; 'client' = this person is your client. */
   relation: 'trainer' | 'client';
+  /** CM-05: so a conversation can show their photo before any message exists. */
+  photo?: string | null;
 }

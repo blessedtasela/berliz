@@ -38,6 +38,8 @@ import { genericError } from 'src/validators/form-validators.module';
 interface StartableContact {
   userId: number;
   name: string;
+  /** CM-05: must be live on open, before any message exists -- never populated only after a send. */
+  photo?: string | null;
 }
 
 /**
@@ -173,11 +175,11 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
 
     const fromTrainers: StartableContact[] = this.myTrainers
       .filter(t => t.type === 'trainer' && t.userId != null && !existingIds.has(t.userId))
-      .map(t => ({ userId: t.userId as number, name: t.name }));
+      .map(t => ({ userId: t.userId as number, name: t.name, photo: t.photo }));
 
     const fromConnections: StartableContact[] = this.connections
       .filter(c => !existingIds.has(c.otherUserId))
-      .map(c => ({ userId: c.otherUserId, name: c.otherUserName }));
+      .map(c => ({ userId: c.otherUserId, name: c.otherUserName, photo: c.otherUserPhoto }));
 
     const seen = new Set<number>();
     this.startableContacts = [...fromTrainers, ...fromConnections].filter(c => {
@@ -303,7 +305,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
       return;
     }
     const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
-    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
+    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', photo: contact?.photo ?? null, role: '' };
   }
 
   goToFullPage(): void {

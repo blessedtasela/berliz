@@ -41,6 +41,8 @@ interface StartableContact {
   name: string;
   /** The other person's role when known (a booked trainer is 'trainer'), so the onboarding card knows which side it is on. */
   role?: string;
+  /** CM-05: must be live on open, before any message exists -- never populated only after a send. */
+  photo?: string | null;
 }
 
 /**
@@ -147,16 +149,16 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
 
     const fromTrainers: StartableContact[] = this.myTrainers
       .filter(t => t.type === 'trainer' && t.userId != null && !existingIds.has(t.userId))
-      .map(t => ({ userId: t.userId as number, name: t.name, role: 'trainer' }));
+      .map(t => ({ userId: t.userId as number, name: t.name, role: 'trainer', photo: t.photo }));
 
     // A trainer's own clients (and, for a client, the trainers they booked): without this a trainer had no way to start a thread.
     const fromBookings: StartableContact[] = this.bookingContacts
       .filter(c => !existingIds.has(c.userId))
-      .map(c => ({ userId: c.userId, name: c.name, role: c.relation === 'trainer' ? 'trainer' : c.role }));
+      .map(c => ({ userId: c.userId, name: c.name, role: c.relation === 'trainer' ? 'trainer' : c.role, photo: c.photo }));
 
     const fromConnections: StartableContact[] = this.connections
       .filter(c => !existingIds.has(c.otherUserId))
-      .map(c => ({ userId: c.otherUserId, name: c.otherUserName }));
+      .map(c => ({ userId: c.otherUserId, name: c.otherUserName, photo: c.otherUserPhoto }));
 
     const seen = new Set<number>();
     this.startableContacts = [...fromTrainers, ...fromBookings, ...fromConnections].filter(c => {
@@ -175,7 +177,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       return;
     }
     const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
-    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: contact?.role ?? '' };
+    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', photo: contact?.photo ?? null, role: contact?.role ?? '' };
   }
 
   private loadBookingContacts(): void {
