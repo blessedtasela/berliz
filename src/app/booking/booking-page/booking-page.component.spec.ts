@@ -139,6 +139,72 @@ describe('BookingPageComponent plans', () => {
     });
   });
 
+  describe('BK-32: trial status', () => {
+    let getMyTrialStatus: jasmine.Spy;
+
+    beforeEach(() => {
+      getMyTrialStatus = jasmine.createSpy('getMyTrialStatus').and.returnValue(of({ data: { used: false, usedAt: null, bookingId: null, bookingReference: null } }));
+      page.bookingService = { getMyTrialStatus };
+      page.providerId = 9;
+      page.trialStatusRequested = false;
+    });
+
+    it('fetches the status once the provider and a signed-in user are both known', () => {
+      (page as any).loadTrialStatus();
+      expect(getMyTrialStatus).toHaveBeenCalledWith(9);
+    });
+
+    it('never fetches for a center -- a trial is a trainer-only thing', () => {
+      page.kind = 'center';
+      (page as any).loadTrialStatus();
+      expect(getMyTrialStatus).not.toHaveBeenCalled();
+    });
+
+    it('never fetches for a guest', () => {
+      page.user = null;
+      (page as any).loadTrialStatus();
+      expect(getMyTrialStatus).not.toHaveBeenCalled();
+    });
+
+    it('only fetches once, even if called again', () => {
+      (page as any).loadTrialStatus();
+      (page as any).loadTrialStatus();
+      expect(getMyTrialStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the used date on the trial option, and blocks picking it', () => {
+      getMyTrialStatus.and.returnValue(of({ data: { used: true, usedAt: '2026-11-05T18:30:00Z', bookingId: 17, bookingReference: 'BK-000017' } }));
+      (page as any).loadTrialStatus();
+
+      expect(page.trialUsedNote).toContain('Already used');
+      page.sessionType = 'SINGLE';
+      page.chooseSessionType('TRIAL');
+      expect(page.sessionType).toBe('SINGLE', 'picking a used trial is a no-op');
+    });
+
+    it('has no used-note while the trial is still available', () => {
+      (page as any).loadTrialStatus();
+      expect(page.trialUsedNote).toBeNull();
+      page.chooseSessionType('TRIAL');
+      expect(page.sessionType).toBe('TRIAL');
+    });
+
+    it('recognizes the already-used server message and offers the one-tap recovery', () => {
+      page.submitError = 'You have already used your trial session with Jane Coach on Nov 5, 2026. Book a regular session instead.';
+      expect(page.isTrialAlreadyUsedError).toBeTrue();
+
+      page.sessionType = 'TRIAL';
+      page.bookRegularInstead();
+      expect(page.sessionType).toBe('SINGLE');
+      expect(page.submitError).toBeNull();
+    });
+
+    it('leaves an ordinary submit error alone', () => {
+      page.submitError = 'Pick a date and an available time.';
+      expect(page.isTrialAlreadyUsedError).toBeFalse();
+    });
+  });
+
   describe('unique payment code', () => {
     function send(code: string): any {
       const dispatch = jasmine.createSpy('dispatch');
