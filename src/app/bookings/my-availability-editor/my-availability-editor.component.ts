@@ -79,6 +79,13 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   leadTimeLoading = true;
   leadTimeSaving = false;
 
+  // ── Referral bookings ──────────────────────────────────────────────────
+  /** Accepts bookings made with a free session earned from a referral. True unless the provider opted out. */
+  acceptingReferrals = true;
+  referralsLoading = true;
+  referralsSaving = false;
+  referralsError: string | null = null;
+
   /** The platform default every provider starts on until they override it — mirrors the backend's own AvailabilityServiceImplement.DEFAULT_SLOT_MINUTES. */
   readonly defaultSlotDurationMinutes = 60;
   /** null = using the platform default; a number = this provider's own override. */
@@ -105,6 +112,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     watchLoadError(this.actions$, loadMyAvailabilityFailure, [loadMyAvailability, loadMyAvailabilitySuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyAvailability());
     this.loadLeadTime();
+    this.loadAcceptingReferrals();
     this.loadSlotDuration();
 
     this.store.select(selectAvailabilityLoading)
@@ -289,6 +297,42 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
         error: (err: any) => {
           this.leadTimeSaving = false;
           this.leadTimeError = err?.error?.message || genericError;
+        },
+      });
+  }
+
+  private loadAcceptingReferrals(): void {
+    this.referralsLoading = true;
+    this.availabilityService.getMyAcceptingReferrals()
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.acceptingReferrals = res?.data !== false;
+          this.referralsLoading = false;
+        },
+        error: () => { this.referralsLoading = false; },
+      });
+  }
+
+  /** The switch: saves straight away, and puts it back if the server refuses. */
+  setAcceptingReferrals(accepting: boolean): void {
+    if (this.referralsSaving) return;
+    this.referralsError = null;
+    const before = this.acceptingReferrals;
+    this.acceptingReferrals = accepting;
+    this.referralsSaving = true;
+    this.availabilityService.setMyAcceptingReferrals(accepting)
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.referralsSaving = false;
+          this.acceptingReferrals = res?.data !== false;
+          this.snackBar.openSnackBar(res?.message || (accepting ? 'Now accepting referral bookings.' : 'Opted out of referral bookings.'), '');
+        },
+        error: (err: any) => {
+          this.referralsSaving = false;
+          this.acceptingReferrals = before;
+          this.referralsError = err?.error?.message || genericError;
         },
       });
   }

@@ -75,6 +75,18 @@ export class AvailabilityService {
     });
   }
 
+  /** Whether the signed-in trainer/center accepts referral-reward bookings: true unless they have opted out. */
+  getMyAcceptingReferrals() {
+    return this.httpClient.get<ApiResponse<boolean>>(this.url + "/availability/acceptingReferrals");
+  }
+
+  /** Opt in or out of referral-reward bookings. Returns the resolved value. */
+  setMyAcceptingReferrals(accepting: boolean) {
+    return this.httpClient.put<ApiResponse<boolean>>(this.url + "/availability/acceptingReferrals", { acceptingReferrals: accepting }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   /** The currently authenticated trainer/center's own slot-length override — null means "using the platform default". */
   getMySlotDuration() {
     return this.httpClient.get<ApiResponse<number | null>>(this.url + "/availability/slotDuration");

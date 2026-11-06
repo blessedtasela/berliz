@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Subject } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { MyAvailabilityEditorComponent } from './my-availability-editor.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -84,6 +84,51 @@ describe('MyAvailabilityEditorComponent', () => {
       const saved = dispatch.calls.allArgs().map(a => a[0] as any).find(a => a.type === '[Availability] Set Mine');
       expect(saved).toBeDefined();
       expect(saved.timezone).toBe('Africa/Casablanca');
+    });
+  });
+
+  describe('referral bookings', () => {
+    let svc: any;
+    beforeEach(() => { svc = (component as any).availabilityService; });
+
+    it('starts from what the provider chose, and is on unless they opted out', () => {
+      spyOn(svc, 'getMyAcceptingReferrals').and.returnValue(of({ data: false } as any));
+      fixture.detectChanges();
+      expect(component.acceptingReferrals).toBeFalse();
+      expect(component.referralsLoading).toBeFalse();
+    });
+
+    it('opts out straight away and says so', () => {
+      spyOn(svc, 'getMyAcceptingReferrals').and.returnValue(of({ data: true } as any));
+      const save = spyOn(svc, 'setMyAcceptingReferrals').and.returnValue(of({ data: false, message: 'Opted out of referral bookings' } as any));
+      const snack = TestBed.inject(SnackBarService) as jasmine.SpyObj<SnackBarService>;
+      fixture.detectChanges();
+
+      component.setAcceptingReferrals(false);
+
+      expect(save).toHaveBeenCalledWith(false);
+      expect(component.acceptingReferrals).toBeFalse();
+      expect(snack.openSnackBar).toHaveBeenCalledWith('Opted out of referral bookings', '');
+    });
+
+    it('puts the switch back and shows the reason when the server refuses', () => {
+      spyOn(svc, 'getMyAcceptingReferrals').and.returnValue(of({ data: true } as any));
+      spyOn(svc, 'setMyAcceptingReferrals').and.returnValue(throwError(() => ({ error: { message: 'Only trainers and centers can do that.' } })));
+      fixture.detectChanges();
+
+      component.setAcceptingReferrals(false);
+
+      expect(component.acceptingReferrals).toBeTrue();
+      expect(component.referralsError).toBe('Only trainers and centers can do that.');
+    });
+
+    it('ignores a second tap while saving', () => {
+      spyOn(svc, 'getMyAcceptingReferrals').and.returnValue(of({ data: true } as any));
+      const save = spyOn(svc, 'setMyAcceptingReferrals').and.returnValue(new Subject() as any);
+      fixture.detectChanges();
+      component.setAcceptingReferrals(false);
+      component.setAcceptingReferrals(true);
+      expect(save).toHaveBeenCalledTimes(1);
     });
   });
 });

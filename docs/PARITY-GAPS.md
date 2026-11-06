@@ -10,8 +10,8 @@ Status: `todo` / `doing` / `done`.
 
 | Feature | Backend | Web | Mobile | Owner | Status |
 |---|---|---|---|---|---|
-| Trainer controls for groups: list own groups/packs, confirm / cancel / complete a group, cancel a pack | `/group-session/trainer/mine`, `/{id}/confirm|cancel|complete`; `/group-pack/trainer/mine`, `/{id}/cancel` (backend done 2026-11-05) | Requests view of Bookings (`provider-groups`) | todo | booking-bugs session | web done; mobile todo |
-| "Accepting referral bookings" setting (trainer/center opt-out) | `/availability/acceptingReferrals` GET/PUT | todo (Availability editor, next to Booking notice) | todo | booking-bugs session | todo |
+| Trainer controls for groups: list own groups/packs, confirm / cancel / complete a group, cancel a pack | `/group-session/trainer/mine`, `/{id}/confirm|cancel|complete`; `/group-pack/trainer/mine`, `/{id}/cancel` (backend done 2026-11-05) | Requests view of Bookings (`provider-groups`) | Provider Bookings screen (`ProviderGroupsCard`) | booking-bugs session | done (web + mobile) |
+| "Accepting referral bookings" setting (trainer/center opt-out) | `/availability/acceptingReferrals` GET/PUT | Availability editor, next to Booking notice | Booking settings card under Weekly hours | booking-bugs session | done (web + mobile) |
 
 ## Web has it, mobile does not
 
@@ -24,7 +24,7 @@ Status: `todo` / `doing` / `done`.
 | Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | booking-bugs session | todo |
 | Monthly booking plans: preview, mine, view, respond | `/booking/plan/*` | booking-bugs session | todo |
 | Promo code preview when buying a plan | `POST /discountCode/preview` | booking-bugs session | todo |
-| Provider settings: booking notice, session length | `/availability/leadTime`, `/availability/slotDuration` | booking-bugs session | todo |
+| Provider settings: booking notice, session length | `/availability/leadTime`, `/availability/slotDuration` | booking-bugs session | done (mobile: Booking settings card) |
 | Exercise progress chart; share a workout log with a user | `/workoutLog/getExerciseProgress/{id}`, `/workoutLog/{id}/share/{userId}` | booking-bugs session | todo |
 | Trainer views a client's progress entries | `/progress-entry/client/{clientId}` | booking-bugs session | todo |
 | Center: manage affiliated trainers, photo | `/center/updateMyCenterTrainers`, `/center/updatePhoto` | booking-bugs session | todo |
