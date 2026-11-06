@@ -86,4 +86,42 @@ describe('BookingDetailsModalComponent', () => {
     component.close();
     expect(dialogRefSpy.close).toHaveBeenCalled();
   });
+
+  // BK-29/BK-18/BK-31: header shows the reference; the travel fee is labelled "travel fee" and
+  // shown exactly once, never duplicated between the location line and the zone line -- verified
+  // against the real BK-000017 numbers (trial $100, new-member promo -$50, paid $50, in-zone gym).
+  describe('reference and fee wording (BK-29/BK-31)', () => {
+    const paidTrial: Booking = {
+      ...booking,
+      reference: 'BK-000017',
+      sessionType: 'TRIAL',
+      trialPrice: 100,
+      introDiscount: 50,
+      locationLabel: 'Evolve Strength',
+      travelZone: 'DOWNTOWN',
+      locationFee: 0,
+      gymDropInFee: 25,
+      paymentStatus: 'PAID',
+      amountPaid: 50,
+    };
+
+    it('shows the booking reference in the header', () => {
+      setup({ booking: paidTrial, mode: 'client' });
+      expect(fixture.nativeElement.textContent).toContain('BK-000017');
+    });
+
+    it('shows the zone travel-fee line exactly once and never a duplicate "location fee" badge', () => {
+      setup({ booking: paidTrial, mode: 'client' });
+      const text = (fixture.nativeElement.textContent as string).replace(/\s+/g, ' ');
+      expect(text).toContain('no travel fee');
+      expect(text).not.toContain('location fee');
+    });
+
+    it('shows the travel fee inline on the location line for a custom location with no travelZone', () => {
+      setup({ booking: { ...paidTrial, locationCustom: true, travelZone: null, locationFee: 30 }, mode: 'client' });
+      const text = (fixture.nativeElement.textContent as string).replace(/\s+/g, ' ');
+      expect(text).toContain('CA$30.00 travel fee');
+      expect(text).not.toContain('location fee');
+    });
+  });
 });
