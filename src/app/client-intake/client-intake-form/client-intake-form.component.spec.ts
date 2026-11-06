@@ -100,6 +100,10 @@ describe('ClientIntakeFormComponent', () => {
     const text = ((fixture.nativeElement as HTMLElement).textContent || '').toLowerCase();
     expect(text).not.toContain('has not been reviewed');
     expect(text).not.toContain('legal review is required');
+    // GN-24: the consent sentence still referenced "the notice above" and "not legally reviewed"
+    // after the banner itself was removed -- a dangling reference to a notice that no longer exists.
+    expect(text).not.toContain('legally reviewed');
+    expect(text).not.toContain('notice above');
   });
 
   // ── FORM VALIDATION ──

@@ -91,8 +91,7 @@
       <label class="flex items-start gap-2.5 rounded-xl border border-gray-200 dark:border-gray-700 p-3.5 cursor-pointer">
         <input type="checkbox" formControlName="consentAcknowledged" class="mt-0.5" data-testid="consent-checkbox" />
         <span class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-          I confirm this information is accurate to the best of my knowledge, and I understand this
-          form has not been legally reviewed (see the notice above).
+          I confirm this information is accurate to the best of my knowledge.
         </span>
       </label>
       <span *ngIf="f['consentAcknowledged'].touched && f['consentAcknowledged'].invalid"
