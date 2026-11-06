@@ -5,6 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
 import { IconsModule } from '../icons/icons.module';
+import { ProviderGroupsComponent } from './provider-groups/provider-groups.component';
 import { GroupPacksListComponent } from '../booking/group-packs-list/group-packs-list.component';
 import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { FooterModule } from '../footer/footer.module';
@@ -44,6 +45,7 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
   ],
   imports: [
     GroupPacksListComponent,
+    ProviderGroupsComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

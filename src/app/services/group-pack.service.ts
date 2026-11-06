@@ -35,6 +35,16 @@ export class GroupPackService {
     return this.httpClient.post<ApiResponse<StripeCheckoutSessionResponse>>(`${this.url}/${id}/checkout`, null);
   }
 
+  /** The signed-in trainer's own packs, any status, with who is in each and who has paid (the trainer's view). */
+  getForMyTrainerProfile() {
+    return this.httpClient.get<ApiResponse<GroupPack[]>>(`${this.url}/trainer/mine`);
+  }
+
+  /** The trainer cancels a pack that is still filling or waiting for payment: whoever paid is refunded. */
+  cancel(id: number) {
+    return this.httpClient.put<ApiResponse<GroupPack>>(`${this.url}/${id}/cancel`, null);
+  }
+
   /** The packs the signed-in person is in. */
   getMine() {
     return this.httpClient.get<ApiResponse<GroupPack[]>>(`${this.url}/mine`);
