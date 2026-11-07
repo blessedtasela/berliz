@@ -426,6 +426,58 @@ describe('BookingCardComponent', () => {
     });
   });
 
+  describe('leave a review (PF-43)', () => {
+    let navigate: jasmine.Spy;
+    beforeEach(() => { navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true); });
+
+    it('is offered on a completed trainer session once the parent confirms a slot is available', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit' } as Booking;
+      component.reviewSlotAvailable = true;
+      expect(component.canLeaveReview).toBeTrue();
+    });
+
+    it('is hidden while the parent has not yet confirmed a slot is available', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit' } as Booking;
+      component.reviewSlotAvailable = undefined;
+      expect(component.canLeaveReview).toBeFalse();
+
+      component.reviewSlotAvailable = false;
+      expect(component.canLeaveReview).toBeFalse();
+    });
+
+    it('is never offered on a center booking', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: null, centerName: 'M Fitness Sources' } as Booking;
+      component.reviewSlotAvailable = true;
+      expect(component.canLeaveReview).toBeFalse();
+    });
+
+    it('is never offered to the provider', () => {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit' } as Booking;
+      component.reviewSlotAvailable = true;
+      expect(component.canLeaveReview).toBeFalse();
+    });
+
+    it('deep-links to the trainer profile\'s review section', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit' } as Booking;
+      component.reviewSlotAvailable = true;
+      component.leaveReview();
+      expect(navigate).toHaveBeenCalledWith(['/trainers', 'blessed-fit'], { fragment: 'add-review' });
+    });
+
+    it('shows the button once a slot is confirmed available', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit' } as Booking;
+      component.reviewSlotAvailable = true;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid=leave-review]')).toBeTruthy();
+    });
+  });
+
   describe('onboarding flag (provider view)', () => {
     function show(percent: number | null | undefined, status = 'pending') {
       component.mode = 'provider';

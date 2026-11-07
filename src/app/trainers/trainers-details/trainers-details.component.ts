@@ -25,6 +25,7 @@ import { environment } from 'src/environments/environment';
 import { closestBySlug, nameSlug } from 'src/app/utils/closest-slug';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
+import { scrollToFragment } from 'src/app/utils/scroll-to-fragment.util';
 import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
 import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
@@ -184,6 +185,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
         this.providerAnalytics.recordProfileView({ trainerId: match.id });
         this.loadPublicProfile();
         this.resumePendingAction();
+        // PF-43: a "Leave a review" chip on a completed booking deep-links here with #add-review.
+        scrollToFragment(this.route.snapshot.fragment);
       });
   }
 

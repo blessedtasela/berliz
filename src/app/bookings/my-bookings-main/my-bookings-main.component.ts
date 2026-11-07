@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
+import { TrainerService } from 'src/app/services/trainer.service';
 
 import {
   cancelBooking,
@@ -43,6 +44,11 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
   /** The booking whose Stripe Checkout is being created, so its Pay button can't be double-tapped. */
   payingBookingId: number | null = null;
 
+  /** PF-43: per-trainer "do they still have an unreviewed completed session" -- fetched once per
+   *  trainer (several completed bookings can share one), not re-checked per booking. */
+  private reviewSlotByTrainerId: Record<number, boolean> = {};
+  private reviewSlotFetchedFor = new Set<number>();
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -50,6 +56,7 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private snackBar: SnackBarService,
     private stripeService: StripeService,
+    private trainerService: TrainerService,
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +65,7 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
       .subscribe(bookings => {
         this.bookings = bookings ?? [];
         this.loading = false;
+        this.fetchReviewSlotStatuses();
       });
     this.store.select(selectBookingLoading).pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
     this.store.select(selectBookingError).pipe(takeUntil(this.destroy$)).subscribe(e => this.loadError = e ?? null);
@@ -96,6 +104,30 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
 
   get completed(): Booking[] {
     return this.bookings.filter(b => b.status === 'completed');
+  }
+
+  /** One check per distinct trainer among completed bookings, cached so re-rendering never refetches. */
+  private fetchReviewSlotStatuses(): void {
+    const trainerIds = new Set(
+      this.completed
+        .map(b => b.trainerId)
+        .filter((id): id is number => !!id && !this.reviewSlotFetchedFor.has(id))
+    );
+    trainerIds.forEach(trainerId => {
+      this.reviewSlotFetchedFor.add(trainerId);
+      this.trainerService.getMyReviewSlotStatus(trainerId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => { this.reviewSlotByTrainerId[trainerId] = !!res?.data?.available; },
+          error: () => { /* Leaves the chip hidden for this trainer -- not worth a toast. */ }
+        });
+    });
+  }
+
+  /** undefined while unknown (chip hidden), true/false once fetched. Center bookings have no review flow yet. */
+  reviewSlotAvailable(booking: Booking): boolean | undefined {
+    if (!booking.trainerId) return undefined;
+    return this.reviewSlotByTrainerId[booking.trainerId];
   }
 
   get cancelled(): Booking[] {

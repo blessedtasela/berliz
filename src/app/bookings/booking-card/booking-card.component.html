@@ -88,6 +88,11 @@
                 <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
                 Book again
             </button>
+            <button *ngIf="canLeaveReview" type="button" (click)="leaveReview()" data-testid="leave-review"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition flex items-center gap-1">
+                <i-feather name="star" style="width:11px;height:11px;"></i-feather>
+                Leave a review
+            </button>
             <button *ngIf="canClientCancel" type="button" (click)="cancel()"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Cancel

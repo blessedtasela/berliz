@@ -131,7 +131,9 @@
 
             </section>
 
-            <app-trainer-add-review [trainerId]="trainer?.id"></app-trainer-add-review>
+            <div id="add-review" class="scroll-mt-24">
+                <app-trainer-add-review [trainerId]="trainer?.id"></app-trainer-add-review>
+            </div>
 
             <!-- ── REASSURANCE ───────────────────────────────────────────── -->
             <app-provider-availability theme="dark" [trainerId]="trainer?.id"></app-provider-availability>

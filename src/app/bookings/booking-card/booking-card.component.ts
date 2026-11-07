@@ -37,6 +37,9 @@ export class BookingCardComponent {
   @Input() onboardingPercent: number | null | undefined;
   /** Whether this client already has an intake form started or submitted -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send Intake Form" (nothing left to ask for). */
   @Input() hasIntake = false;
+  /** PF-43: does the client still have an unreviewed completed session with this trainer --
+   *  undefined while unknown (chip hidden), never a guess. The parent fetches this per trainer. */
+  @Input() reviewSlotAvailable: boolean | null | undefined;
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
@@ -175,6 +178,17 @@ export class BookingCardComponent {
     const isTrainer = !!this.booking.trainerName;
     const name = (isTrainer ? this.booking.trainerName : this.booking.centerName) as string;
     this.router.navigate([isTrainer ? '/trainers' : '/centers', nameSlug(name), 'book']);
+  }
+
+  /** PF-43: a completed trainer session the client hasn't used up their review slot for yet.
+   *  No center equivalent -- TrainerReview has no center counterpart. */
+  get canLeaveReview(): boolean {
+    return this.mode === 'client' && this.booking.status === 'completed'
+      && !!this.booking.trainerName && !!this.reviewSlotAvailable;
+  }
+
+  leaveReview(): void {
+    this.router.navigate(['/trainers', nameSlug(this.booking.trainerName as string)], { fragment: 'add-review' });
   }
 
   /** Confirmed, and the start time has passed: the provider can record that the client never came. */
