@@ -143,6 +143,27 @@ describe('EarningsViewComponent', () => {
     });
   });
 
+  describe('a payout adjusted for a refund (PY-19)', () => {
+    it('explains a shrunk payout instead of just showing a smaller number', () => {
+      const adjusted: Payout = { ...pendingPayout, id: 55, refundAdjusted: true, originalGrossAmount: 100, grossAmount: 50 };
+      store.overrideSelector(selectMyPayouts, [adjusted]);
+      store.refreshState();
+      fixture.detectChanges();
+
+      const note = fixture.nativeElement.querySelector('[data-testid="refund-adjusted-note"]') as HTMLElement;
+      expect(note).not.toBeNull();
+      expect(note.textContent).toContain('Adjusted for a refund');
+    });
+
+    it('shows nothing extra for a payout that was never refund-adjusted', () => {
+      store.overrideSelector(selectMyPayouts, [pendingPayout]);
+      store.refreshState();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[data-testid="refund-adjusted-note"]')).toBeNull();
+    });
+  });
+
   describe('where an earning came from', () => {
     const detailed = {
       ...pendingPayout, id: 77, source: 'BOOKING', sessionType: 'TRIAL', clientName: 'Alex Doe', clientEmail: 'alex@example.com',

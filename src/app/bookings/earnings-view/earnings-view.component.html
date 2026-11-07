@@ -109,6 +109,13 @@
                     <span class="font-semibold text-gray-700 dark:text-gray-300">You keep: {{ p.payoutAmount | currency }}</span>
                 </div>
 
+                <!-- PY-19: a refund silently shrank this payout -- say so instead of a smaller
+                     number appearing with no explanation. -->
+                <p *ngIf="p.refundAdjusted" class="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 mt-1" data-testid="refund-adjusted-note">
+                    <i-feather name="alert-triangle" style="width:11px;height:11px;"></i-feather>
+                    Adjusted for a refund -- was {{ p.originalGrossAmount | currency }}, now {{ p.grossAmount | currency }}
+                </p>
+
                 <button type="button" (click)="toggleDetails(p.id)" [attr.aria-expanded]="expandedPayoutId === p.id"
                     class="mt-2 text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1" data-testid="payout-details-toggle">
                     <i-feather [name]="expandedPayoutId === p.id ? 'chevron-up' : 'chevron-down'" style="width:12px;height:12px;"></i-feather>

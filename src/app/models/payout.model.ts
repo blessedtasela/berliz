@@ -18,6 +18,11 @@ export interface Payout {
   payoutAmount: number;
   commissionRate: number;
 
+  /** PY-19: true once a refund has recomputed this payout's amounts at least once. */
+  refundAdjusted?: boolean | null;
+  /** What grossAmount was before the first refund adjustment -- only set when refundAdjusted is true. */
+  originalGrossAmount?: number | null;
+
   /** PENDING | PAID | FAILED */
   status: string;
   stripeTransferId: string | null;
