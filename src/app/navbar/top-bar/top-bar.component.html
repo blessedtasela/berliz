@@ -9,6 +9,14 @@
         -->
         <div class="items-center gap-4 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
 
+            <!-- Global back nav -- every page gets one, top-left, so users can
+                 always step back without hunting for a page-specific control. -->
+            <button *ngIf="showBackButton" type="button" (click)="goBack()" aria-label="Go back"
+                class="shrink-0 w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                       flex items-center justify-center transition">
+                <i-feather name="arrow-left" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
+            </button>
+
             <!-- Sidebar reopen toggle — only rendered when there's no persistent/overlay
                  sidebar currently on screen (desktop "hidden" mode, or mobile with the
                  overlay closed). Lives here in the fixed top bar, not as a separately
