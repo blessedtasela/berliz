@@ -211,3 +211,27 @@ Also fixed while on the Messages surface (not asked, flagged per rule 1 and done
 
 4. **PF-34**: what should "member directory" mean here -- is this an existing page under a different name, or a feature that hasn't been built yet?
 5. **PF-35**: when you say consolidate the two bio fields, which one should win -- does the account Bio become the trainer's public Introduction too, or does Introduction stay separate and Bio gets hidden/removed for trainers?
+
+## Lane 1 (owner's Nov 6 night priority doc)
+
+| ID | Item | Status |
+|---|---|---|
+| PY-19 | Missing refund line on the Earnings tab (and commission-rate inconsistency on old entries) | **Done, the Earnings-side gap.** `Payout.refundAdjusted`/`originalGrossAmount` (V101) track a payout's pre-refund gross the first time a refund touches it; the Earnings tab shows "Adjusted for a refund -- was $X, now $Y" when set. The booking-detail side already surfaces refund status via the existing payment badge -- not duplicated. Commission-rate inconsistency on old rows and the unexplained "5% booking fee": no 5% rate exists anywhere in current code (commission is 15/12/10% tiered); most likely a stale historical row, same category PY-24's "Recalculate" action already exists to fix one at a time. |
+| CM-03 + GN-27 (403 reference code) | **Done.** Every 403 (`AccessDeniedException` and the app's own `ForbiddenException`) now logs with a short `ERR-XXXXXXXX` reference and returns it alongside the message, same treatment the 500s already got. Re-investigated CM-03's actual report: `MessageServiceImplement#hasRelationship` already checks `ConnectionRepo#existsAcceptedBetween` (status `'accepted'`, both directions) correctly, and the frontend interceptor already stopped redirecting on 403 with the error reaching a snackbar. Could not reproduce further without a live repro or the specific connection's actual DB status -- if this is still happening live, I need to know whether Johnson Kalu's connection is genuinely "accepted" (not just showing as connected in the UI). |
+| GN-28 (Android JWT-expired shell) | **Already fixed in code, not yet confirmed live.** Found `3655108` ("Mobile: renew an expired access token (single-flight, retry once), and sign out cleanly when the refresh token is refused"), committed 2026-11-05 23:30 Pacific -- same evening as your 22:25 crash report, likely built in direct response. Single-flight refresh, retry-once, clean sign-out on a refused refresh token, renews proactively on cold start before showing any screen. 16 tests, all passing. **This is a mobile app, not Railway -- the code fix doesn't reach your installed app until an EAS Update (JS-only change, no native rebuild needed) or a new build is pushed.** I haven't triggered that; it's a deploy action I'd want your go-ahead on. |
+| SG-07 + SG-01 | **Done** (re-confirmed, no new issue found) | `StringMultipartFileEditor` fix for the blank-photo sign-up crash already shipped; Google sign-in was never broken (works both before and after). |
+| SG-06 | **Done** (re-confirmed) | Terms/Privacy checkbox required at signup, both flows. |
+
+### Production crash investigation (Nov 5 07:59 and 22:25)
+
+Both crashes I can account for are migration bugs found and fixed within this session, confirmed clean via Railway logs immediately after the fix:
+1. **V96** (notification dedupe migration, ~16:02 UTC Nov 5): `row_to_json()` collided with a column literally named `notification` on the same table. Postgres ran the migration as one transaction, so it rolled back with zero data loss.
+2. **V98** (GN-32 classification migration, ~06:43 UTC Nov 6): camelCase column/table names didn't match Spring's physical naming strategy's snake_case conversion.
+
+Both now redeploy clean. Every migration since (V99-V101) was checked against `V1__baseline.sql`'s real snake_case schema before writing DDL -- the standing practice this incident established. Exact timestamp reconciliation (Railway logs are UTC, the report reads Pacific) isn't exact -- if there's a third crash not covered by these two, I need the Railway deploy log for that window specifically.
+
+### Owner questions, round 3
+
+6. **CM-03 live repro**: is Johnson Kalu's connection genuinely status `accepted` in the DB, or could it still be `pending`/something else that just displays as connected in the UI? The backend check looks correct on every path I can find.
+7. **GN-28 mobile deploy**: the JWT-refresh fix is code-complete and tested but needs an EAS Update/build to reach your device -- want me to look into triggering that, or is that something you handle?
+8. **Subscription naming audit**: agreed this needs fixing (Subscription/Pack/Trial/Group Session should never share one label) -- queued for Lane 3, since it's a real but not security/money-critical bug.
