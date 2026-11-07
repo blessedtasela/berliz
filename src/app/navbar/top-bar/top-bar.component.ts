@@ -6,6 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -61,6 +62,7 @@ export class TopBarComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private location: Location,
     private userService: UserService,
     private dialog: MatDialog,
     private store: Store,
@@ -158,6 +160,16 @@ export class TopBarComponent implements OnInit {
 
   closeNotificationDropdown() {
     this.notificationDropdown = false;
+  }
+
+  // Global back nav: present at top-left on every page except the dashboard
+  // home itself (nothing meaningful to go back to from there).
+  get showBackButton(): boolean {
+    return !!this.currentRoute && this.currentRoute !== '/dashboard';
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   toggleSidebar(): void {

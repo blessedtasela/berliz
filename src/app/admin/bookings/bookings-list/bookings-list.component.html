@@ -52,19 +52,19 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">SN</th>
+                    <th class="hidden lg:table-cell px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">SN</th>
                     <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Client</th>
                     <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">With</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Scheduled</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Duration</th>
+                    <th class="hidden lg:table-cell px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Scheduled</th>
+                    <th class="hidden xl:table-cell px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Duration</th>
                     <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Status</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Booking ID</th>
+                    <th class="hidden lg:table-cell px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Booking ID</th>
                     <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 <tr *ngFor="let booking of bookingsData; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ i + 1 }}</td>
+                    <td class="hidden lg:table-cell px-4 py-3 text-gray-500 dark:text-gray-400">{{ i + 1 }}</td>
                     <td class="px-4 py-3">
                         <app-user-hover-card [userId]="booking.clientId" [firstname]="booking.clientFirstname"
                             [lastname]="booking.clientLastname" [email]="booking.clientEmail"
@@ -75,8 +75,8 @@
                         {{ who(booking) }}
                         <span class="text-[10px] text-gray-400 dark:text-gray-500">({{ booking.trainerName ? 'Trainer' : 'Center' }})</span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(booking.scheduledAt) }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400 tabular-nums">{{ booking.durationMinutes }}m</td>
+                    <td class="hidden lg:table-cell px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(booking.scheduledAt) }}</td>
+                    <td class="hidden xl:table-cell px-4 py-3 text-gray-600 dark:text-gray-400 tabular-nums">{{ booking.durationMinutes }}m</td>
                     <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
                             [ngClass]="{
@@ -88,7 +88,7 @@
                             {{ booking.status | titlecase }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ booking.id }}</td>
+                    <td class="hidden lg:table-cell px-4 py-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ booking.id }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button type="button" *ngIf="booking.status === 'pending'"
