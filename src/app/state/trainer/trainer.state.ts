@@ -3,6 +3,7 @@ import {
     TrainerBenefits,
     TrainerClients,
     TrainerFeatureVideo,
+    TrainerFeaturedPhoto,
     TrainerIntroduction,
     TrainerPhotoAlbum,
     TrainerPricing,
@@ -48,6 +49,10 @@ export interface TrainerState {
     trainerFeatureVideos: TrainerFeatureVideo[];
     myTrainerFeatureVideos: TrainerFeatureVideo[];
     activeTrainerFeatureVideos: TrainerFeatureVideo[];
+
+    // Featured Photos (PF-40)
+    myFeaturedPhotos: TrainerFeaturedPhoto[];
+    featuredPhotos: TrainerFeaturedPhoto[];
 
     // Photo Albums
     trainerPhotoAlbums: TrainerPhotoAlbum[];
@@ -103,6 +108,9 @@ export const initialTrainerState: TrainerState = {
     trainerFeatureVideos: [],
     myTrainerFeatureVideos: [],
     activeTrainerFeatureVideos: [],
+
+    myFeaturedPhotos: [],
+    featuredPhotos: [],
 
     trainerPhotoAlbums: [],
     myTrainerPhotoAlbum: null,

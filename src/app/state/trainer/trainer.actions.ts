@@ -5,6 +5,7 @@ import {
     TrainerBenefits,
     TrainerClients,
     TrainerFeatureVideo,
+    TrainerFeaturedPhoto,
     TrainerIntroduction,
     TrainerPhotoAlbum,
     TrainerPricing,
@@ -206,6 +207,16 @@ export const loadMyTrainerFeatureVideosFailure = createAction('[Trainer] Load My
 export const loadActiveTrainerFeatureVideos = createAction('[Trainer] Load Active Trainer Feature Videos', props<{ trainerId: number }>());
 export const loadActiveTrainerFeatureVideosSuccess = createAction('[Trainer] Load Active Trainer Feature Videos Success', props<Res<TrainerFeatureVideo[]>>());
 export const loadActiveTrainerFeatureVideosFailure = createAction('[Trainer] Load Active Trainer Feature Videos Failure', props<Err>());
+
+// PF-40: Featured Photos. The editor itself calls TrainerService.updateMyFeaturedPhotos directly
+// on Save (same as Feature Videos' own editor) -- these actions are only for loading.
+export const loadMyFeaturedPhotos = createAction('[Trainer] Load My Featured Photos');
+export const loadMyFeaturedPhotosSuccess = createAction('[Trainer] Load My Featured Photos Success', props<Res<TrainerFeaturedPhoto[]>>());
+export const loadMyFeaturedPhotosFailure = createAction('[Trainer] Load My Featured Photos Failure', props<Err>());
+
+export const loadFeaturedPhotos = createAction('[Trainer] Load Featured Photos', props<{ trainerId: number }>());
+export const loadFeaturedPhotosSuccess = createAction('[Trainer] Load Featured Photos Success', props<Res<TrainerFeaturedPhoto[]>>());
+export const loadFeaturedPhotosFailure = createAction('[Trainer] Load Featured Photos Failure', props<Err>());
 
 export const addTrainerFeatureVideo = createAction('[Trainer] Add Trainer Feature Video', props<Data>());
 export const addTrainerFeatureVideoSuccess = createAction('[Trainer] Add Trainer Feature Video Success', props<Res<TrainerFeatureVideo>>());

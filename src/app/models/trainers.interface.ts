@@ -171,6 +171,15 @@ export interface TrainerFeatureVideo {
   trainerName: string;
 }
 
+/** PF-40: a reference to one of the trainer's own photo-album photos, picked to show at the
+ *  top of the public profile next to Featured Videos. */
+export interface TrainerFeaturedPhoto {
+  id: number;
+  photo: PhotoResponse;
+  /** Display order within the featured strip -- the trainer's pick order, lowest first. */
+  position: number;
+}
+
 export interface TrainerReview {
   id: number;
   trainerId: number;

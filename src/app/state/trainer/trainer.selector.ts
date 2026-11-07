@@ -33,6 +33,8 @@ export const selectMyTrainerIntroduction = createSelector(selectState, s => s.my
 export const selectTrainerFeatureVideos        = createSelector(selectState, s => s.trainerFeatureVideos);
 export const selectMyTrainerFeatureVideos      = createSelector(selectState, s => s.myTrainerFeatureVideos);
 export const selectActiveTrainerFeatureVideos  = createSelector(selectState, s => s.activeTrainerFeatureVideos);
+export const selectMyFeaturedPhotos            = createSelector(selectState, s => s.myFeaturedPhotos);
+export const selectFeaturedPhotos              = createSelector(selectState, s => s.featuredPhotos);
 
 // ── Photo Albums ──────────────────────────────────────────────────────────────
 export const selectTrainerPhotoAlbums   = createSelector(selectState, s => s.trainerPhotoAlbums);

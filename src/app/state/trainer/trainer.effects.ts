@@ -368,6 +368,22 @@ export class TrainerEffects {
     ))
   ));
 
+  loadMyFeaturedPhotos$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadMyFeaturedPhotos),
+    exhaustMap(() => this.svc.getMyFeaturedPhotos().pipe(
+      map(r => A.loadMyFeaturedPhotosSuccess({ response: r })),
+      catchError(e => of(A.loadMyFeaturedPhotosFailure({ error: e?.error?.message || 'Failed' })))
+    ))
+  ));
+
+  loadFeaturedPhotos$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadFeaturedPhotos),
+    mergeMap(({ trainerId }) => this.svc.getFeaturedPhotos(trainerId).pipe(
+      map(r => A.loadFeaturedPhotosSuccess({ response: r })),
+      catchError(e => of(A.loadFeaturedPhotosFailure({ error: e?.error?.message || 'Failed' })))
+    ))
+  ));
+
   addTrainerFeatureVideo$ = createEffect(() => this.actions$.pipe(
     ofType(A.addTrainerFeatureVideo),
     mergeMap(({ data }) => this.svc.addTrainerFeatureVideo(data).pipe(
