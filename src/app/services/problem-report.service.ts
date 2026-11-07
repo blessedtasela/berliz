@@ -12,13 +12,17 @@ export class ProblemReportService {
   constructor(private httpClient: HttpClient) { }
 
   addProblemReport(data: any) {
-    return this.httpClient.post<{ message: string }>(this.url + "/problemReport/add", data, {
+    return this.httpClient.post<{ message: string, referenceCode?: string }>(this.url + "/problemReport/add", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }
 
   getAllProblemReports() {
     return this.httpClient.get<ProblemReport[]>(this.url + "/problemReport/get");
+  }
+
+  getMyReports() {
+    return this.httpClient.get<ProblemReport[]>(this.url + "/problemReport/mine");
   }
 
   getProblemReport(id: any) {

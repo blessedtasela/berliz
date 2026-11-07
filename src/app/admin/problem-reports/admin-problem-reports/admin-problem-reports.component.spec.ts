@@ -25,6 +25,10 @@ describe('AdminProblemReportsComponent', () => {
     category: 'bug',
     description: 'The booking calendar does not load on Safari.',
     status: 'open',
+    severity: null,
+    referenceCode: null,
+    autoClassified: null,
+    mergeNotes: null,
     date: new Date(),
     lastUpdate: new Date()
   };
