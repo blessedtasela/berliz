@@ -30,6 +30,14 @@
         </div>
         <h2 class="text-xl font-extrabold text-white">Report submitted</h2>
         <p class="text-sm text-zinc-400 max-w-sm">{{ successMessage }}</p>
+        <div *ngIf="referenceCode" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700">
+          <i-feather name="tag" class="text-zinc-500" style="width:11px;height:11px;"></i-feather>
+          <span class="text-[11px] font-semibold text-zinc-300">{{ referenceCode }}</span>
+        </div>
+        <p *ngIf="referenceCode" class="text-[11px] text-zinc-500 max-w-sm">
+          Keep this reference -- you can track this report's status under
+          <a routerLink="/report-problem/my-reports" class="text-red-400 hover:text-red-300 underline">My reports</a>.
+        </p>
         <div class="flex items-center gap-3 mt-2">
           <button type="button" (click)="dismissSuccess()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                      hover:bg-red-700 active:scale-[0.98] transition">
@@ -52,7 +60,7 @@
         <!-- Category picker -->
         <div class="relative flex flex-col gap-3">
           <label class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
-            What's this about?
+            What's this about? <span class="normal-case text-zinc-600">(optional -- we'll figure it out if you skip this)</span>
           </label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button type="button" *ngFor="let category of categories; trackBy: trackByCategory"
@@ -74,11 +82,6 @@
               </span>
             </button>
           </div>
-          <p *ngIf="reportForm.get('category')?.invalid && reportForm.get('category')?.touched"
-            class="text-[11px] text-red-500 flex items-center gap-1">
-            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-            Please choose a category
-          </p>
         </div>
 
         <!-- Name -->
@@ -149,6 +152,8 @@
           <a routerLink="/faqs" class="text-red-400 hover:text-red-300 underline">FAQs</a>
           or visit the
           <a routerLink="/help-center" class="text-red-400 hover:text-red-300 underline">Help Center</a>.
+          Already reported something?
+          <a routerLink="/report-problem/my-reports" class="text-red-400 hover:text-red-300 underline">Check your reports</a>.
         </p>
       </form>
     </div>

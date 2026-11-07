@@ -59,9 +59,9 @@ describe('ReportProblemPageComponent', () => {
     httpMock.expectNone(addUrl);
   });
 
-  it('submits successfully and shows the success state', () => {
+  it('submits successfully, captures the reference code and shows the success state', () => {
     component.reportForm.setValue({
-      category: 'bug',
+      category: 'TECHNICAL',
       name: 'Jane Doe',
       email: 'jane@example.com',
       description: 'The booking calendar does not load on Safari.'
@@ -71,17 +71,35 @@ describe('ReportProblemPageComponent', () => {
 
     const req = httpMock.expectOne(addUrl);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body.category).toBe('bug');
-    req.flush({ message: 'Your report has been submitted.' });
+    expect(req.request.body.category).toBe('TECHNICAL');
+    req.flush({ message: 'Your report has been submitted.', referenceCode: 'PR-000042' });
 
     expect(component.submitted).toBeTrue();
     expect(component.submitting).toBeFalse();
     expect(component.successMessage).toBe('Your report has been submitted.');
+    expect(component.referenceCode).toBe('PR-000042');
+  });
+
+  it('submits with no category picked, same as leaving it to the classifier', () => {
+    component.reportForm.setValue({
+      category: '',
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      description: 'The booking calendar does not load on Safari.'
+    });
+
+    component.submitForm();
+
+    const req = httpMock.expectOne(addUrl);
+    expect(req.request.body.category).toBe('');
+    req.flush({ message: 'Your report has been submitted.', referenceCode: 'PR-000043' });
+
+    expect(component.submitted).toBeTrue();
   });
 
   it('shows a real error message (not an alert) when the backend rejects the submission', () => {
     component.reportForm.setValue({
-      category: 'billing',
+      category: 'PAYMENTS',
       name: 'Jane Doe',
       email: 'jane@example.com',
       description: 'I was charged twice for the same subscription.'
@@ -98,9 +116,19 @@ describe('ReportProblemPageComponent', () => {
   });
 
   it('selectCategory sets and touches the category control', () => {
-    component.selectCategory('safety-concern');
+    component.selectCategory('SAFETY');
 
-    expect(component.reportForm.get('category')?.value).toBe('safety-concern');
+    expect(component.reportForm.get('category')?.value).toBe('SAFETY');
     expect(component.reportForm.get('category')?.touched).toBeTrue();
+  });
+
+  it('dismissSuccess clears the reference code along with the success state', () => {
+    (component as any).submitted = true;
+    (component as any).referenceCode = 'PR-000042';
+
+    component.dismissSuccess();
+
+    expect(component.submitted).toBeFalse();
+    expect(component.referenceCode).toBeNull();
   });
 });

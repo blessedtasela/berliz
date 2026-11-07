@@ -30,13 +30,26 @@ export class ReportProblemPageComponent implements OnInit, OnDestroy {
   submitted = false;
   submitError = '';
   successMessage = '';
+  referenceCode: string | null = null;
   subscriptions: Subscription[] = [];
 
+  /**
+   * GN-32's taxonomy. Picking one is a human override of the backend's own
+   * classifier (which always runs from the description) -- never required,
+   * so category is left unselected by default and the control carries no
+   * Validators.required. An earlier version of this form sent the RETIRED
+   * bug/billing/safety-concern/other values here, which the backend's
+   * VALID_CATEGORIES check rejects outright (400) for every one of them
+   * except "other" -- silently breaking most submissions.
+   */
   readonly categories: ProblemCategoryOption[] = [
-    { value: 'bug', label: 'Something is broken', description: 'A page, button or feature isn’t working as expected.', icon: 'alert-triangle' },
-    { value: 'billing', label: 'Billing or subscription', description: 'A charge, plan or payment issue.', icon: 'credit-card' },
-    { value: 'safety-concern', label: 'Safety concern', description: 'A trainer, center or member behaved inappropriately.', icon: 'shield' },
-    { value: 'other', label: 'Something else', description: 'Anything that doesn’t fit the categories above.', icon: 'info' }
+    { value: 'PAYMENTS', label: 'Payments & billing', description: 'A charge, refund, payout or subscription issue.', icon: 'credit-card' },
+    { value: 'BOOKINGS', label: 'Bookings & sessions', description: 'Something about scheduling, cancelling or a session itself.', icon: 'calendar' },
+    { value: 'ACCOUNT_AND_ACCESS', label: 'Account & access', description: 'Signing in, your profile, or getting locked out.', icon: 'lock' },
+    { value: 'SAFETY', label: 'Safety concern', description: 'A trainer, center or member behaved inappropriately.', icon: 'shield' },
+    { value: 'TECHNICAL', label: 'Something is broken', description: 'A page, button or feature isn’t working as expected.', icon: 'alert-triangle' },
+    { value: 'CONTENT_AND_PROFILE', label: 'Content or a profile', description: 'Something wrong with a listing, photo or profile content.', icon: 'image' },
+    { value: 'OTHER', label: 'Something else', description: 'Anything that doesn’t fit the categories above.', icon: 'info' }
   ];
 
   constructor(
@@ -49,7 +62,7 @@ export class ReportProblemPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.reportForm = this.formBuilder.group({
-      category: ['', [Validators.required]],
+      category: [''],
       name: ['', [Validators.required, fullNameValidator()]],
       email: ['', [Validators.required, Validators.email]],
       description: ['', [Validators.required, Validators.minLength(10)]]
@@ -104,6 +117,7 @@ export class ReportProblemPageComponent implements OnInit, OnDestroy {
         this.submitted = true;
         this.invalidForm = false;
         this.successMessage = response?.message || 'Your report has been submitted. Our team will look into it.';
+        this.referenceCode = response?.referenceCode || null;
         this.reportForm.reset();
       },
       error: (error: any) => {
@@ -117,6 +131,7 @@ export class ReportProblemPageComponent implements OnInit, OnDestroy {
   dismissSuccess(): void {
     this.submitted = false;
     this.successMessage = '';
+    this.referenceCode = null;
   }
 
   trackByCategory(_: number, category: ProblemCategoryOption): string {
