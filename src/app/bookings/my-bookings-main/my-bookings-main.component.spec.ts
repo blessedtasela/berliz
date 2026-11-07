@@ -8,6 +8,7 @@ import { Subject, of, throwError } from 'rxjs';
 import { MyBookingsMainComponent } from './my-bookings-main.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
+import { TrainerService } from 'src/app/services/trainer.service';
 import { selectBookingError, selectBookingLoading, selectMyBookings } from 'src/app/state/booking/booking.selectors';
 import { loadMyBookings } from 'src/app/state/booking/booking.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
@@ -19,10 +20,13 @@ describe('MyBookingsMainComponent', () => {
 
   let stripeSpy: jasmine.SpyObj<StripeService>;
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
+  let trainerServiceSpy: jasmine.SpyObj<TrainerService>;
 
   beforeEach(() => {
     snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     stripeSpy = jasmine.createSpyObj('StripeService', ['createBookingCheckout']);
+    trainerServiceSpy = jasmine.createSpyObj('TrainerService', ['getMyReviewSlotStatus']);
+    trainerServiceSpy.getMyReviewSlotStatus.and.returnValue(of({ success: true, statusCode: 200, message: '', data: { available: true } }));
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
@@ -38,7 +42,8 @@ describe('MyBookingsMainComponent', () => {
         { provide: Actions, useValue: new Subject() },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackBarSpy },
-        { provide: StripeService, useValue: stripeSpy }
+        { provide: StripeService, useValue: stripeSpy },
+        { provide: TrainerService, useValue: trainerServiceSpy }
       ]
     });
 
@@ -137,6 +142,52 @@ describe('MyBookingsMainComponent', () => {
       expect(redirect).not.toHaveBeenCalled();
       expect(snackBarSpy.openSnackBar).toHaveBeenCalled();
       expect(component.payingBookingId).toBeNull();
+    });
+  });
+
+  describe('review slot status (PF-43)', () => {
+    function booking(id: number, trainerId: number): any {
+      return { id, status: 'completed', trainerId, trainerName: 'Coach' };
+    }
+
+    it('fetches once per distinct trainer among completed bookings', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectMyBookings, [booking(1, 9), booking(2, 9), booking(3, 10)]);
+      store.refreshState();
+
+      fixture.detectChanges();
+
+      expect(trainerServiceSpy.getMyReviewSlotStatus).toHaveBeenCalledTimes(2);
+      expect(trainerServiceSpy.getMyReviewSlotStatus).toHaveBeenCalledWith(9);
+      expect(trainerServiceSpy.getMyReviewSlotStatus).toHaveBeenCalledWith(10);
+    });
+
+    it('exposes the fetched availability per booking via reviewSlotAvailable', () => {
+      const store = TestBed.inject(MockStore);
+      const b = booking(1, 9);
+      store.overrideSelector(selectMyBookings, [b]);
+      store.refreshState();
+
+      fixture.detectChanges();
+
+      expect(component.reviewSlotAvailable(b)).toBeTrue();
+    });
+
+    it('does not refetch a trainer already checked once the list re-emits', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectMyBookings, [booking(1, 9)]);
+      store.refreshState();
+      fixture.detectChanges();
+
+      store.overrideSelector(selectMyBookings, [booking(1, 9), booking(2, 9)]);
+      store.refreshState();
+
+      expect(trainerServiceSpy.getMyReviewSlotStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('leaves a booking with no trainerId (a center booking) undecided', () => {
+      const b = { id: 1, status: 'completed', trainerId: null, centerId: 3 };
+      expect(component.reviewSlotAvailable(b as any)).toBeUndefined();
     });
   });
 });

@@ -11,6 +11,7 @@ import {
   TrainerIntroduction,
   TrainerPhotoAlbum,
   TrainerPricing,
+  ReviewSlotStatus,
   TrainerReview,
   TrainerReviewLikes,
   TrainerSubscription,
@@ -374,6 +375,11 @@ export class TrainerService {
   // ─────────────────────────────
   // REVIEWS
   // ─────────────────────────────
+
+  getMyReviewSlotStatus(trainerId: number) {
+    return this.httpClient.get<ApiResponse<ReviewSlotStatus>>(
+      `${this.url}/trainer/myReviewSlotStatus`, { params: { trainerId } });
+  }
 
   addTrainerReview(data: any) {
     return this.httpClient.post<ApiResponse<TrainerReview>>(`${this.url}/trainer/addTrainerReview`, data);

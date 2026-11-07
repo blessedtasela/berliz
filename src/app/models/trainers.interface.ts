@@ -180,6 +180,11 @@ export interface TrainerFeaturedPhoto {
   position: number;
 }
 
+/** PF-43: whether the signed-in client still has an unreviewed completed session with a trainer. */
+export interface ReviewSlotStatus {
+  available: boolean;
+}
+
 export interface TrainerReview {
   id: number;
   trainerId: number;

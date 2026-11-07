@@ -60,7 +60,8 @@
                 <i-feather name="award" style="width:11px;height:11px;"></i-feather>
                 Completed
             </span>
-            <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"></app-booking-card>
+            <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"
+                [reviewSlotAvailable]="reviewSlotAvailable(b)"></app-booking-card>
         </div>
 
         <!-- No-show -->
