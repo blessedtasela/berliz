@@ -1,0 +1,95 @@
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                Featured Photos
+                <span class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+                    {{ selectedIds.length }} / {{ MAX_FEATURED }} selected
+                </span>
+            </h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                Pick up to {{ MAX_FEATURED }} photos from your album to show at the top of your public profile.
+            </p>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+    <ng-container *ngIf="albumPhotos.length === 0">
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">
+            Add photos to your Photo Album first -- you'll be able to feature them here once you have some.
+        </p>
+    </ng-container>
+
+    <ng-container *ngIf="albumPhotos.length > 0">
+
+        <!-- Featured strip (current picks) -->
+        <div class="grid grid-cols-4 gap-2">
+            <ng-container *ngFor="let i of [0, 1, 2, 3]">
+                <div *ngIf="selectedPhotos[i]" class="relative group aspect-square rounded-xl overflow-hidden border-2 border-green-300 dark:border-green-800">
+                    <img alt="" [src]="photoUrl(selectedPhotos[i])" class="w-full h-full object-cover object-top"
+                        data-fallback-src="assets/avatar.png" />
+                    <button type="button" (click)="toggle(selectedPhotos[i].id)" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center
+                           text-red-600 hover:bg-red-50 transition shadow" aria-label="Remove from featured">
+                        <i-feather name="x" style="width:11px;height:11px;"></i-feather>
+                    </button>
+                </div>
+                <div *ngIf="!selectedPhotos[i]" class="aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700
+                     flex flex-col items-center justify-center gap-1 bg-gray-50/50 dark:bg-gray-800/50">
+                    <i-feather name="star" style="width:16px;height:16px;" class="text-gray-300"></i-feather>
+                    <span class="text-[9px] text-gray-400 dark:text-gray-500">Empty slot</span>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <!-- Album photo picker -->
+        <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                Your album -- tap to feature
+            </label>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                <button type="button" *ngFor="let photo of albumPhotos" (click)="toggle(photo.id)"
+                    [disabled]="!isSelected(photo.id) && !canAddMore"
+                    class="relative aspect-square rounded-xl overflow-hidden border-2 transition" [ngClass]="{
+                        'border-green-400 dark:border-green-700': isSelected(photo.id),
+                        'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600': !isSelected(photo.id) && canAddMore,
+                        'border-gray-100 dark:border-gray-800 opacity-40 cursor-not-allowed': !isSelected(photo.id) && !canAddMore
+                    }">
+                    <img alt="" [src]="photoUrl(photo)" class="w-full h-full object-cover object-top"
+                        data-fallback-src="assets/avatar.png" />
+                    <div *ngIf="isSelected(photo.id)" class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-green-500
+                         flex items-center justify-center shadow">
+                        <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between">
+            <span *ngIf="!hasChanges" class="text-xs text-gray-400 dark:text-gray-500">No changes detected</span>
+            <span *ngIf="hasChanges" class="text-xs text-green-600 dark:text-green-400 font-semibold flex items-center gap-1">
+                <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                Ready to save
+            </span>
+
+            <button type="button" (click)="save()" [disabled]="!hasChanges || saving"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="{
+                    'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]': hasChanges && !saving,
+                    'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed': !hasChanges || saving
+                }">
+                <i-feather *ngIf="!saving" name="save" style="width:13px;height:13px;"></i-feather>
+                <i-feather *ngIf="saving" name="loader" style="width:13px;height:13px;" class="animate-spin"></i-feather>
+                {{ saving ? 'Saving...' : 'Save changes' }}
+            </button>
+        </div>
+
+    </ng-container>
+
+</div>

@@ -12,6 +12,7 @@ import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { FeatherModule } from 'angular-feather';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MyTrainerFeatureVideosComponent } from './my-trainer-feature-videos/my-trainer-feature-videos.component';
+import { MyTrainerFeaturedPhotosComponent } from './my-trainer-featured-photos/my-trainer-featured-photos.component';
 import { MyTrainerCentersComponent } from './my-trainer-centers/my-trainer-centers.component';
 import { MyTrainerSubscriptionsComponent } from './my-trainer-subscriptions/my-trainer-subscriptions.component';
 import { MyTrainerClientsComponent } from './my-trainer-clients/my-trainer-clients.component';
@@ -42,6 +43,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     MyTrainerPhotoAlbumComponent,
     MyTrainerVideoAlbumComponent,
     MyTrainerFeatureVideosComponent,
+    MyTrainerFeaturedPhotosComponent,
     MyTrainerCentersComponent,
     MyTrainerSubscriptionsComponent,
     MyTrainerClientsComponent,

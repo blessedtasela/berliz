@@ -34,6 +34,7 @@ export const trainerReducer = createReducer(
     A.loadTrainerFeatureVideos, A.loadMyTrainerFeatureVideos, A.loadActiveTrainerFeatureVideos,
     A.addTrainerFeatureVideo, A.updateTrainerFeatureVideo, A.deleteTrainerFeatureVideo,
     A.setTrainerFeaturedVideo, A.updateTrainerFeatureVideoPosition, A.incrementTrainerFeatureVideoViews,
+    A.loadMyFeaturedPhotos, A.loadFeaturedPhotos,
     A.loadTrainerClients, A.loadTrainerActiveClients, A.loadTrainerCenterTrainers,
     A.loadTrainerSubscriptions, A.loadActiveTrainerSubscriptions, A.loadMyTrainerSubscription,
     A.addTrainerSubscription, A.updateTrainerSubscription,
@@ -64,6 +65,7 @@ export const trainerReducer = createReducer(
     A.loadTrainerFeatureVideosFailure, A.loadMyTrainerFeatureVideosFailure, A.loadActiveTrainerFeatureVideosFailure,
     A.addTrainerFeatureVideoFailure, A.updateTrainerFeatureVideoFailure, A.deleteTrainerFeatureVideoFailure,
     A.setTrainerFeaturedVideoFailure, A.updateTrainerFeatureVideoPositionFailure, A.incrementTrainerFeatureVideoViewsFailure,
+    A.loadMyFeaturedPhotosFailure, A.loadFeaturedPhotosFailure,
     A.loadTrainerClientsFailure, A.loadTrainerActiveClientsFailure, A.loadTrainerCenterTrainersFailure,
     A.loadTrainerSubscriptionsFailure, A.loadActiveTrainerSubscriptionsFailure, A.loadMyTrainerSubscriptionFailure,
     A.addTrainerSubscriptionFailure, A.updateTrainerSubscriptionFailure,
@@ -261,6 +263,12 @@ export const trainerReducer = createReducer(
   })),
   on(A.loadActiveTrainerFeatureVideosSuccess, (s, { response }) => ({
     ...s, loading: false, activeTrainerFeatureVideos: response.data ?? []
+  })),
+  on(A.loadMyFeaturedPhotosSuccess, (s, { response }) => ({
+    ...s, loading: false, myFeaturedPhotos: response.data ?? []
+  })),
+  on(A.loadFeaturedPhotosSuccess, (s, { response }) => ({
+    ...s, loading: false, featuredPhotos: response.data ?? []
   })),
   on(A.addTrainerFeatureVideoSuccess, (s, { response }) => ({
     ...s, loading: false,

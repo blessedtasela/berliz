@@ -67,6 +67,9 @@
             <app-trainer-feature-video [trainerVideos]="trainerFeatureVideos">
             </app-trainer-feature-video>
 
+            <app-trainer-featured-photo-strip [photos]="trainerFeaturedPhotos" (viewAllPhotos)="scrollToPhotoAlbum()">
+            </app-trainer-featured-photo-strip>
+
             <!-- ── PLANS & PRICING ───────────────────────────────────────── -->
             <div id="plans" class="scroll-mt-24 flex flex-col gap-6">
                 <app-provider-packages theme="dark" eyebrow="Choose how you train" [highlightFirst]="true"
@@ -137,8 +140,10 @@
                 [freeCancelHours]="trainer?.freeCancelHours" [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent">
             </app-provider-terms>
 
-            <app-trainer-album [trainerPhotoAlbum]="trainerPhotoAlbum">
-            </app-trainer-album>
+            <div id="photo-album" class="scroll-mt-24">
+                <app-trainer-album [trainerPhotoAlbum]="trainerPhotoAlbum">
+                </app-trainer-album>
+            </div>
 
             <app-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
             </app-trainer-video-album>

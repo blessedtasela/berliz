@@ -6,6 +6,7 @@ import { scrollToFragment } from 'src/app/utils/scroll-to-fragment.util';
 import {
   TrainerBenefits,
   TrainerFeatureVideo,
+  TrainerFeaturedPhoto,
   TrainerIntroduction,
   TrainerPhotoAlbum,
   TrainerPricing,
@@ -17,8 +18,8 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { MyTrainerSubModalComponent } from '../my-trainer-sub-modal/my-trainer-sub-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectCurrentTrainer, selectMyTrainerBenefit, selectMyTrainerFeatureVideos, selectMyTrainerIntroduction, selectMyTrainerPhotoAlbum, selectMyTrainerPricing, selectMyTrainerSubscription, selectMyTrainerVideoAlbum } from 'src/app/state/trainer/trainer.selector';
-import { loadMyTrainer, loadMyTrainerPricing, loadMyTrainerIntroduction, loadMyTrainerBenefits, loadMyTrainerFeatureVideos, loadMyTrainerPhotoAlbum, loadMyTrainerVideoAlbum, loadMyTrainerSubscription } from 'src/app/state/trainer/trainer.actions';
+import { selectCurrentTrainer, selectMyTrainerBenefit, selectMyTrainerFeatureVideos, selectMyFeaturedPhotos, selectMyTrainerIntroduction, selectMyTrainerPhotoAlbum, selectMyTrainerPricing, selectMyTrainerSubscription, selectMyTrainerVideoAlbum } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainer, loadMyTrainerPricing, loadMyTrainerIntroduction, loadMyTrainerBenefits, loadMyTrainerFeatureVideos, loadMyFeaturedPhotos, loadMyTrainerPhotoAlbum, loadMyTrainerVideoAlbum, loadMyTrainerSubscription } from 'src/app/state/trainer/trainer.actions';
 
 // Which sections are completed — used to build the checklist
 export interface ProfileCompletion {
@@ -42,6 +43,7 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   trainerPricing!: TrainerPricing | null;
   trainerBenefit!: TrainerBenefits | null;
   trainerFeatureVideo: TrainerFeatureVideo[] = [];
+  myFeaturedPhotos: TrainerFeaturedPhoto[] = [];
   trainerPhotoAlbum!: TrainerPhotoAlbum | null;
   trainerVideoAlbum!: TrainerVideoAlbum | null;
   trainerSubscription!: TrainerSubscription | null;
@@ -124,6 +126,11 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
         this.trainerFeatureVideo = res;
         this.markRequestCompleted('featureVideos');
       }),
+      // Supplementary, not part of the completion gate (PF-40, like the feature
+      // videos/photo album sections it sits beside) -- never blocks initial render.
+      this.store.select(selectMyFeaturedPhotos).subscribe(res => {
+        this.myFeaturedPhotos = res;
+      }),
       this.store.select(selectMyTrainerPhotoAlbum).subscribe(res => {
         this.trainerPhotoAlbum = res;
         this.markRequestCompleted('photoAlbum');
@@ -178,6 +185,7 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadMyTrainerPricing());
     this.store.dispatch(loadMyTrainerBenefits());
     this.store.dispatch(loadMyTrainerFeatureVideos());
+    this.store.dispatch(loadMyFeaturedPhotos());
     this.store.dispatch(loadMyTrainerPhotoAlbum());
     this.store.dispatch(loadMyTrainerVideoAlbum());
     this.store.dispatch(loadMyTrainerSubscription());

@@ -7,6 +7,7 @@ import {
   TrainerBenefits,
   TrainerClients,
   TrainerFeatureVideo,
+  TrainerFeaturedPhoto,
   TrainerIntroduction,
   TrainerPhotoAlbum,
   TrainerPricing,
@@ -229,6 +230,20 @@ export class TrainerService {
   incrementFeatureVideoViews(id: number) {
     return this.httpClient.put<ApiResponse<TrainerFeatureVideo>>(
       `${this.url}/trainer/incrementFeatureVideoViews/${id}`, null);
+  }
+
+  /** PF-40: replaces the whole featured-photos set (0-4, from the trainer's own album) in the given order. */
+  updateMyFeaturedPhotos(photoIds: number[]) {
+    return this.httpClient.put<ApiResponse<TrainerFeaturedPhoto[]>>(
+      `${this.url}/trainer/updateMyFeaturedPhotos`, { photoIds });
+  }
+
+  getMyFeaturedPhotos() {
+    return this.httpClient.get<ApiResponse<TrainerFeaturedPhoto[]>>(`${this.url}/trainer/getMyFeaturedPhotos`);
+  }
+
+  getFeaturedPhotos(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerFeaturedPhoto[]>>(`${this.url}/trainer/getFeaturedPhotos/${trainerId}`);
   }
 
   // ─────────────────────────────
