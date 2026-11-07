@@ -21,6 +21,7 @@ import { TrainerDetailHeroComponent } from './trainer-detail-hero/trainer-detail
 import { TrainerCategoryComponent } from './trainer-category/trainer-category.component';
 import { TrainerBenefitsComponent } from './trainer-benefits/trainer-benefits.component';
 import { TrainerFeatureVideoComponent } from './trainer-feature-video/trainer-feature-video.component';
+import { TrainerFeaturedPhotoStripComponent } from './trainer-featured-photo-strip/trainer-featured-photo-strip.component';
 import { TrainerClientReviewComponent } from './trainer-client-review/trainer-client-review.component';
 import { IconsModule } from '../icons/icons.module';
 import { SharedModule } from '../shared/shared.module';
@@ -59,6 +60,7 @@ import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booki
     TrainerCategoryComponent,
     TrainerBenefitsComponent,
     TrainerFeatureVideoComponent,
+    TrainerFeaturedPhotoStripComponent,
     TrainerClientReviewComponent,
     TrainerAlbumComponent,
     ChatWithTrainerComponent,

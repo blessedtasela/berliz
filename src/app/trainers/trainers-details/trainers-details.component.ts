@@ -9,6 +9,7 @@ import { catchError, take } from 'rxjs/operators';
 import {
   TrainerBenefits,
   TrainerFeatureVideo,
+  TrainerFeaturedPhoto,
   TrainerIntroduction,
   TrainerPhotoAlbum,
   TrainerPricing,
@@ -28,11 +29,13 @@ import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial
 import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
   loadActiveTrainerFeatureVideos,
-  loadActiveTrainerReviews
+  loadActiveTrainerReviews,
+  loadFeaturedPhotos
 } from 'src/app/state/trainer/trainer.actions';
 import {
   selectActiveTrainerFeatureVideos,
-  selectActiveTrainerReviews
+  selectActiveTrainerReviews,
+  selectFeaturedPhotos
 } from 'src/app/state/trainer/trainer.selector';
 
 /**
@@ -68,6 +71,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
   trainerPhotoAlbum: TrainerPhotoAlbum | null = null;
   trainerVideoAlbum: TrainerVideoAlbum | null = null;
   trainerFeatureVideos: TrainerFeatureVideo[] = [];
+  trainerFeaturedPhotos: TrainerFeaturedPhoto[] = [];
   trainerReviews: TrainerReview[] = [];
   trainerTestimonials: Testimonials[] = [];
 
@@ -232,6 +236,10 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  scrollToPhotoAlbum(): void {
+    document.getElementById('photo-album')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   /** Back to the trainers directory from the not-found state. */
   backToTrainers(): void {
     this.router.navigate([this.directoryRoute]);
@@ -271,6 +279,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
     // Already trainer-scoped on the backend.
     this.store.dispatch(loadActiveTrainerFeatureVideos({ trainerId: id }));
+    this.store.dispatch(loadFeaturedPhotos({ trainerId: id }));
     this.store.dispatch(loadActiveTrainerReviews({ id }));
     this.store.dispatch(loadTestimonialsByTrainer({ trainerId: id }));
 
@@ -278,6 +287,12 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
       this.store.select(selectActiveTrainerFeatureVideos).subscribe(list => {
         this.trainerFeatureVideos = (list ?? [])
           .filter(v => v.trainerId === id)
+          .slice()
+          .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+      }),
+
+      this.store.select(selectFeaturedPhotos).subscribe(list => {
+        this.trainerFeaturedPhotos = (list ?? [])
           .slice()
           .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
       }),
