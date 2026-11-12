@@ -16,6 +16,7 @@ import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BlockService } from 'src/app/services/block.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { updateMessagePopupEnabled, updateEmailNotificationPreferences } from 'src/app/state/user-profile/user-profile.actions';
+import { Users } from 'src/app/models/users.interface';
 
 describe('UserProfileSettingsComponent', () => {
   let component: UserProfileSettingsComponent;
@@ -66,6 +67,52 @@ describe('UserProfileSettingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  /**
+   * PF-52: phone, postal code, country, state, city, address and bio are exactly the fields
+   * the reduced-friction sign-up already defers to "complete your profile" -- but this form's
+   * own validators required all of them anyway. A quick-signup account with none of them set
+   * had a permanently invalid form, so Save never enabled no matter what was actually typed
+   * into firstname/lastname/dob/bio, and nothing could ever be saved.
+   */
+  describe('a quick-signup account with no phone/location/address/bio set (PF-52)', () => {
+    const bareUser: Partial<Users> = {
+      id: 1,
+      firstname: 'Rish',
+      lastname: 'Client',
+      dob: '1995-05-05',
+      gender: 'Male',
+      email: 'rish@example.com',
+      phone: null as any,
+      postalCode: null as any,
+      country: null as any,
+      state: null as any,
+      city: null as any,
+      address: null as any,
+      bio: null as any,
+    };
+
+    it('builds a valid form even though phone/location/address/bio are unset', () => {
+      component.user = bareUser as Users;
+      (component as any).initOrPatchForm();
+
+      expect(component.updateUserForm.valid).toBeTrue();
+    });
+
+    it('lets a name/DOB/bio edit actually save', () => {
+      component.user = bareUser as Users;
+      (component as any).initOrPatchForm();
+
+      const userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+      userService.updateUser.and.returnValue(of({ message: 'Profile details saved', data: '', success: true, statusCode: 200 }));
+
+      component.updateUserForm.patchValue({ firstname: 'Rishabh', bio: 'Training for a marathon.' });
+      component.updateUserForm.markAsDirty();
+      component.onSubmitForm();
+
+      expect(userService.updateUser).toHaveBeenCalled();
+    });
   });
 
   it('shows achievements by default and sends the flipped value when the switch is used', () => {
