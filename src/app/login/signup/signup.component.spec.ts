@@ -158,6 +158,40 @@ describe('SignupComponent', () => {
       expect(userServiceMock.signup).toHaveBeenCalled();
       expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
     });
+
+    /**
+     * SG-09: the test above only checked that signup() was called, not what was actually sent --
+     * `data.append('profilePhoto', this.selectedImage!)` with no photo picked appended the
+     * stringified `null`, which Spring's multipart binder can't convert to a MultipartFile (only a
+     * genuinely empty value is treated as "no file"), and every such sign-up failed with a raw
+     * 500. The field must be omitted entirely, not sent as a string placeholder.
+     */
+    it('omits profilePhoto from the request entirely when none was picked', () => {
+      userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
+      component.selectedImage = null;
+      component.signupForm.setValue({
+        ...validSignupFormValue,
+        profilePhoto: '',
+        location: { country: null, state: null, city: null, countryCode: null, postalCode: '', address: '', phone: '' },
+      });
+
+      component.submitForm();
+
+      const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
+      expect(sentFormData.has('profilePhoto')).toBeFalse();
+    });
+
+    it('sends profilePhoto as the real File when one was picked', () => {
+      userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
+      const photo = new File([], 'photo.jpg', { type: 'image/jpeg' });
+      component.selectedImage = photo;
+      component.signupForm.setValue(validSignupFormValue);
+
+      component.submitForm();
+
+      const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
+      expect(sentFormData.get('profilePhoto')).toBe(photo);
+    });
   });
 
   describe('Terms and Privacy agreement (SG-06)', () => {

@@ -199,7 +199,11 @@ export class SignupComponent {
       if (key === 'agreeToTerms') return;
       const value = this.f(key).value;
       if (key === 'profilePhoto') {
-        data.append(key, this.selectedImage!);
+        // SG-09: this field is optional -- appending it with `this.selectedImage` when no photo was
+        // picked sent FormData the stringified "null", which Spring's multipart binder can't convert
+        // to a MultipartFile (only a genuinely empty string is treated as "no file"). Omitting the key
+        // entirely when nothing was picked is how an absent optional multipart field is meant to look.
+        if (this.selectedImage) data.append(key, this.selectedImage);
       } else if (key === 'location') {
         Object.entries(value).forEach(([k, v]) => data.append(k, v as string));
       } else {
