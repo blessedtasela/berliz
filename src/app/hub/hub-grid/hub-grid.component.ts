@@ -38,7 +38,7 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'exercise-suggestions', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings'];
+    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts'];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
@@ -174,6 +174,11 @@ export class HubGridComponent implements OnChanges {
     'my-notifications': '/dashboard/my-notifications',
     // Trainer/center self-service package builder -- no /dashboard/hub/my-packages route exists.
     'my-packages': '/dashboard/my-packages',
+    // PF-50: Admin Billing (Overview/Payouts/Connect accounts/Payments/Subscriptions) is its own
+    // module at /dashboard/billing, not an admin CRUD table at /dashboard/hub/payouts -- there was
+    // no card at all pointing at it before this, which is why the Recalculate control it already
+    // has was unreachable from the UI.
+    'payouts': '/dashboard/billing',
   };
 
   resolveRoute(key: string): string {
