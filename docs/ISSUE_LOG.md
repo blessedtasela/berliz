@@ -235,3 +235,26 @@ Both now redeploy clean. Every migration since (V99-V101) was checked against `V
 6. **CM-03 live repro**: is Johnson Kalu's connection genuinely status `accepted` in the DB, or could it still be `pending`/something else that just displays as connected in the UI? The backend check looks correct on every path I can find.
 7. **GN-28 mobile deploy**: the JWT-refresh fix is code-complete and tested but needs an EAS Update/build to reach your device -- want me to look into triggering that, or is that something you handle?
 8. **Subscription naming audit**: agreed this needs fixing (Subscription/Pack/Trial/Group Session should never share one label) -- queued for Lane 3, since it's a real but not security/money-critical bug.
+
+## Escalated ahead of the lane queue: BK-34 extension 4 (Nov 12 delivery package)
+
+Owner instruction, Nov 10: build the personalized-request feature ahead of the logged-bug lane
+order because two live paying cases are waiting on it (a $300 three-month plan offer and a
+$200-for-3-sessions in-person proposal). Scoped to "Extension 4 first" (the negotiation loop) per
+the owner's own answer when asked to confirm scope.
+
+| ID | Item | Status |
+|---|---|---|
+| BK-34 ext. 4 | Personalized request: client proposes a custom plan + price, trainer accepts/counters/declines, client can accept a counter or walk away | **Backend negotiation loop done, unverified live.** New `PersonalizedRequest` entity + `/personalizedRequest/*` REST surface: `submit`, trainer `accept`/`counter`/`decline`, client `acceptCounter`/`walkAway`, `markDelivered`, `mine`/`forMe` lists. Reaches ACCEPTED (agreed, awaiting payment) -- that's as far as this pass goes. Reconciled a spec-spine inconsistency: 07b names the lifecycle Proposed/Countered/Accepted/Declined/Expired, 07e names it Submitted/Priced/Declined/Paid/Delivered -- synthesized into one status set (REQUESTED/COUNTERED/ACCEPTED/DECLINED/PAID/DELIVERED), documented on the entity rather than silently picking one. BK-40 folded in: `submitRequest` refuses a request from a profile with no real name or no photo. **Not done yet:** the Stripe checkout leg (client pays the agreed amount, platform takes 15% flat, a `Payout` row is created feeding the PY-22 weekly sweep below) and any frontend (request form, trainer accept/counter/decline UI, payment trigger) -- both are the immediate next step, tracked here until they ship. 13 new backend unit tests, full existing suite green. `com.berliz` commit `b47fce2`. |
+
+**Known GAPs, not guessed at:** whether a personalized-request's 15% commission counts toward the proposed-but-never-confirmed weekly tier schedule (12%/10% at volume) -- left at flat 15% per the spec, tier interaction stays an open question for the owner. Delivery/scheduling mechanics after payment (how "3 sessions" actually get booked) are also underspecified in the spec spine -- deliberately out of scope for this pass rather than invented.
+
+## PY-22 (automated weekly payouts), started Nov 12
+
+Was on the "still open" list above (round-2 section). Built the scheduler half; the admin
+payments-console-reconciling-to-Stripe half was not part of this pass (no spec for what that
+console should show beyond what the existing Admin Billing Payouts tab already surfaces).
+
+| ID | Item | Status |
+|---|---|---|
+| PY-22 | Automated weekly payouts (Sunday 00:00 Pacific) | **Done, the scheduler half.** `WeeklyPayoutScheduler` (`@Scheduled(cron = "0 0 0 * * SUN", zone = "America/Vancouver")` -- explicit zone since BC is now permanently UTC-7 and the server clock is UTC) sweeps every PENDING payout; a provider whose Stripe Connect onboarding isn't finished is skipped and retried next week rather than marked FAILED, and one provider's failed transfer doesn't stop the rest of the sweep (per-payout try/catch). Shares the real transfer logic with the existing admin-triggered single payout via a new `attemptTransfer` helper, so there's one code path for "what actually moves money," not two. 3 new unit tests, full suite green. **Not done:** an admin console reconciling payouts to Stripe beyond what Admin Billing's Payouts tab (PY-18) already shows -- no spec for what more it should add. Unverified against a real Stripe transfer. |
