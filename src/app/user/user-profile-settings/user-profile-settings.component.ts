@@ -662,19 +662,25 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   // -------------------------
   private initOrPatchForm() {
     if (!this.updateUserForm) {
+      // PF-52: phone/location/address/bio are the same fields the reduced-friction sign-up
+      // already made optional (deferred to the onboarding checklist's "complete your profile"
+      // step) -- but this form still required all of them. A quick-signup account with none of
+      // them filled in had a permanently invalid form no matter what it actually changed, so
+      // Save stayed disabled and nothing it typed into firstname/lastname/dob/bio could ever
+      // save. Only the fields the signup flow itself treats as mandatory stay required here.
       this.updateUserForm = this.formBuilder.group({
         id: [this.user.id],
         firstname: [this.user.firstname, [Validators.required, Validators.minLength(2)]],
         lastname: [this.user.lastname, [Validators.required, Validators.minLength(2)]],
-        phone: [this.user.phone, [Validators.required, Validators.minLength(9)]],
-        postalCode: [this.user.postalCode, [Validators.required, Validators.minLength(5)]],
+        phone: [this.user.phone, [Validators.minLength(9)]],
+        postalCode: [this.user.postalCode, [Validators.minLength(5)]],
         dob: [this.user.dob, Validators.required],
         gender: [this.user.gender, Validators.required],
-        country: [this.user.country, Validators.required],
-        state: [this.user.state, Validators.required],
-        city: [this.user.city, Validators.required],
-        address: [this.user.address, [Validators.required, Validators.minLength(8)]],
-        bio: [this.user.bio, [Validators.required, Validators.minLength(10)]],
+        country: [this.user.country],
+        state: [this.user.state],
+        city: [this.user.city],
+        address: [this.user.address, [Validators.minLength(8)]],
+        bio: [this.user.bio, [Validators.minLength(10)]],
         email: [
           this.user.email,
           [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]
