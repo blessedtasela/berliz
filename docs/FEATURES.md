@@ -114,7 +114,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Searchable dropdowns in forms (`app-select`) | ✅ | One shared searchable select (type to filter, keyboard friendly, roomy touch target, dark mode) replaces the bare `<select>` on long lists; the open list attaches to `<body>` so a modal can't clip it, and a saved value missing from the list still shows. Used by the location pickers (signup, profile, trainer "Available in", the booking picker's own-place), assigning a task (client, exercise), logging a workout (exercise) and the admin pickers that list every user / client / trainer / center / task / exercise (members, payments, tasks, sub-tasks, testimonials, equipment). Short fixed lists (status, duration, sort) stay native `<select>`s; `add-center-pricings-modal` still uses one because it reads the change event. Prefer `app-select` for any new long list |
 | Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 | Shop — buy and sell new/used gear | ✅ | `/shop`. Any user can apply to sell (lightweight: one motivation statement, reusing the existing Partner application + admin-approval gate — `role: 'store'`); approval is the verification, a store goes live immediately once approved. Sellers list items as New or Used with a price, quantity, optional brand and photo. Buyers browse/filter by condition, add to a client-side cart (multiple sellers in one cart — each is paid out separately), and check out through a real `Order` + Stripe Checkout, same pattern as booking payments. Buying and selling both require sign-in |
-| Personalized requests (BK-34 ext. 4) — client proposes a custom plan + price, trainer accepts/counters/declines | 🚧 | Backend only so far: `POST /personalizedRequest/submit`, trainer `/{id}/accept`\|`/counter`\|`/decline`, client `/{id}/acceptCounter`\|`/walkAway`. Reaches ACCEPTED (agreed, awaiting payment); the Stripe checkout leg (payment + 15% commission payout) and the client/trainer UI are still to come. Requires a complete profile (name + photo) to submit, per BK-40. Full status in `docs/ISSUE_LOG.md` |
+| Personalized requests (BK-34 ext. 4) — client proposes a custom plan + price, trainer accepts/counters/declines, client pays in-app | 🚧 | Backend only so far: negotiation loop (`POST /personalizedRequest/submit`, trainer `/{id}/accept`\|`/counter`\|`/decline`, client `/{id}/acceptCounter`\|`/walkAway`) plus the Stripe checkout leg (`POST /stripe/personalized-request-checkout/{id}`) that pays the agreed amount and creates a 15%-commission Payout. No frontend yet (request form, trainer accept/counter/decline UI, pay button) -- that's what's left. Requires a complete profile (name + photo) to submit, per BK-40. Full status in `docs/ISSUE_LOG.md` |
 
 ## 6. Payments & subscriptions
 
@@ -222,6 +222,20 @@ instead).
 ## Changelog
 
 Newest first.
+
+### 2026-11-12 — Personalized requests: Stripe checkout + payout
+
+- **Personalized requests (BK-34 ext. 4), the payment leg.** Adds the
+  Stripe checkout session that pays a request's agreed amount
+  (`POST /stripe/personalized-request-checkout/{id}`, mirroring
+  `createGroupPackCheckoutSession`'s dynamic-amount pattern) and the
+  webhook handler that marks the request PAID and creates its Payout row
+  at a flat 15% commission, feeding the PY-22 weekly automatic sweep.
+  Still no frontend (request form, trainer accept/counter/decline UI, pay
+  button) -- that's the last piece before this feature is usable end to
+  end. See the row above in
+  [Discovery & marketplace](#5-discovery--marketplace) (still marked 🚧).
+  Full status in `docs/ISSUE_LOG.md`. `com.berliz` commit `89f9ed0`.
 
 ### 2026-11-12 — Personalized requests (backend, negotiation loop)
 
