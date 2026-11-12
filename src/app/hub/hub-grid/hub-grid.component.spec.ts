@@ -18,4 +18,14 @@ describe('HubGridComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('PF-50: routes the payouts count to Admin Billing, not a nonexistent hub CRUD table', () => {
+    component.items = { payouts: 7 };
+    component.ngOnChanges({ items: {} as any });
+    const content = component.groups.find(g => g.id === 'content');
+    const payoutsItem = content?.items.find(i => i.key === 'payouts');
+    expect(payoutsItem).toBeTruthy();
+    expect(payoutsItem?.link).toBe('/dashboard/billing');
+    expect(payoutsItem?.value).toBe(7);
+  });
 });
