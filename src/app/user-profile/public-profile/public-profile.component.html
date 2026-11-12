@@ -104,9 +104,16 @@
                 </div>
 
                 <!-- D10 — book this trainer / center -->
-                <app-book-provider-button *ngIf="viewedTrainerId || viewedCenterId"
-                    [role]="profile.role" [trainerId]="viewedTrainerId" [centerId]="viewedCenterId"
-                    [providerName]="viewedProviderName || 'this provider'" size="md"></app-book-provider-button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <app-book-provider-button *ngIf="viewedTrainerId || viewedCenterId"
+                        [role]="profile.role" [trainerId]="viewedTrainerId" [centerId]="viewedCenterId"
+                        [providerName]="viewedProviderName || 'this provider'" size="md"></app-book-provider-button>
+
+                    <!-- BK-34 ext. 4 — ask this trainer for a custom-priced plan instead -->
+                    <app-request-personalized-plan-button *ngIf="viewedTrainerId"
+                        [role]="profile.role" [trainerId]="viewedTrainerId"
+                        [trainerName]="viewedProviderName || 'this trainer'"></app-request-personalized-plan-button>
+                </div>
             </div>
         </div>
     </section>

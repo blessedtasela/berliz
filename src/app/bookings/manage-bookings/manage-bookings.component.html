@@ -33,6 +33,9 @@
     <!-- A trainer's own group sessions and group packs (confirm, mark done, cancel). Empty for centers and trainers with no groups. -->
     <app-provider-groups *ngIf="isProvider && view === 'requests'"></app-provider-groups>
 
+    <!-- BK-34 ext. 4 — incoming personalized plan requests (accept / counter / decline). Empty for centers. -->
+    <app-personalized-requests-for-me *ngIf="isProvider && view === 'requests'"></app-personalized-requests-for-me>
+
     <app-my-bookings-main *ngIf="view === 'mine'" [embedded]="true"></app-my-bookings-main>
     <app-provider-bookings-main *ngIf="isProvider && view === 'requests'" [embedded]="true"></app-provider-bookings-main>
 
