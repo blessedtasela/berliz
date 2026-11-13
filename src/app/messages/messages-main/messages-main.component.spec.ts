@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Actions } from '@ngrx/effects';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject, of } from 'rxjs';
@@ -35,8 +36,11 @@ describe('MessagesMainComponent', () => {
   let fixture: ComponentFixture<MessagesMainComponent>;
   let store: MockStore;
   let matDialogSpy: jasmine.SpyObj<MatDialog>;
+  let snackbarSpy: jasmine.SpyObj<SnackBarService>;
   let bookingContacts: MessageContact[];
   let role: string;
+  let queryUserId: string | undefined;
+  let actions$: Subject<any>;
 
   const conversations: ConversationSummary[] = [
     { otherUserId: 5, otherUserName: 'Coach Sam', otherUserRole: 'trainer', lastMessage: 'Hey!', lastMessageDate: new Date(), unreadCount: 1 }
@@ -58,7 +62,9 @@ describe('MessagesMainComponent', () => {
   beforeEach(() => {
     bookingContacts = [];
     role = 'user';
-    const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    queryUserId = undefined;
+    actions$ = new Subject<any>();
+    snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
@@ -79,8 +85,12 @@ describe('MessagesMainComponent', () => {
             { selector: selectMessageError, value: null },
           ]
         }),
+        { provide: Actions, useValue: actions$ },
         { provide: SnackBarService, useValue: snackbarSpy },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { get queryParamMap() { return convertToParamMap(queryUserId ? { userId: queryUserId } : {}); } } }
+        },
         { provide: MatDialog, useValue: matDialogSpy },
         { provide: MessageService, useValue: { getContacts: () => of({ data: bookingContacts }) } },
         { provide: AuthService, useValue: { getCurrentUserRole: () => role } },
@@ -257,6 +267,56 @@ describe('MessagesMainComponent', () => {
 
     expect(component.isMine(messages[0])).toBeFalse(); // sent BY the active partner (5) -> not mine
     expect(component.isMine({ ...messages[0], senderId: 1 })).toBeTrue();
+  });
+
+  describe('deep link (?userId=) failures are not unprompted toasts (GN-61)', () => {
+    it('shows a dismissible inline notice instead of the error toast when the deep-linked conversation fails to load, and falls back to the list', () => {
+      queryUserId = '9';
+      fixture.detectChanges();
+      (store.dispatch as jasmine.Spy).calls.reset();
+
+      store.overrideSelector(selectMessageError, 'Failed to load conversation');
+      store.refreshState();
+
+      expect(component.linkNotice).toBe("That conversation couldn't be opened.");
+      expect(snackbarSpy.openSnackBar).not.toHaveBeenCalled();
+      expect(store.dispatch).toHaveBeenCalledWith(MessageActions.clearActiveConversation());
+    });
+
+    it('dismissLinkNotice clears it', () => {
+      queryUserId = '9';
+      fixture.detectChanges();
+      store.overrideSelector(selectMessageError, 'Failed to load conversation');
+      store.refreshState();
+      expect(component.linkNotice).not.toBeNull();
+
+      component.dismissLinkNotice();
+
+      expect(component.linkNotice).toBeNull();
+    });
+
+    it('does not suppress a later, genuinely user-prompted failure once the deep-linked conversation loads successfully', () => {
+      queryUserId = '9';
+      fixture.detectChanges();
+
+      actions$.next(MessageActions.loadConversationSuccess({ response: { data: [] } as any, otherUserId: 9 }));
+
+      store.overrideSelector(selectMessageError, 'Failed to send message');
+      store.refreshState();
+
+      expect(component.linkNotice).toBeNull();
+      expect(snackbarSpy.openSnackBar).toHaveBeenCalledWith('Failed to send message', 'error');
+    });
+
+    it('shows the normal error toast for a failure with no deep link involved', () => {
+      fixture.detectChanges();
+
+      store.overrideSelector(selectMessageError, 'Failed to load conversations');
+      store.refreshState();
+
+      expect(component.linkNotice).toBeNull();
+      expect(snackbarSpy.openSnackBar).toHaveBeenCalledWith('Failed to load conversations', 'error');
+    });
   });
 
   it('dispatches clearActiveConversation on destroy', () => {

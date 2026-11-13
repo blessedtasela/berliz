@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, take, takeUntil } from 'rxjs';
 
@@ -93,11 +94,17 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   replyTo: Message | null = null;
   editingMessage: Message | null = null;
 
+  /** Shown when a `?userId=` deep link couldn't be opened -- e.g. a stale/bookmarked link, or the other party is no longer reachable. */
+  linkNotice: string | null = null;
+  /** True only while the deep-link's own loadConversation is in flight -- a failure here is shown as linkNotice instead of the generic error toast (GN-61: nothing the user did on THIS page caused it, so a toast reads as an unprompted error). */
+  private suppressNextErrorToast = false;
+
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private snackBar: SnackBarService,
     public lightbox: PhotoLightboxService,
     private route: ActivatedRoute,
@@ -123,17 +130,46 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
       this.store.select(selectIsActivePartyTyping).pipe(takeUntil(this.destroy$)).subscribe(t => this.activePartyTyping = t),
       this.store.select(selectMessageError).pipe(takeUntil(this.destroy$)).subscribe(error => {
-        if (error) this.snackBar.openSnackBar(error || genericError, 'error');
+        if (!error) return;
+        if (this.suppressNextErrorToast) {
+          this.suppressNextErrorToast = false;
+          this.linkNotice = "That conversation couldn't be opened.";
+          // loadConversation sets activeConversationUserId optimistically on dispatch, before the
+          // failure comes back -- undo it so the thread pane doesn't show an empty, broken-looking
+          // view for someone the deep link couldn't actually reach; fall back to the list instead.
+          this.store.dispatch(MessageActions.clearActiveConversation());
+          return;
+        }
+        this.snackBar.openSnackBar(error || genericError, 'error');
       }),
     );
 
     // Deep link from a "Message" button elsewhere in the app
     // (?userId=<otherUserId>) -- open that thread straight away rather than
-    // making the user hunt for the person in the list again.
+    // making the user hunt for the person in the list again. Nothing the
+    // user did on THIS page triggers this load, so GN-61: a failure here
+    // must not read as an unprompted "Failed to load conversation" toast --
+    // show it as a dismissible inline notice instead and fall back to the
+    // conversation list, same as a stale notification deep link elsewhere.
     const requestedUserId = Number(this.route.snapshot.queryParamMap.get('userId'));
     if (requestedUserId > 0) {
+      this.suppressNextErrorToast = true;
+      // Narrows the suppression window to just this one load: once it succeeds, a LATER, actually
+      // user-prompted failure must go back to showing the normal toast. A failure is NOT watched
+      // here -- it's consumed by the selectMessageError subscription above instead, so there is
+      // only ever one place deciding what a failure means, never two callbacks racing over the
+      // same flag for the same event.
+      this.actions$.pipe(
+        ofType(MessageActions.loadConversationSuccess),
+        take(1),
+        takeUntil(this.destroy$),
+      ).subscribe(() => this.suppressNextErrorToast = false);
       this.openConversation(requestedUserId);
     }
+  }
+
+  dismissLinkNotice(): void {
+    this.linkNotice = null;
   }
 
   ngOnDestroy(): void {
