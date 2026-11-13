@@ -79,70 +79,70 @@
 
         <div class="flex items-center gap-1.5 mt-2 flex-wrap" (click)="$event.stopPropagation()">
             <button *ngIf="canClientPay" type="button" (click)="pay()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1">
                 <i-feather name="credit-card" style="width:11px;height:11px;"></i-feather>
                 {{ payButtonLabel }}
             </button>
             <button *ngIf="canRebook" type="button" (click)="rebook()" data-testid="book-again"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1">
                 <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
                 Book again
             </button>
             <button *ngIf="canLeaveReview" type="button" (click)="leaveReview()" data-testid="leave-review"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition flex items-center gap-1">
                 <i-feather name="star" style="width:11px;height:11px;"></i-feather>
                 Leave a review
             </button>
             <button *ngIf="canClientCancel" type="button" (click)="cancel()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Cancel
             </button>
 
             <button *ngIf="canProviderConfirm" type="button" (click)="setStatus('confirmed')"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition">
                 Review request
             </button>
             <button *ngIf="canProviderComplete" type="button" (click)="setStatus('completed')"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-green-600 text-white hover:bg-green-700 transition">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-green-600 text-white hover:bg-green-700 transition">
                 Mark completed
             </button>
             <button *ngIf="completionLocked" type="button" disabled
                 [title]="completionUnlockNote"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed">
                 Mark completed &middot; {{ completionUnlockNote }}
             </button>
             <button *ngIf="canProviderNoShow" type="button" (click)="setStatus('no_show')"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather name="user-x" style="width:11px;height:11px;"></i-feather>
                 No-show
             </button>
             <button *ngIf="canProviderCancel" type="button" (click)="setStatus('cancelled')"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Cancel
             </button>
             <button *ngIf="canStartIntake" type="button" (click)="startIntake()" data-testid="intake-fill-or-view"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather [name]="hasIntake ? 'eye' : 'file-text'" style="width:11px;height:11px;"></i-feather>
                 {{ hasIntake ? 'View Intake Form' : 'Fill Together' }}
             </button>
             <button *ngIf="canStartIntake && !hasIntake" type="button" (click)="sendIntake()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather name="send" style="width:11px;height:11px;"></i-feather>
                 Send Intake Form
             </button>
 
             <button *ngIf="canProviderReopen" type="button" (click)="reopen()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition flex items-center gap-1">
                 <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
                 Reopen
             </button>
             <button *ngIf="canFollowUp" type="button" (click)="followUp()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1">
                 <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
                 Message
             </button>
             <button *ngIf="canProviderDelete" type="button" (click)="remove()"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900 transition flex items-center gap-1">
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900 transition flex items-center gap-1">
                 <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
                 Delete
             </button>
