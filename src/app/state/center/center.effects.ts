@@ -410,6 +410,14 @@ export class CenterEffects {
         ))
     ));
 
+    loadMyCenterMembers$ = createEffect(() => this.actions$.pipe(
+        ofType(A.loadMyCenterMembers),
+        mergeMap(() => this.svc.getMyCenterMembers().pipe(
+            map(r => A.loadMyCenterMembersSuccess({ response: r })),
+            catchError(e => of(A.loadMyCenterMembersFailure({ error: e?.error?.message || 'Failed' })))
+        ))
+    ));
+
     addCenterTrainer$ = createEffect(() => this.actions$.pipe(
         ofType(A.addCenterTrainer),
         mergeMap(({ data }) => this.svc.addCenterTrainer(data).pipe(

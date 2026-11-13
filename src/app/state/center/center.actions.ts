@@ -7,6 +7,7 @@ import {
     CenterEquipment,
     CenterIntroduction,
     CenterLocations,
+    CenterMember,
     CenterPhotoAlbum,
     CenterPricing,
     CenterTrainers,
@@ -238,6 +239,10 @@ export const updateCenterTrainerStatusFailure = createAction('[Center] Update Ce
 export const deleteCenterTrainer = createAction('[Center] Delete Center Trainer', props<Id>());
 export const deleteCenterTrainerSuccess = createAction('[Center] Delete Center Trainer Success', props<Id>());
 export const deleteCenterTrainerFailure = createAction('[Center] Delete Center Trainer Failure', props<Err>());
+
+export const loadMyCenterMembers = createAction('[Center] Load My Center Members');
+export const loadMyCenterMembersSuccess = createAction('[Center] Load My Center Members Success', props<Res<CenterMember[]>>());
+export const loadMyCenterMembersFailure = createAction('[Center] Load My Center Members Failure', props<Err>());
 
 // =============================================================================
 // VIDEO ALBUMS

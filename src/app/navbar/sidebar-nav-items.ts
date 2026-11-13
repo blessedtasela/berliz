@@ -125,6 +125,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       { name: 'My Drafts', icon: 'edit-3', route: '/dashboard/my-drafts' },
       { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
       { name: 'My Reviews', icon: 'star', route: '/dashboard/my-trainer-reviews' },
+      { name: 'My Memberships', icon: 'home', route: '/dashboard/my-memberships' },
       { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },
       { name: 'FAQs', icon: 'message-square', route: '/dashboard/my-faqs' },
     ],
