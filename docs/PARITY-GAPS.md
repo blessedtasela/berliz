@@ -23,8 +23,8 @@ Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pus
 |---|---|---|---|
 | Payment codes: request, ask trainer, my codes/requests, check/redeem; trainer forward/decline/cancel; admin approve/reject/revoke/codes; a "unique code" field in the booking form | `/payment-code/*`, `/bypassCode/*`, `paymentCode` on booking create and purchasePackage | booking-bugs session | done (mobile: PaymentCodesScreen, plan-card code box + ask, booking-form field) |
 | Weekly fixed-time subscriptions: mine, view, set schedule, pause, resume, cancel | `/weekly-subscription/*` | booking-bugs session | done (mobile: WeeklySubscriptionsScreen) |
-| Trainer monthly coaching plans (buy a trainer plan) | `POST /subscription/purchaseTrainerPlan` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
-| Referral claim (free-session reward claim / waitlist) | `/referral-claim/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
+| Trainer monthly coaching plans (buy a trainer plan) | `POST /subscription/purchaseTrainerPlan` | Berliz Angular Project Overview | doing |
+| Referral claim (free-session reward claim / waitlist) | `/referral-claim/*` | Berliz Angular Project Overview | done (web -- shipped as its own pass since this row was last touched; mobile still open) |
 | Shop: browse products, product detail, cart + Stripe order checkout, my orders; seller: my store, my products | `/product/*`, `/store/*`, `/order/*`, `POST /payment/stripe/order-checkout/{id}` | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
 | Monthly booking plans: preview, mine, view, respond | `/booking/plan/*` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
 | Promo code preview when buying a plan | `POST /discountCode/preview` | Berliz Angular Project Overview (handed over 2026-11-06) | todo |
