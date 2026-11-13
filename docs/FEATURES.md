@@ -108,7 +108,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Trial session, new-member offer, gym drop-in and travel zones on the booking page | ✅ | A trainer booking offers **Single session** or **Trial session** (one flat price: the trainer's own, else CA$100). A client new to Berliz sees "New members: 50% off your first trial session, CA$100 down to CA$50." and the discount is already in the total they see before sending the request (Berliz funds it, so the trainer is paid in full; it is not stacked on another reward). The estimate card always shows a clear total, the list price crossed out, what was taken off, the travel fee with its zone, and what is saved. A gym's drop-in fee is shown as "Pay at the gym" and is never in the total; nothing is charged until the trainer confirms and the client has 24 hours to pay; the cancellation line gives a concrete refund example. A client can also pick "Another gym": name + optional Google Maps link, whose coordinates set the zone (downtown/West End CA$0, up to 30 km CA$30, beyond CA$50); without a link the trainer settles the zone when accepting. Backend: `POST /booking/add` takes `sessionType`, `customGym`, `customGymMapsUrl`; `GET /booking/newMemberOffer`; `PUT /booking/zone/{id}`. |
 | Group sessions and shared group packs | ✅ | **Group session** (booking page, third option for a trainer): 2 to 5 people train together, booked as one block that only goes ahead once every place is taken. The person starting picks the size, the time and how many places they take (up to the whole group, bringing the others themselves); others join the remaining places from the same page; each person pays for their own places (default CA$75 a place or the trainer's own group price) once the trainer confirms. Short of people 24 hours before the start, it is cancelled and everyone is told. **Group pack** (same page, below the groups): a trainer's group package (e.g. 5 sessions for 5 people, CA$299.99) bought together: each person takes places, nobody is charged until every place is taken, then each has 24 hours to pay their exact share (shares add up to the price to the cent); the pack activates when all are paid and its sessions are shared, one used each time the group trains. A pack member books a time with an active pack from the same page (no extra payment). Unpaid places are released, a pack that does not fill in 14 days is cancelled with refunds, and unused sessions of an expired pack are refunded pro rata. Your packs (pay my share, leave, sessions left) also show at the top of My Bookings, and the "pay your share" notification goes there. Backend: `/group-session/*`, `/group-pack/*` (incl. `POST /group-pack/{id}/checkout`). Mobile: not yet. |
 | Client intake forms | ✅ | |
-| Testimonials & reviews (trainer/center) | ✅ | |
+| Testimonials & reviews (trainer/center) | ✅ | A client sees their own written reviews at `/dashboard/my-trainer-reviews` ("My Reviews" in the sidebar's Me group), mirroring the trainer's existing "Client Reviews" photo-grid view |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
 | Choose where to train: trainer's listed spots (+ optional per-spot fee) and optional client's-own-place (+ fee by where it is) | ✅ | Trainers only; client picks at booking and sees the fee before sending. The trainer lists **cities, each with any number of spots** (a gym, a park, a studio — name optional, exact address or just a general area, optional fee) and sets the client's-own-place fee per city, for anywhere outside their cities, or off entirely. The client's place is entered as country / state / city + address and the server prices it (inside a listed city → that city's fee, else the usual fee; outside → the outside fee; refused where the trainer won't go). Location text + fee are snapshotted on the booking |
 | Searchable dropdowns in forms (`app-select`) | ✅ | One shared searchable select (type to filter, keyboard friendly, roomy touch target, dark mode) replaces the bare `<select>` on long lists; the open list attaches to `<body>` so a modal can't clip it, and a saved value missing from the list still shows. Used by the location pickers (signup, profile, trainer "Available in", the booking picker's own-place), assigning a task (client, exercise), logging a workout (exercise) and the admin pickers that list every user / client / trainer / center / task / exercise (members, payments, tasks, sub-tasks, testimonials, equipment). Short fixed lists (status, duration, sort) stay native `<select>`s; `add-center-pricings-modal` still uses one because it reads the change event. Prefer `app-select` for any new long list |
@@ -222,6 +222,34 @@ instead).
 ## Changelog
 
 Newest first.
+
+### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
+
+- **Client's own trainer reviews.** `GET /client/getMyTrainerReviews` used
+  to hand back raw `TrainerReview` entities (lazy trainer/client/photo
+  relations, no frontend ever called it as a result) -- now mapped
+  through the same `TrainerMapper` the trainer-side "Client Reviews"
+  view already uses. New `MyTrainerReviewsComponent` at
+  `/dashboard/my-trainer-reviews` ("My Reviews" in the sidebar's Me
+  group): star rating, before/after photo grid when set, link to the
+  trainer's profile. `com.berliz` commit `36b25d2`, `berliz` commit
+  `352d288e8`.
+- **GN-60 — false "empty" states while a list is still loading.** 19 admin
+  list pages, plus client intakes/to-dos/testimonials/notifications/
+  connections/subscriptions/workouts, had a `loading` flag sitting
+  unused next to the empty-state check. Admin Bookings had no error
+  handling at all (a failed load left the global spinner stuck
+  forever). Full details in `docs/ISSUE_LOG.md`. `berliz` commit `a9f66964b`.
+- **BK-39 — booking-card action buttons could wrap their own text.**
+  `whitespace-nowrap` added to every action-row button so a long label
+  (the disabled "Mark completed · Unlocks at…" variant, "Accept at
+  $X.XX") moves to the next line as a whole pill instead of wrapping
+  mid-label on a narrow phone screen. `berliz` commit `f22e2eec5`.
+- **GN-61 — unprompted "Failed to load conversation" toast.** Opening
+  Messages via a `?userId=` deep link that fails to load now shows a
+  dismissible inline notice, not the generic error toast that used to
+  fire before the user had clicked anything on the page. `berliz`
+  commit `09a002eb0`.
 
 ### 2026-11-12 — Personalized requests: Stripe checkout + payout
 
