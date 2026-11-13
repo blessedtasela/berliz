@@ -226,6 +226,13 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **Group-pack session bookings now record their real paid share.** `memberBooking()` sets
+  `amountPaid`/`paymentStatus=PAID` from the pack's pinned `groupPackShare` at creation, instead of
+  leaving them unset and relying on a price-field guess every time a payout or the booking's own
+  payment badge needed a number. The booking-details modal now correctly shows "Paid CA$X.XX" for a
+  pack session (it showed nothing before). Owner decision Nov 13: fix this one; the separate
+  post-payout-refund staleness finding from the same audit stays manual reconciliation. `com.berliz`
+  commit `8681a86`.
 - **Upcoming earnings are now clearly labelled as an estimate; Recalculate is audited (PY-25).**
   GN-67/BK-45-class finding: the "Paid, not yet earned" row on a provider's Earnings tab projects
   its commission rate live from this week's completed-session count, which can only grow before the
