@@ -23,8 +23,10 @@ export interface Payout {
   /** What grossAmount was before the first refund adjustment -- only set when refundAdjusted is true. */
   originalGrossAmount?: number | null;
 
-  /** PENDING | PAID | FAILED */
+  /** PENDING | PAID | FAILED | UPCOMING */
   status: string;
+  /** True only for an UPCOMING row -- the commission rate/amounts can still change before the session completes. */
+  estimate?: boolean | null;
   stripeTransferId: string | null;
 
   date: Date;

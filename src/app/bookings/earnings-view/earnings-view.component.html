@@ -66,8 +66,8 @@
                     {{ p.bookingScheduledAt | date:'mediumDate' }} &middot; {{ p.bookingDurationMinutes }}m
                 </p>
                 <div class="flex items-center gap-3 mt-1.5 text-[11px] text-gray-500 dark:text-gray-400">
-                    <span>Commission (15%): {{ p.commissionAmount | currency }}</span>
-                    <span class="font-semibold text-gray-700 dark:text-gray-300">You'll keep: {{ p.payoutAmount | currency }}</span>
+                    <span>Commission ({{ p.commissionRate * 100 | number:'1.0-2' }}%): {{ p.commissionAmount | currency }}</span>
+                    <span class="font-semibold text-gray-700 dark:text-gray-300">You'll keep{{ p.estimate ? ' (est.)' : '' }}: {{ p.payoutAmount | currency }}</span>
                 </div>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{{ p.description }}</p>
             </div>
@@ -105,7 +105,7 @@
                 </p>
 
                 <div class="flex items-center gap-3 mt-1.5 text-[11px] text-gray-500 dark:text-gray-400">
-                    <span>Commission (15%): {{ p.commissionAmount | currency }}</span>
+                    <span>Commission ({{ p.commissionRate * 100 | number:'1.0-2' }}%): {{ p.commissionAmount | currency }}</span>
                     <span class="font-semibold text-gray-700 dark:text-gray-300">You keep: {{ p.payoutAmount | currency }}</span>
                 </div>
 

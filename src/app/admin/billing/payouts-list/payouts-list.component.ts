@@ -109,11 +109,14 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
       message: `Recompute this payout from the booking's actual paid amount? This replaces the gross/commission/payout figures shown below with the real numbers.`,
       confirmation: true,
       disableClose: true,
+      requireReason: true,
+      reasonLabel: 'Reason (kept in the audit log)',
+      reasonPlaceholder: 'e.g. booking was refunded after the original payout was calculated',
     };
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
-    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+    dialogRef.componentInstance.onEmitStatusChange.subscribe((reason: string) => {
       this.recalculatingId = payout.id;
-      this.store.dispatch(recalculatePayout({ bookingId: payout.bookingId as number }));
+      this.store.dispatch(recalculatePayout({ bookingId: payout.bookingId as number, reason }));
       dialogRef.close('recalculating');
     });
   }

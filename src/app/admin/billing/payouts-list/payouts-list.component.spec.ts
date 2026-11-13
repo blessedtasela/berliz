@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { of } from 'rxjs';
 
 import { PayoutsListComponent } from './payouts-list.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Payout } from 'src/app/models/payout.model';
+import { recalculatePayout } from 'src/app/state/payout/payout.actions';
 
 describe('PayoutsListComponent', () => {
   let component: PayoutsListComponent;
   let fixture: ComponentFixture<PayoutsListComponent>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
+  let store: MockStore;
 
   const pendingPayout: Payout = {
     id: 1, bookingId: null, bookingScheduledAt: null, bookingDurationMinutes: null, paymentId: null,
@@ -37,6 +39,7 @@ describe('PayoutsListComponent', () => {
 
     fixture = TestBed.createComponent(PayoutsListComponent);
     component = fixture.componentInstance;
+    store = TestBed.inject(MockStore);
   });
 
   it('should create', () => {
@@ -99,6 +102,18 @@ describe('PayoutsListComponent', () => {
       component.recalculatingId = 99;
       component.recalculate(withBooking);
       expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+
+    it('requires a reason, and dispatches it with the recalculate action', () => {
+      fixture.detectChanges();
+      const dispatchSpy = spyOn(store, 'dispatch');
+      dialogSpy.open.and.returnValue({ componentInstance: { onEmitStatusChange: of('The booking was refunded after the original calculation') }, close: () => {} } as any);
+
+      component.recalculate(withBooking);
+
+      const config: any = dialogSpy.open.calls.mostRecent().args[1];
+      expect(config.data.requireReason).toBe(true);
+      expect(dispatchSpy).toHaveBeenCalledWith(recalculatePayout({ bookingId: 17, reason: 'The booking was refunded after the original calculation' }));
     });
   });
 });

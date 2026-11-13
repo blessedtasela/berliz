@@ -12,6 +12,7 @@ import { PromptData } from 'src/app/models/Prompt.interface';
 export class PromptModalComponent implements OnInit {
   onEmitStatusChange = new EventEmitter();
   details!: PromptData;
+  reason = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: PromptData,
     public dialogRef: MatDialogRef<PromptModalComponent>) { }
@@ -41,9 +42,16 @@ export class PromptModalComponent implements OnInit {
     return null;
   }
 
+  /** True once a required reason has actually been typed -- the confirm button stays disabled until then. */
+  get canConfirm(): boolean {
+    return !this.details?.requireReason || this.reason.trim().length > 0;
+  }
+
   handleChangeAction() {
-    this.onEmitStatusChange.emit(true);
-    this.dialogRef.close(true);
+    if (!this.canConfirm) return;
+    const result = this.details?.requireReason ? this.reason.trim() : true;
+    this.onEmitStatusChange.emit(result);
+    this.dialogRef.close(result);
   }
 
   closeDialog() {

@@ -58,4 +58,47 @@ describe('PromptModalComponent', () => {
       expect(text).not.toContain('irreversible');
     });
   });
+
+  describe('requireReason', () => {
+    it('blocks confirm until a reason is typed, and emits the trimmed reason instead of true', () => {
+      component.details = { requireReason: true, message: 'Recompute?' };
+      fixture.detectChanges();
+      expect(component.canConfirm).toBe(false);
+
+      component.reason = '   ';
+      expect(component.canConfirm).toBe(false);
+
+      component.reason = '  a real reason  ';
+      expect(component.canConfirm).toBe(true);
+
+      const emitted: any[] = [];
+      component.onEmitStatusChange.subscribe((v: any) => emitted.push(v));
+      component.handleChangeAction();
+
+      expect(emitted).toEqual(['a real reason']);
+    });
+
+    it('does nothing when confirm is pressed with no reason yet', () => {
+      component.details = { requireReason: true, message: 'Recompute?' };
+      fixture.detectChanges();
+      const emitted: any[] = [];
+      component.onEmitStatusChange.subscribe((v: any) => emitted.push(v));
+
+      component.handleChangeAction();
+
+      expect(emitted).toEqual([]);
+    });
+
+    it('still emits a plain true when no reason is required', () => {
+      component.details = { confirmation: true, message: 'Delete it?' };
+      fixture.detectChanges();
+      expect(component.canConfirm).toBe(true);
+
+      const emitted: any[] = [];
+      component.onEmitStatusChange.subscribe((v: any) => emitted.push(v));
+      component.handleChangeAction();
+
+      expect(emitted).toEqual([true]);
+    });
+  });
 });
