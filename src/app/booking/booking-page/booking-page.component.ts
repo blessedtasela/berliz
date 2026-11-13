@@ -32,6 +32,7 @@ import { DEFAULT_TRIAL_PRICE } from '../booking-price-estimate/booking-price.uti
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
 import { environment } from 'src/environments/environment';
+import { isProfileIncompleteError } from 'src/app/utils/profile-completeness.util';
 
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
@@ -237,6 +238,9 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   /** A visitor who is not signed in asked to send the request: show the log in / create account choice. */
   showAuthPrompt = false;
 
+  /** BK-40: a signed-in client with no name/photo asked to send the request: show the completion prompt. */
+  showProfileIncompletePrompt = false;
+
   /** Days (yyyy-MM-dd) this client has asked to be told about this session. */
   waitlistedDates = new Set<string>();
   waitlistBusy = false;
@@ -406,8 +410,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     });
 
     this.actions$.pipe(ofType(createBookingFailure), takeUntil(this.destroy$)).subscribe(({ error }) => {
-      this.submitting = false;
-      this.submitError = error || genericError;
+      this.handleCreateBookingFailure(error);
     });
   }
 
@@ -661,6 +664,17 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return !this.user?.email;
   }
 
+  /** Split out from the createBookingFailure subscription so it's directly testable. */
+  handleCreateBookingFailure(error: string | null): void {
+    this.submitting = false;
+    if (isProfileIncompleteError(error)) {
+      this.saveDraft();
+      this.showProfileIncompletePrompt = true;
+      return;
+    }
+    this.submitError = error || genericError;
+  }
+
   /** Remember the pick, then let the visitor choose between logging in and creating an account. */
   promptToSignIn(): void {
     this.saveDraft();
@@ -669,6 +683,15 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   dismissAuthPrompt(): void {
     this.showAuthPrompt = false;
+  }
+
+  dismissProfileIncompletePrompt(): void {
+    this.showProfileIncompletePrompt = false;
+  }
+
+  /** The draft was already saved when the prompt opened; restoreGuestDraft() picks it up when they're back here. */
+  goToCompleteProfile(): void {
+    this.router.navigate(['/dashboard/profile/edit']);
   }
 
   goToLogin(): void {
