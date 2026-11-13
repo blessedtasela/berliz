@@ -77,11 +77,15 @@ describe('LoginFormComponent', () => {
     spyOn(router, 'navigateByUrl').and.returnValue(Promise.resolve(true));
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
+    // The returnUrl fallback reads this real sessionStorage key (see guest-booking-draft.ts) --
+    // clear it so a leftover draft from another spec file can never change where these tests expect to land.
+    sessionStorage.removeItem('berliz.guestBooking.v1');
   });
 
   afterEach(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('berliz.guestBooking.v1');
   });
 
   it('should create', () => {

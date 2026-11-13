@@ -541,6 +541,14 @@ describe('BookingPageComponent profile completeness (BK-40)', () => {
     page.showProfileIncompletePrompt = false;
   });
 
+  afterEach(() => {
+    // handleCreateBookingFailure's profile-incomplete branch calls the real saveGuestDraft(),
+    // which writes to real sessionStorage (by design -- see guest-booking-draft.ts). Left
+    // uncleared, it survives into later specs in the same Karma run and silently changes
+    // LoginFormComponent's returnUrl fallback (it reads this same key).
+    sessionStorage.clear();
+  });
+
   it('shows the completion prompt instead of the generic error, and stops leaving "sending" on', () => {
     page.handleCreateBookingFailure('Add your name and a profile photo before sending a request.');
 
