@@ -43,7 +43,7 @@ Handed over 2026-11-06: the booking-bugs session is closed. Done so far (all pus
 | Admin: Bills | `/bill/*` | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
 | Admin: Products, Orders, Stores (all, any status) | `/product/*`, `/order/*`, `/store/*` admin endpoints | Berliz Angular Project Overview (handed over 2026-11-06) | paused (owner, 2026-11-06) |
 | Center owner: members (add, status, remove, my members, my memberships) and a member's own views | `/center/addMember`, `/center/updateMemberStatus/{id}`, `/center/removeMember/{id}`, `/center/getMyCenterMembers`, `/center/getMyCenterMemberships`, `/member/getMy*` | Berliz Angular Project Overview | doing -- confirmed genuinely missing (2026-11-13 audit): not even a near-miss under a different name, distinct from the unrelated admin `/member/*` CRUD screen that already exists |
-| A client's own trainer reviews | `/client/getMyTrainerReviews` | Berliz Angular Project Overview | doing -- confirmed genuinely missing (2026-11-13 audit): distinct endpoint from the already-built `/trainer/getMyTrainerReviews` (a trainer viewing reviews written about them) |
+| A client's own trainer reviews | `/client/getMyTrainerReviews` | Berliz Angular Project Overview | done (web -- `com.berliz`@`36b25d2` fixed the endpoint to map through `TrainerMapper` instead of leaking raw lazy entities; `berliz`@`352d288e8` ships the "My Reviews" page at `/dashboard/my-trainer-reviews`, linked from the sidebar's Me group. Mobile still open) |
 | Admin: set a user's password | `PUT /user/changePasswordAdmin` | unclaimed (security-sensitive: ask the owner) | todo |
 
 ## Not a gap on purpose
