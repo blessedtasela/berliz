@@ -55,12 +55,12 @@ type Action = { id: number; kind: 'decline' };
         <div *ngIf="r.status === 'REQUESTED'" class="flex flex-wrap items-center gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
           <ng-container *ngIf="!isConfirming(r.id, 'decline'); else declineSure">
             <button type="button" (click)="accept(r)" [disabled]="busy" data-testid="accept-request"
-              class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-1.5">
+              class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap">
               <i-feather name="check" style="width:13px;height:13px;"></i-feather>
               Accept at {{ r.proposedAmount | currency:'CAD':'symbol':'1.2-2' }}
             </button>
             <button type="button" (click)="openCounter(r)" [disabled]="busy" data-testid="counter-request"
-              class="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+              class="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition whitespace-nowrap">
               Counter
             </button>
             <button type="button" (click)="ask(r.id, 'decline')" [disabled]="busy"
