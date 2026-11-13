@@ -87,6 +87,8 @@ describe('TestimonialListComponent', () => {
     });
 
     it('shows the "be the first" prompt when nothing failed', () => {
+      actions$.next(loadActiveTestimonialsSuccess({ response: [] } as any));
+      fixture.detectChanges();
       expect(el().textContent).toContain('Be the first to share your experience');
     });
   });

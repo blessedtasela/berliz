@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadExercises, loadExercisesFailure, loadExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { ExercisesComponent } from './exercises.component';
+import { selectExerciseLoading } from 'src/app/state/exercise/exercise.selectors';
 
 describe('ExercisesComponent', () => {
   let component: ExercisesComponent;
@@ -26,6 +27,7 @@ describe('ExercisesComponent', () => {
     });
     fixture = TestBed.createComponent(ExercisesComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectExerciseLoading, false);
     fixture.detectChanges();
   });
 

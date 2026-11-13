@@ -8,6 +8,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadContactUs, loadContactUsFailure, loadContactUsSuccess } from 'src/app/state/contact-us/contact-us.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { AdminContactUsComponent } from './admin-contact-us.component';
+import { selectContactUsLoading } from 'src/app/state/contact-us/contact-us.selectors';
 
 describe('AdminContactUsComponent', () => {
   let component: AdminContactUsComponent;
@@ -30,6 +31,7 @@ describe('AdminContactUsComponent', () => {
     });
     fixture = TestBed.createComponent(AdminContactUsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectContactUsLoading, false);
     fixture.detectChanges();
   });
 

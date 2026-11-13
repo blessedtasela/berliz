@@ -9,6 +9,7 @@ import { TodoListsComponent } from './todo-lists.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTodos, loadTodosFailure, loadTodosSuccess } from 'src/app/state/todo/todo.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { selectTodoLoading } from 'src/app/state/todo/todo.selectors';
 
 describe('TodoListsComponent', () => {
   let component: TodoListsComponent;
@@ -34,6 +35,7 @@ describe('TodoListsComponent', () => {
     });
     fixture = TestBed.createComponent(TodoListsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectTodoLoading, false);
     fixture.detectChanges();
   });
 

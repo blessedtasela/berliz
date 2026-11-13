@@ -129,7 +129,7 @@
         <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
             <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your connections</p>
 
-            <div *ngIf="connections.length === 0" class="py-6 text-center">
+            <div *ngIf="!loading && connections.length === 0" class="py-6 text-center">
                 <p class="text-xs text-gray-400 dark:text-gray-500">No connections yet. Use "Find people" above to search and connect.</p>
             </div>
 

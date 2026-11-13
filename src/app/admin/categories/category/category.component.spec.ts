@@ -8,6 +8,7 @@ import { loadCategories, loadCategoriesFailure, loadCategoriesSuccess } from 'sr
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { CategoryComponent } from './category.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { selectCategoryLoading } from 'src/app/state/category/category.selectors';
 
 describe('CategoryComponent', () => {
   let component: CategoryComponent;
@@ -31,6 +32,7 @@ describe('CategoryComponent', () => {
     });
     fixture = TestBed.createComponent(CategoryComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectCategoryLoading, false);
     fixture.detectChanges();
   });
 

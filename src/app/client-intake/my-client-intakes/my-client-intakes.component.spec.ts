@@ -5,7 +5,7 @@ import { Actions } from '@ngrx/effects';
 import { Subject } from 'rxjs';
 
 import { MyClientIntakesComponent } from './my-client-intakes.component';
-import { selectMyClientIntakes } from 'src/app/state/client-intake/client-intake.selectors';
+import { selectMyClientIntakes, selectClientIntakeLoading } from 'src/app/state/client-intake/client-intake.selectors';
 import { loadMyClientIntakes, loadMyClientIntakesFailure, loadMyClientIntakesSuccess } from 'src/app/state/client-intake/client-intake.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
@@ -22,7 +22,7 @@ describe('MyClientIntakesComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: Actions, useValue: actions$ },
-        provideMockStore({ selectors: [{ selector: selectMyClientIntakes, value: [] }] }),
+        provideMockStore({ selectors: [{ selector: selectMyClientIntakes, value: [] }, { selector: selectClientIntakeLoading, value: false }] }),
       ]
     });
 

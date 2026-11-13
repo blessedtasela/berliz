@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadTestimonials, loadTestimonialsFailure, loadTestimonialsSuccess } from 'src/app/state/testimonial/testimonial.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { TestimonialsComponent } from './testimonials.component';
+import { selectTestimonialLoading } from 'src/app/state/testimonial/testimonial.selectors';
 
 describe('TestimonialsComponent', () => {
   let component: TestimonialsComponent;
@@ -26,6 +27,7 @@ describe('TestimonialsComponent', () => {
     });
     fixture = TestBed.createComponent(TestimonialsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectTestimonialLoading, false);
     fixture.detectChanges();
   });
 

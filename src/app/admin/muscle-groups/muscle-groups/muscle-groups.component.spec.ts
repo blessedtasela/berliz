@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadMuscleGroups, loadMuscleGroupsFailure, loadMuscleGroupsSuccess } from 'src/app/state/muscle-group/muscle-group.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { MuscleGroupsComponent } from './muscle-groups.component';
+import { selectMuscleGroupLoading } from 'src/app/state/muscle-group/muscle-group.selectors';
 
 describe('MuscleGroupsComponent', () => {
   let component: MuscleGroupsComponent;
@@ -26,6 +27,7 @@ describe('MuscleGroupsComponent', () => {
     });
     fixture = TestBed.createComponent(MuscleGroupsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectMuscleGroupLoading, false);
     fixture.detectChanges();
   });
 

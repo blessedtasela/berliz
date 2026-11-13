@@ -1,6 +1,9 @@
 <app-page-header icon="calendar" title="Bookings" subtitle="Every session booked on the platform"></app-page-header>
 <app-admin-search [selector]="selectBookings" [fields]="bookingSearchFields"
     placeholder="Search bookings..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="!loading && loadError && bookingsData.length === 0" title="Couldn't load bookings" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="bookingsData.length > 0 || (!loading && !loadError)">
 <app-bookings-header [bookingsData]="bookingsData" [totalBookings]="totalBookings"
     [bookingsLength]="bookingsLength"></app-bookings-header>
 <app-bookings-list [bookingsData]="bookingsData" [totalBookings]="totalBookings"></app-bookings-list>
+</ng-container>

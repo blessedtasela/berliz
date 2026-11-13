@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { loadNewsletters, loadNewslettersFailure, loadNewslettersSuccess } from 'src/app/state/newsletter/newsletter.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
+import { selectNewsletters, selectNewsletterLoading } from 'src/app/state/newsletter/newsletter.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -24,6 +24,8 @@ export class NewslettersComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectNewsletters = selectNewsletters;
   readonly newsletterSearchFields: AdminSearchField<Newsletter>[] = [
@@ -46,6 +48,7 @@ export class NewslettersComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadNewslettersFailure, [loadNewsletters, loadNewslettersSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectNewsletterLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadNewsletters());
     this.subscriptions.push(
       this.store.select(selectNewsletters).subscribe((newsletter) => {

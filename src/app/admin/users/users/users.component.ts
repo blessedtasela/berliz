@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { selectUsers } from 'src/app/state/user/user.selector';
+import { selectUsers, selectUserLoading } from 'src/app/state/user/user.selector';
 import { loadAllUsers, loadUsersFailure, loadUsersSuccess } from 'src/app/state/user/user.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
@@ -24,7 +24,10 @@ export class UsersComponent implements OnDestroy {
   isSearch: boolean = true;
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
   private loadErrorSub?: Subscription;
+  private loadingSub?: Subscription;
 
   /** ?userId=<id> from search -- passed through to UserListComponent, which opens that user's details modal once it has loaded. */
   deepLinkUserId: number | null = null;
@@ -50,6 +53,7 @@ export class UsersComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.loadErrorSub?.unsubscribe();
+    this.loadingSub?.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -57,6 +61,7 @@ export class UsersComponent implements OnDestroy {
     this.deepLinkUserId = raw ? Number(raw) : null;
 
     this.loadErrorSub = watchLoadError(this.actions$, loadUsersFailure, [loadAllUsers, loadUsersSuccess], null, m => this.loadError = m);
+    this.loadingSub = this.store.select(selectUserLoading).subscribe(l => this.loading = l);
     this.store.dispatch(loadAllUsers());
     this.handleEmitEvent()
     // this.userStateService.allUsersData$.subscribe((cachedData) => {

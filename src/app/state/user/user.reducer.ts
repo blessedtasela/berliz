@@ -31,6 +31,12 @@ export const userReducer = createReducer(
   })),
 
   // LIST USERS
+  on(UserActions.loadAllUsers, (state) => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+
   on(UserActions.loadUsersSuccess, (state, { response }) => ({
     ...state,
     users: response,

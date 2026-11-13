@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { loadMuscleGroups, loadMuscleGroupsFailure, loadMuscleGroupsSuccess } from 'src/app/state/muscle-group/muscle-group.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
+import { selectMuscleGroups, selectMuscleGroupLoading } from 'src/app/state/muscle-group/muscle-group.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -23,6 +23,8 @@ export class MuscleGroupsComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectMuscleGroups = selectMuscleGroups;
   readonly muscleGroupSearchFields: AdminSearchField<MuscleGroups>[] = [
@@ -46,6 +48,7 @@ export class MuscleGroupsComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadMuscleGroupsFailure, [loadMuscleGroups, loadMuscleGroupsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectMuscleGroupLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadMuscleGroups());
     this.subscriptions.push(
       this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {

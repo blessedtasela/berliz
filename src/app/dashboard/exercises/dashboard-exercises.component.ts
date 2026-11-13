@@ -18,6 +18,8 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 import {
   deleteCenterEquipment,
   loadAllCenterEquipment,
+  loadAllCenterEquipmentFailure,
+  loadAllCenterEquipmentSuccess,
   loadMyCenterEquipment
 } from 'src/app/state/center/center.actions';
 import { selectCenterEquipment, selectMyCenterEquipment } from 'src/app/state/center/center.selectors';
@@ -82,6 +84,8 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
   firstLoaded = false;
   /** Why the library could not load, so a failed load is never mistaken for an empty library. */
   loadError: string | null = null;
+  /** Same thing, for the Equipment tab's own load -- it has nothing to do with the exercise library's firstLoaded. */
+  equipmentFirstLoaded = false;
 
   private platformId = inject(PLATFORM_ID);
   private actions$ = injectActionsOrNull();
@@ -110,9 +114,11 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
       this.subs.push(
         watchFirstLoad(this.actions$, this.platformId, [loadPublicExercisesSuccess, loadPublicExercisesFailure], () => this.firstLoaded = true),
         watchLoadError(this.actions$, loadPublicExercisesFailure, [loadPublicExercises, loadPublicExercisesSuccess], null, m => this.loadError = m),
+        watchFirstLoad(this.actions$, this.platformId, [loadAllCenterEquipmentSuccess, loadAllCenterEquipmentFailure], () => this.equipmentFirstLoaded = true),
       );
     } else {
       this.firstLoaded = true; // no effects wired (a bare test bed)
+      this.equipmentFirstLoaded = true;
     }
     this.refresh();
 

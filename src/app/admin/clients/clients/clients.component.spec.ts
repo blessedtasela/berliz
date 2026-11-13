@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadClients, loadClientsFailure, loadClientsSuccess } from 'src/app/state/client/client.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { ClientsComponent } from './clients.component';
+import { selectClientLoading } from 'src/app/state/client/client.selectors';
 
 describe('ClientsComponent', () => {
   let component: ClientsComponent;
@@ -26,6 +27,7 @@ describe('ClientsComponent', () => {
     });
     fixture = TestBed.createComponent(ClientsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectClientLoading, false);
     fixture.detectChanges();
   });
 

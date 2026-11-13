@@ -11,7 +11,7 @@ import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interf
 import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
 import { loadMyTodos, loadMyTodosFailure, loadMyTodosSuccess } from 'src/app/state/todo/todo.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
+import { selectMyTodos, selectTodoLoading } from 'src/app/state/todo/todo.selectors';
 import { filterTodos } from 'src/app/state/todo/todo.utils';
 
 @Component({
@@ -38,6 +38,8 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   allTodos: TodoList[] = [];
   /** Why the to-dos couldn't be loaded -- so a failed load never reads as an empty list with zeroed metrics. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the dashboard block so it can't flash "empty" during a fetch. */
+  loading = true;
   filteredTodos: TodoList[] = [];
   pagedTodos: TodoList[] = [];
   sections: any[] = [];
@@ -69,6 +71,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.push(watchLoadError(this.actions$, loadMyTodosFailure, [loadMyTodos, loadMyTodosSuccess], null, m => this.loadError = m));
+    this.subs.push(this.store.select(selectTodoLoading).subscribe(l => this.loading = l));
     const sub = this.store.select(selectMyTodos).subscribe(data => {
       this.allTodos = data;
       this.filteredTodos = [...data];

@@ -9,6 +9,7 @@ import { loadAllUsers, loadUsersFailure, loadUsersSuccess } from 'src/app/state/
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { UsersComponent } from './users.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { selectUserLoading } from 'src/app/state/user/user.selector';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -32,6 +33,7 @@ describe('UsersComponent', () => {
     });
     fixture = TestBed.createComponent(UsersComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectUserLoading, false);
     fixture.detectChanges();
   });
 
