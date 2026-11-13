@@ -226,6 +226,16 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **Admin subscriptions list/detail — raw-entity leak fixed.** `GET
+  /subscription/get`, `/getActiveSubscriptions` and `/getSubscription/{id}`
+  used to serialize the raw `Subscription` entity -- the full nested `User`
+  entity, password hash included, plus the full `Trainer`/`Center` entity
+  graphs. New `SubscriptionResponse`/`SubscriptionMapper` mirror the exact
+  shape the admin Billing/Subscriptions UI already consumes (nested
+  user/trainer/center/categories/providerPackage, same field names), so no
+  frontend change was needed -- this was the one remaining gap from the
+  admin Billing section (line 132 above), which otherwise already shipped
+  end-to-end. `com.berliz` commit `b08ae0f`.
 - **Center membership rosters.** `CenterMembersComponent` (owner side,
   on the partnership page) mirrors the existing `CenterTrainersComponent`
   pattern: add by email, activate/deactivate, remove. New
