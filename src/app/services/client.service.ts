@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/Api.interface';
 import { Clients } from '../models/clients.interface';
+import { TrainerReview } from '../models/trainers.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +43,11 @@ export class ClientService {
 
   deleteClient(id: number) {
     return this.httpClient.delete<{ message: string }>(this.url + `/client/delete/${id}`);
+  }
+
+  /** Reviews the signed-in client has written about trainers -- distinct from `TrainerService.getMyTrainerReviews`, which is a trainer viewing reviews written about them. */
+  getMyTrainerReviews() {
+    return this.httpClient.get<ApiResponse<TrainerReview[]>>(this.url + "/client/getMyTrainerReviews");
   }
 
 }

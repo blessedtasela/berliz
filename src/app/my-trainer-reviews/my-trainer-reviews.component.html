@@ -1,0 +1,93 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 flex items-center justify-center shrink-0">
+            <i-feather name="star" class="text-amber-500" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">My Reviews</h1>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500">Reviews you've written about trainers</p>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <app-load-error *ngIf="!loading && loadError && reviews.length === 0" title="Couldn't load your reviews"
+        [message]="loadError" (retry)="loadReviews()"></app-load-error>
+
+    <ng-container *ngIf="reviews.length > 0 || (!loading && !loadError)">
+
+        <!-- Empty state -->
+        <div *ngIf="reviews.length === 0" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-10 flex flex-col items-center gap-3 text-center">
+            <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                <i-feather name="star" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-gray-100">You haven't reviewed a trainer yet</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 max-w-xs">Finished a session? Leaving a review helps other clients find the right trainer.</p>
+        </div>
+
+        <!-- Review cards -->
+        <div *ngFor="let review of reviews" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex flex-col gap-0.5">
+                    <a [routerLink]="['/trainers', trainerSlug(review.trainerName)]" class="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 transition">
+                        {{ review.trainerName }}
+                    </a>
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ formatDate(review.date) }}</p>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <span *ngIf="review.rating" class="flex items-center gap-0.5" [attr.aria-label]="review.rating + ' out of 5 stars'">
+                        <i-feather *ngFor="let star of [1,2,3,4,5]" name="star" style="width:12px;height:12px;"
+                            [class]="star <= (review.rating ?? 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 dark:text-gray-700'"></i-feather>
+                    </span>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+                        [ngClass]="review.status === 'true'
+                            ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900'
+                            : 'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 border-yellow-100 dark:border-yellow-900'">
+                        {{ review.status === 'true' ? 'Visible' : 'Pending' }}
+                    </span>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{{ review.review }}</p>
+
+            <!-- Photo grid: before/after pairs, only when at least one is set -->
+            <div *ngIf="hasPhotos(review)" class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col gap-1">
+                    <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Front</p>
+                    <div class="grid grid-cols-2 gap-1">
+                        <img *ngIf="review.photoFrontBefore?.photoUrl" alt="Before" [src]="review.photoFrontBefore.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                        <img *ngIf="review.photoFrontAfter?.photoUrl" alt="After" [src]="review.photoFrontAfter.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Side</p>
+                    <div class="grid grid-cols-2 gap-1">
+                        <img *ngIf="review.photoSideBefore?.photoUrl" alt="Before" [src]="review.photoSideBefore.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                        <img *ngIf="review.photoSideAfter?.photoUrl" alt="After" [src]="review.photoSideAfter.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Back</p>
+                    <div class="grid grid-cols-2 gap-1">
+                        <img *ngIf="review.photoBackBefore?.photoUrl" alt="Before" [src]="review.photoBackBefore.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                        <img *ngIf="review.photoBackAfter?.photoUrl" alt="After" [src]="review.photoBackAfter.photoUrl | strapiUrl"
+                            class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+
+</section>
