@@ -9,6 +9,7 @@ import { MyTodoListMainComponent } from './my-todo-list-main.component';
 import { TodoService } from 'src/app/services/todo.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadMyTodos, loadMyTodosFailure, loadMyTodosSuccess } from 'src/app/state/todo/todo.actions';
+import { selectTodoLoading } from 'src/app/state/todo/todo.selectors';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
 describe('MyTodoListMainComponent', () => {
@@ -36,6 +37,7 @@ describe('MyTodoListMainComponent', () => {
     });
     fixture = TestBed.createComponent(MyTodoListMainComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectTodoLoading, false);
     fixture.detectChanges();
   });
 

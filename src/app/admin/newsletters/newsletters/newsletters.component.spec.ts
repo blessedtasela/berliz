@@ -8,6 +8,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadNewsletters, loadNewslettersFailure, loadNewslettersSuccess } from 'src/app/state/newsletter/newsletter.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { NewslettersComponent } from './newsletters.component';
+import { selectNewsletterLoading } from 'src/app/state/newsletter/newsletter.selectors';
 
 describe('NewslettersComponent', () => {
   let component: NewslettersComponent;
@@ -30,6 +31,7 @@ describe('NewslettersComponent', () => {
     });
     fixture = TestBed.createComponent(NewslettersComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectNewsletterLoading, false);
     fixture.detectChanges();
   });
 

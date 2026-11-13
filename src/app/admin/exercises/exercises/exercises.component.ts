@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { loadExercises, loadExercisesFailure, loadExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
+import { selectExercises, selectExerciseLoading } from 'src/app/state/exercise/exercise.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -23,6 +23,8 @@ export class ExercisesComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectExercises = selectExercises;
   readonly exerciseSearchFields: AdminSearchField<Exercises>[] = [
@@ -45,6 +47,7 @@ export class ExercisesComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadExercisesFailure, [loadExercises, loadExercisesSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectExerciseLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadExercises());
     this.subscriptions.push(
       this.store.select(selectExercises).subscribe((allExercises) => {

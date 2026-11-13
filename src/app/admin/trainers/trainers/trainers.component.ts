@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { loadTrainers, loadTrainersFailure, loadTrainersSuccess } from 'src/app/state/trainer/trainer.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { selectTrainers, selectTrainerLoading } from 'src/app/state/trainer/trainer.selector';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -23,6 +23,8 @@ export class TrainersComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectTrainers = selectTrainers;
   readonly trainerSearchFields: AdminSearchField<Trainers>[] = [
@@ -47,6 +49,7 @@ export class TrainersComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadTrainersFailure, [loadTrainers, loadTrainersSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectTrainerLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadTrainers());
     this.subscriptions.push(
       this.store.select(selectTrainers).subscribe((allTrainers) => {

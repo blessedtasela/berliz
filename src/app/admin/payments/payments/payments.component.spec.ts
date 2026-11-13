@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadPayments, loadPaymentsFailure, loadPaymentsSuccess } from 'src/app/state/payment/payment.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { PaymentsComponent } from './payments.component';
+import { selectPaymentLoading } from 'src/app/state/payment/payment.selectors';
 
 describe('PaymentsComponent', () => {
   let component: PaymentsComponent;
@@ -26,6 +27,7 @@ describe('PaymentsComponent', () => {
     });
     fixture = TestBed.createComponent(PaymentsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectPaymentLoading, false);
     fixture.detectChanges();
   });
 

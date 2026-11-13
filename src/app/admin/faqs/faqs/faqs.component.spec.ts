@@ -10,6 +10,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { selectFaqs } from 'src/app/state/faq/faq.selectors';
 import { loadFaqs, loadFaqsFailure, loadFaqsSuccess } from 'src/app/state/faq/faq.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { selectFaqLoading } from 'src/app/state/faq/faq.selectors';
 
 describe('FaqsComponent', () => {
   let component: FaqsComponent;
@@ -37,6 +38,7 @@ describe('FaqsComponent', () => {
 
     fixture = TestBed.createComponent(FaqsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectFaqLoading, false);
     fixture.detectChanges();
   });
 

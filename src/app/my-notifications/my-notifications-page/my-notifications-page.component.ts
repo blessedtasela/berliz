@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { selectMyNotifications, selectNotificationLoading } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications, loadMyNotificationsFailure, loadMyNotificationsSuccess } from 'src/app/state/notification/notification.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
@@ -49,6 +49,8 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   markingAll = false;
   /** Why the notifications couldn't be loaded -- so a failed load never reads as "No notifications yet". */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly views = VIEWS;
   view: NotificationView = 'all';
@@ -96,6 +98,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
     this.isAdmin = this.authService.isAdmin();
 
     this.subscriptions.push(watchLoadError(this.actions$, loadMyNotificationsFailure, [loadMyNotifications, loadMyNotificationsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectNotificationLoading).subscribe(l => this.loading = l));
     this.subscriptions.push(this.route.queryParamMap.subscribe(params =>
       this.applyUrlState(params.get('view'), params.get('category'), params.get('q'), params.get('id'))));
     this.watchStoreState();

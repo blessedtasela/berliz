@@ -7,6 +7,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadSubscriptions, loadSubscriptionsFailure, loadSubscriptionsSuccess } from 'src/app/state/subscription/subscription.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { SubscriptionsComponent } from './subscriptions.component';
+import { selectSubscriptionLoading } from 'src/app/state/subscription/subscription.selectors';
 
 describe('SubscriptionsComponent', () => {
   let component: SubscriptionsComponent;
@@ -26,6 +27,7 @@ describe('SubscriptionsComponent', () => {
     });
     fixture = TestBed.createComponent(SubscriptionsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectSubscriptionLoading, false);
     fixture.detectChanges();
   });
 

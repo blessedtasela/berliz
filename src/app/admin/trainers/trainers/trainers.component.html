@@ -1,8 +1,8 @@
 <app-page-header icon="award" title="Trainers" subtitle="Every trainer profile on the platform"></app-page-header>
 <app-admin-search [selector]="selectTrainers" [fields]="trainerSearchFields"
     placeholder="Search trainers..." (results)="handleSearchResults($event)"></app-admin-search>
-<app-load-error *ngIf="loadError && trainersData.length === 0" title="Couldn't load trainers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
-<ng-container *ngIf="!(loadError && trainersData.length === 0)">
+<app-load-error *ngIf="!loading && loadError && trainersData.length === 0" title="Couldn't load trainers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="trainersData.length > 0 || (!loading && !loadError)">
 <app-trainer-header [trainersData]="trainersData" [totalTrainers]="totalTrainers"
     [trainersLength]="trainersLength"></app-trainer-header>
 <app-trainer-list [trainersData]="trainersData" [totalTrainers]="totalTrainers"></app-trainer-list>

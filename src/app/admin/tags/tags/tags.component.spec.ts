@@ -8,6 +8,7 @@ import { loadTags, loadTagsFailure, loadTagsSuccess } from 'src/app/state/tag/ta
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { TagsComponent } from './tags.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { selectTagLoading } from 'src/app/state/tag/tag.selectors';
 
 describe('TagsComponent', () => {
   let component: TagsComponent;
@@ -31,6 +32,7 @@ describe('TagsComponent', () => {
     });
     fixture = TestBed.createComponent(TagsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectTagLoading, false);
     fixture.detectChanges();
   });
 

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { Faq } from 'src/app/models/faq.model';
 import { loadFaqs, loadFaqsFailure, loadFaqsSuccess } from 'src/app/state/faq/faq.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectFaqs } from 'src/app/state/faq/faq.selectors';
+import { selectFaqs, selectFaqLoading } from 'src/app/state/faq/faq.selectors';
 import { AddFaqModalComponent } from '../add-faq-modal/add-faq-modal.component';
 
 @Component({
@@ -22,6 +22,8 @@ export class FaqsComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty list. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   constructor(
     private dialog: MatDialog,
@@ -38,6 +40,7 @@ export class FaqsComponent implements OnInit, OnDestroy {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadFaqsFailure, [loadFaqs, loadFaqsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectFaqLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadFaqs());
     this.subscriptions.push(
       this.store.select(selectFaqs).subscribe((allFaqs) => {

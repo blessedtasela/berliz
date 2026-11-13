@@ -8,6 +8,7 @@ import { selectCenters } from 'src/app/state/center/center.selectors';
 import { loadCenters, loadCentersFailure, loadCentersSuccess } from 'src/app/state/center/center.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { CentersComponent } from './centers.component';
+import { selectCenterLoading } from 'src/app/state/center/center.selectors';
 
 describe('CentersComponent', () => {
   let component: CentersComponent;
@@ -29,6 +30,7 @@ describe('CentersComponent', () => {
     });
     fixture = TestBed.createComponent(CentersComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectCenterLoading, false);
     fixture.detectChanges();
   });
 

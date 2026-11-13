@@ -6,7 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ClientIntake } from 'src/app/models/client-intake.model';
 import { loadMyClientIntakes, loadMyClientIntakesFailure, loadMyClientIntakesSuccess } from 'src/app/state/client-intake/client-intake.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectMyClientIntakes } from 'src/app/state/client-intake/client-intake.selectors';
+import { selectMyClientIntakes, selectClientIntakeLoading } from 'src/app/state/client-intake/client-intake.selectors';
 
 /**
  * Trainer-facing list of every client intake this trainer has created —
@@ -25,6 +25,8 @@ export class MyClientIntakesComponent implements OnInit, OnDestroy {
   intakes: ClientIntake[] = [];
   /** Why the intakes couldn't be loaded -- so a failed load never reads as "you haven't started any". */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   private destroy$ = new Subject<void>();
 
@@ -36,6 +38,7 @@ export class MyClientIntakesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     watchLoadError(this.actions$, loadMyClientIntakesFailure, [loadMyClientIntakes, loadMyClientIntakesSuccess], this.destroy$, m => this.loadError = m);
+    this.store.select(selectClientIntakeLoading).pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
     this.store.dispatch(loadMyClientIntakes());
     this.store.select(selectMyClientIntakes)
       .pipe(takeUntil(this.destroy$))

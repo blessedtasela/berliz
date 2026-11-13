@@ -142,7 +142,7 @@
   </div>
 
   <!-- ═══════════════════ EMPTY STATE ═══════════════════ -->
-  <div *ngIf="assignments.length === 0"
+  <div *ngIf="!loading && assignments.length === 0"
     class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-10 flex flex-col items-center justify-center gap-3 text-center">
     <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
       <i-feather name="inbox" style="width:22px;height:22px;" class="text-gray-400 dark:text-gray-500"></i-feather>

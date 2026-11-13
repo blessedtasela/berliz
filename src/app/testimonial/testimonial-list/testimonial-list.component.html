@@ -8,7 +8,7 @@
             [message]="loadError" (retry)="retryLoad()"></app-load-error>
 
         <!-- ── EMPTY STATE ──────────────────────────────────────────────── -->
-        <div *ngIf="testimonials.length === 0 && !loadError"
+        <div *ngIf="testimonials.length === 0 && !loadError && firstLoaded"
             class="flex flex-col items-center justify-center py-20 gap-6 text-center rounded-2xl border border-zinc-800 bg-zinc-900">
 
             <div class="w-20 h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">

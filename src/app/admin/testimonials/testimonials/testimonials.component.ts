@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { loadTestimonials, loadTestimonialsFailure, loadTestimonialsSuccess } from 'src/app/state/testimonial/testimonial.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
+import { selectTestimonials, selectTestimonialLoading } from 'src/app/state/testimonial/testimonial.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -23,6 +23,8 @@ export class TestimonialsComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectTestimonials = selectTestimonials;
   readonly testimonialSearchFields: AdminSearchField<Testimonials>[] = [
@@ -48,6 +50,7 @@ export class TestimonialsComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadTestimonialsFailure, [loadTestimonials, loadTestimonialsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectTestimonialLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadTestimonials());
     this.subscriptions.push(
       this.store.select(selectTestimonials).subscribe((allTestimonials) => {

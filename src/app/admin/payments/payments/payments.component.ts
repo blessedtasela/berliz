@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
 import { loadPayments, loadPaymentsFailure, loadPaymentsSuccess } from 'src/app/state/payment/payment.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectPayments } from 'src/app/state/payment/payment.selectors';
+import { selectPayments, selectPaymentLoading } from 'src/app/state/payment/payment.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -23,6 +23,8 @@ export class PaymentsComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectPayments = selectPayments;
   readonly paymentSearchFields: AdminSearchField<Payments>[] = [
@@ -46,6 +48,7 @@ export class PaymentsComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadPaymentsFailure, [loadPayments, loadPaymentsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectPaymentLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadPayments());
     this.subscriptions.push(
       this.store.select(selectPayments).subscribe((allPayments) => {

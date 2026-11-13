@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { loadContactUs, loadContactUsFailure, loadContactUsSuccess } from 'src/app/state/contact-us/contact-us.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
+import { selectContactUsList, selectContactUsLoading } from 'src/app/state/contact-us/contact-us.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -24,6 +24,8 @@ export class AdminContactUsComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectContactUsList = selectContactUsList;
   readonly contactUsSearchFields: AdminSearchField<ContactUs>[] = [
@@ -46,6 +48,7 @@ export class AdminContactUsComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadContactUsFailure, [loadContactUs, loadContactUsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectContactUsLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadContactUs());
     this.subscriptions.push(
       this.store.select(selectContactUsList).subscribe((contactUs) => {

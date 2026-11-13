@@ -6,7 +6,7 @@ import { Tags } from 'src/app/models/tags.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTags, loadTagsFailure, loadTagsSuccess } from 'src/app/state/tag/tag.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectTags } from 'src/app/state/tag/tag.selectors';
+import { selectTags, selectTagLoading } from 'src/app/state/tag/tag.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -24,6 +24,8 @@ export class TagsComponent {
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
+  loading = true;
 
   readonly selectTags = selectTags;
   readonly tagSearchFields: AdminSearchField<Tags>[] = [
@@ -51,6 +53,7 @@ export class TagsComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(watchLoadError(this.actions$, loadTagsFailure, [loadTags, loadTagsSuccess], null, m => this.loadError = m));
+    this.subscriptions.push(this.store.select(selectTagLoading).subscribe(l => this.loading = l));
     this.store.dispatch(loadTags());
     this.subscriptions.push(
       this.store.select(selectTags).subscribe((allTags) => {

@@ -23,7 +23,7 @@
    <!-- A link to a notification that's gone -->
    <app-inline-alert kind="info" [message]="linkNotice" (dismissed)="dismissLinkNotice()"></app-inline-alert>
 
-   <ng-container *ngIf="!(loadError && rawNotifications.length === 0)">
+   <ng-container *ngIf="rawNotifications.length > 0 || (!loading && !loadError)">
 
       <!-- View tabs: All / Unread / Read -->
       <div role="tablist" aria-label="Notification view" class="inline-flex self-start p-1 rounded-xl bg-gray-100 dark:bg-gray-800">
@@ -64,10 +64,10 @@
 
    </ng-container>
 
-   <app-load-error *ngIf="loadError && rawNotifications.length === 0" title="Couldn't load your notifications"
+   <app-load-error *ngIf="!loading && loadError && rawNotifications.length === 0" title="Couldn't load your notifications"
       [message]="loadError" (retry)="retryLoad()"></app-load-error>
 
-   <app-my-notifications *ngIf="!(loadError && rawNotifications.length === 0)" [notificationData]="notificationData" [totalNotifications]="totalNotifications"
+   <app-my-notifications *ngIf="rawNotifications.length > 0 || (!loading && !loadError)" [notificationData]="notificationData" [totalNotifications]="totalNotifications"
       [highlightId]="highlightId" [filtered]="view !== 'all' || category !== 'all' || !!query"
       [refreshing]="refreshing" (refresh)="onRefresh()">
    </app-my-notifications>

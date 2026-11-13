@@ -11,6 +11,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadMyNotifications, loadMyNotificationsFailure, loadMyNotificationsSuccess } from 'src/app/state/notification/notification.actions';
+import { selectNotificationLoading } from 'src/app/state/notification/notification.selector';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
 describe('MyNotificationsPageComponent', () => {
@@ -45,6 +46,7 @@ describe('MyNotificationsPageComponent', () => {
     });
     fixture = TestBed.createComponent(MyNotificationsPageComponent);
     component = fixture.componentInstance;
+    TestBed.inject(MockStore).overrideSelector(selectNotificationLoading, false);
     fixture.detectChanges();
   });
 
