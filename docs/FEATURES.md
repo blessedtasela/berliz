@@ -226,6 +226,17 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **Upcoming earnings are now clearly labelled as an estimate; Recalculate is audited (PY-25).**
+  GN-67/BK-45-class finding: the "Paid, not yet earned" row on a provider's Earnings tab projects
+  its commission rate live from this week's completed-session count, which can only grow before the
+  session actually completes -- so the real, stamped Payout can land at a different (usually lower)
+  rate than what the Upcoming tab showed. `PayoutResponse.estimate` now flags exactly that
+  projection, and the UI labels it "(est.)" instead of presenting it as committed; also fixed two
+  spots that hardcoded "Commission (15%)" instead of reading the real (possibly volume-discounted)
+  rate. Separately, admin's "Recalculate" payout action had no audit trail -- the shared prompt
+  modal gained an optional required-reason field, and every recalculation is now logged
+  (actor/time/before/after/reason) in a new `payout_recalculation_log` table. `com.berliz` commit
+  `d8be218`, `berliz` commit `eecbb4ac9`.
 - **Admin subscriptions list/detail — raw-entity leak fixed.** `GET
   /subscription/get`, `/getActiveSubscriptions` and `/getSubscription/{id}`
   used to serialize the raw `Subscription` entity -- the full nested `User`
