@@ -33,8 +33,11 @@ export class PayoutService {
     return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/pay/${id}`, null);
   }
 
-  /** Admin only — PY-24: recomputes a not-yet-paid-out payout from the booking's real amountPaid. */
-  recalculatePayout(bookingId: number) {
-    return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/recalculate/${bookingId}`, null);
+  /**
+   * Admin only — PY-24: recomputes a not-yet-paid-out payout from the booking's real amountPaid.
+   * PY-25: `reason` is logged server-side (actor/time/before/after); may be omitted.
+   */
+  recalculatePayout(bookingId: number, reason?: string) {
+    return this.httpClient.put<ApiResponse<Payout>>(this.url + `/payout/recalculate/${bookingId}`, { reason });
   }
 }
