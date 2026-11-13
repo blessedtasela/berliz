@@ -44,6 +44,7 @@ export const selectMyCenterPricing = createSelector(selectState, s => s.myCenter
 // ── Center Trainers ───────────────────────────────────────────────────────────
 export const selectCenterTrainers = createSelector(selectState, s => s.centerTrainers);
 export const selectMyCenterTrainers = createSelector(selectState, s => s.myCenterTrainers);
+export const selectMyCenterMembers = createSelector(selectState, s => s.myCenterMembers);
 
 // ── Video Albums ──────────────────────────────────────────────────────────────
 export const selectCenterVideoAlbums = createSelector(selectState, s => s.centerVideoAlbums);

@@ -5,6 +5,7 @@ import {
     CenterEquipment,
     CenterIntroduction,
     CenterLocations,
+    CenterMember,
     CenterPhotoAlbum,
     CenterPricing,
     CenterTrainers,
@@ -53,6 +54,9 @@ export interface CenterState {
     centerTrainers: CenterTrainers[];
     myCenterTrainers: CenterTrainers[];
 
+    // Members (gym roster)
+    myCenterMembers: CenterMember[];
+
     // Video Albums
     centerVideoAlbums: CenterVideoAlbum[];
     myCenterVideoAlbums: CenterVideoAlbum[];
@@ -94,6 +98,8 @@ export const initialCenterState: CenterState = {
 
     centerTrainers: [],
     myCenterTrainers: [],
+
+    myCenterMembers: [],
 
     centerVideoAlbums: [],
     myCenterVideoAlbums: [],

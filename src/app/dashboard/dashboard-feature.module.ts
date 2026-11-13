@@ -403,6 +403,18 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Centers the signed-in user personally belongs to as a roster member -- distinct from a
+      // center owner's own member-management view (CenterMembersComponent, on the partnership page).
+      {
+        path: 'my-memberships',
+        loadComponent: () => import('../my-center-memberships/my-center-memberships.component').then(m => m.MyCenterMembershipsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Memberships',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Client intake — trainer initiates for a specific client (clientId
       // route param); client or the assigned trainer can view/edit
       // afterwards (id route param). Access is enforced server-side.

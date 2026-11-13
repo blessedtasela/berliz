@@ -11,6 +11,7 @@ import {
   CenterEquipment,
   CenterIntroduction,
   CenterLocations,
+  CenterMember,
   CenterPhotoAlbum,
   CenterPricing,
   CenterTrainers,
@@ -294,6 +295,30 @@ export class CenterService {
 
   deleteCenterTrainer(id: number) {
     return this.http.delete<ApiResponse<string>>(`${this.url}/center/deleteCenterTrainer/${id}`);
+  }
+
+  // =========================================================================
+  // MEMBERS (gym roster -- not a Subscription/membership payment)
+  // =========================================================================
+  getMyCenterMembers() {
+    return this.http.get<ApiResponse<CenterMember[]>>(`${this.url}/center/getMyCenterMembers`);
+  }
+
+  addMember(data: { memberEmail: string }) {
+    return this.http.post<ApiResponse<CenterMember>>(`${this.url}/center/addMember`, data);
+  }
+
+  updateMemberStatus(id: number) {
+    return this.http.put<ApiResponse<CenterMember>>(`${this.url}/center/updateMemberStatus/${id}`, {});
+  }
+
+  removeMember(id: number) {
+    return this.http.delete<ApiResponse<string>>(`${this.url}/center/removeMember/${id}`);
+  }
+
+  /** The signed-in user's own view: every center they personally belong to as a member -- open to any role. */
+  getMyCenterMemberships() {
+    return this.http.get<ApiResponse<CenterMember[]>>(`${this.url}/center/getMyCenterMemberships`);
   }
 
   // =========================================================================

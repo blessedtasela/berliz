@@ -1,0 +1,55 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900 flex items-center justify-center shrink-0">
+            <i-feather name="home" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">My Memberships</h1>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500">Centers you're a roster member of</p>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <app-load-error *ngIf="!loading && loadError && memberships.length === 0" title="Couldn't load your memberships"
+        [message]="loadError" (retry)="load()"></app-load-error>
+
+    <ng-container *ngIf="memberships.length > 0 || (!loading && !loadError)">
+
+        <!-- Empty state -->
+        <div *ngIf="memberships.length === 0" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-10 flex flex-col items-center gap-3 text-center">
+            <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                <i-feather name="home" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-gray-100">You're not on any center's roster yet</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 max-w-xs">A center adds you by email once you sign up with them -- it'll show up here.</p>
+        </div>
+
+        <!-- Membership cards -->
+        <div *ngFor="let membership of memberships" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900 flex items-center justify-center shrink-0">
+                    <i-feather name="home" class="text-sky-600" style="width:15px;height:15px;"></i-feather>
+                </div>
+                <div class="min-w-0">
+                    <a [routerLink]="['/centers', centerSlug(membership.centerName)]" class="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 transition truncate block">
+                        {{ membership.centerName }}
+                    </a>
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500">Member since {{ formatDate(membership.date) }}</p>
+                </div>
+            </div>
+
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0" [ngClass]="isActive(membership.status)
+                    ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900'
+                    : 'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 border-yellow-100 dark:border-yellow-900'">
+                {{ isActive(membership.status) ? 'Active' : 'Pending approval' }}
+            </span>
+        </div>
+
+    </ng-container>
+
+</section>

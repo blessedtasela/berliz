@@ -34,6 +34,7 @@ export const centerReducer = createReducer(
     A.addCenterPricing, A.updateCenterPricing, A.deleteCenterPricing,
     A.loadAllCenterTrainers, A.loadMyCenterTrainers,
     A.addCenterTrainer, A.updateCenterTrainerStatus, A.deleteCenterTrainer,
+    A.loadMyCenterMembers,
     A.loadAllCenterVideoAlbums, A.loadMyCenterVideoAlbums,
     A.addCenterVideoAlbum, A.updateCenterVideoAlbum, A.deleteCenterVideoAlbum,
     A.loadAllCenterReviews, A.loadMyCenterReviews, A.loadActiveCenterReviews,
@@ -61,6 +62,7 @@ export const centerReducer = createReducer(
     A.addCenterPricingFailure, A.updateCenterPricingFailure, A.deleteCenterPricingFailure,
     A.loadAllCenterTrainersFailure, A.loadMyCenterTrainersFailure,
     A.addCenterTrainerFailure, A.updateCenterTrainerStatusFailure, A.deleteCenterTrainerFailure,
+    A.loadMyCenterMembersFailure,
     A.loadAllCenterVideoAlbumsFailure, A.loadMyCenterVideoAlbumsFailure,
     A.addCenterVideoAlbumFailure, A.updateCenterVideoAlbumFailure, A.deleteCenterVideoAlbumFailure,
     A.loadAllCenterReviewsFailure, A.loadMyCenterReviewsFailure, A.loadActiveCenterReviewsFailure,
@@ -239,6 +241,7 @@ export const centerReducer = createReducer(
   // =========================================================================
   on(A.loadAllCenterTrainersSuccess, (s, { response }) => ({ ...s, loading: false, centerTrainers: response.data ?? [] })),
   on(A.loadMyCenterTrainersSuccess, (s, { response }) => ({ ...s, loading: false, myCenterTrainers: response.data ?? [] })),
+  on(A.loadMyCenterMembersSuccess, (s, { response }) => ({ ...s, loading: false, myCenterMembers: response.data ?? [] })),
 
   on(A.addCenterTrainerSuccess, (s, { response }) => ({
     ...s, loading: false,

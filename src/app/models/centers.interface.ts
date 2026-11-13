@@ -136,6 +136,23 @@ export interface CenterTrainers {
   message?: string;
 }
 
+/** A gym-roster entry -- "this user belongs to this center's membership roster," not a paid
+ *  Subscription or a trainer affiliation. status: "false" = pending approval, "true" = active. */
+export interface CenterMember {
+  id: number;
+  centerId: number;
+  centerName: string;
+  userId: number;
+  memberName: string;
+  memberEmail: string;
+  /** Raw bytes (user.profilePhoto), not a Strapi-hosted PhotoResponse -- same shape the backend sends. */
+  memberPhoto?: string | null;
+  status: string;
+  date: Date;
+  lastUpdate: Date;
+  message?: string;
+}
+
 export interface CenterPromotions {
   id: number;
   centerId: number;

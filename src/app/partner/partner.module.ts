@@ -24,6 +24,7 @@ import { CenterAnnouncementsComponent } from './center-announcements/center-anno
 import { CenterPhotoAlbumComponent } from './center-photo-album/center-photo-album.component';
 import { CenterVideoAlbumComponent } from './center-video-album/center-video-album.component';
 import { CenterTrainersComponent } from './center-trainers/center-trainers.component';
+import { CenterMembersComponent } from './center-members/center-members.component';
 import { CenterReviewComponent } from './center-review/center-review.component';
 import { CenterLikeComponent } from './center-like/center-like.component';
 import { MyBookingsModule } from '../bookings/bookings.module';
@@ -51,6 +52,7 @@ import { ProviderPricingFieldsComponent } from './provider-pricing-fields/provid
     CenterPhotoAlbumComponent,
     CenterVideoAlbumComponent,
     CenterTrainersComponent,
+    CenterMembersComponent,
     CenterReviewComponent,
     CenterLikeComponent,
   ],
