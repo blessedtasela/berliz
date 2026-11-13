@@ -338,6 +338,22 @@
       <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
     </div>
 
+    <!-- BK-40: signed in, but no name/photo yet -- the trainer needs to know who's asking. -->
+    <div *ngIf="showProfileIncompletePrompt" role="region" aria-label="Complete your profile to send your request" data-testid="profile-incomplete-prompt"
+      class="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 flex flex-col gap-3">
+      <div>
+        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Add your name and a photo first</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+          So {{ providerName }} knows who's asking. Your day, time and notes are saved -- you'll come straight back here afterwards.
+        </p>
+      </div>
+      <button type="button" (click)="goToCompleteProfile()" data-testid="complete-profile-cta"
+        class="self-start px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+        Complete your profile
+      </button>
+      <button type="button" (click)="dismissProfileIncompletePrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+    </div>
+
     <!-- BK-32: the one-tap recovery for "you already used your trial" -- same trainer/gym/discipline picks, just switched to a regular session, instead of a dead end. -->
     <div *ngIf="isTrialAlreadyUsedError" class="rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-3 flex flex-col gap-2" data-testid="trial-already-used">
       <p class="text-xs text-amber-800 dark:text-amber-300">{{ submitError }}</p>

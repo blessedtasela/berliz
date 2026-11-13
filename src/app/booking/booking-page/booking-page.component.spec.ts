@@ -518,3 +518,54 @@ describe('BookingPageComponent timezone notes', () => {
     expect(page.yourTimeNote).toBeNull();
   });
 });
+
+describe('BookingPageComponent profile completeness (BK-40)', () => {
+
+  let page: any;
+  let navigate: jasmine.Spy;
+
+  beforeEach(() => {
+    navigate = jasmine.createSpy('navigate');
+    page = Object.create(BookingPageComponent.prototype);
+    page.router = { navigate };
+    page.kind = 'trainer';
+    page.providerId = 9;
+    page.providerName = 'Jo Smith';
+    page.selectedDate = '2026-11-20';
+    page.selectedSlot = { startTime: '09:00:00', endTime: '10:00:00' };
+    page.notes = 'Looking forward to it';
+    page.maxNotesLength = 500;
+    page.selectedOption = { kind: 'single' };
+    page.submitting = true;
+    page.submitError = null;
+    page.showProfileIncompletePrompt = false;
+  });
+
+  it('shows the completion prompt instead of the generic error, and stops leaving "sending" on', () => {
+    page.handleCreateBookingFailure('Add your name and a profile photo before sending a request.');
+
+    expect(page.submitting).toBeFalse();
+    expect(page.showProfileIncompletePrompt).toBeTrue();
+    expect(page.submitError).toBeNull();
+  });
+
+  it('leaves every other failure on the normal inline-error path', () => {
+    page.handleCreateBookingFailure('That slot was just taken.');
+
+    expect(page.submitting).toBeFalse();
+    expect(page.showProfileIncompletePrompt).toBeFalse();
+    expect(page.submitError).toBe('That slot was just taken.');
+  });
+
+  it('goToCompleteProfile sends the client to the profile editor', () => {
+    page.goToCompleteProfile();
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/profile/edit']);
+  });
+
+  it('dismissProfileIncompletePrompt closes it without navigating', () => {
+    page.showProfileIncompletePrompt = true;
+    page.dismissProfileIncompletePrompt();
+    expect(page.showProfileIncompletePrompt).toBeFalse();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+});
