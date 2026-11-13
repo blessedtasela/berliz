@@ -392,6 +392,17 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Reviews a client wrote about trainers -- distinct from a trainer's "Client Reviews" view.
+      {
+        path: 'my-trainer-reviews',
+        loadComponent: () => import('../my-trainer-reviews/my-trainer-reviews.component').then(m => m.MyTrainerReviewsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Reviews',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Client intake — trainer initiates for a specific client (clientId
       // route param); client or the assigned trainer can view/edit
       // afterwards (id route param). Access is enforced server-side.
