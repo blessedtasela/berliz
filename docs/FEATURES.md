@@ -226,6 +226,11 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **BK-46: a client's completed-session count only counts sessions that actually happened.**
+  `getMyClients`/`getMyTrainers` counted every booking with a person -- pending, confirmed,
+  cancelled, no-show -- as a "session," so a client whose every booking was cancelled still showed
+  a nonzero count. Both now count only `completed` bookings. `com.berliz` commit `48da358`, `berliz`
+  commit `1ac7def0b`.
 - **BK-43: a booking no longer claims its intake is Complete with nothing submitted.** The trainer's
   booking card read "Intake complete" the moment a client intake row existed, even if the client
   never answered anything -- a row is created the instant "Fill Together"/"Send Intake Form" is
