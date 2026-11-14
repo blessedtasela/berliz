@@ -410,3 +410,13 @@ Root cause found by tracing the data, not guessing: `ProviderBookingsMainCompone
 **Fixed** (`berliz`@`41129b467`): added a second map, `submittedIntakeByClient`, true only when `submittedAt` is set, and `hasIntake` now reads from that instead. `intakeIdByClient` itself is untouched -- it still has to include unsubmitted drafts, because BK-24 depends on it to reopen an existing draft instead of starting a blank form; collapsing the two concepts into one map would have fixed BK-43 by breaking BK-24.
 
 **Not built:** a three-way Not-submitted/Partial/Complete status display -- the ticket's acceptance test only exercises the two concrete cases (never touched, fully submitted), and this intake form is slated for a full rebuild into a signed, locked PAR-Q under BK-47, so a bespoke "partial" heuristic for the soon-to-be-replaced form felt like the wrong place to spend effort.
+
+### BK-45: a trainer-created booking claiming "onboarding complete" (Nov 13, 2026)
+
+The ticket extends BK-43's law to three derivations a trainer-created booking must start at their true initial value: intake/onboarding, payment, and payment-code usage. Investigated each (no code changed beyond a regression test, since none of the three turned out to be stamped wrong):
+
+- **Intake/onboarding** -- the booking card's own code names this exact chip `onboardingChip`, and it's the same "Intake complete" mechanism BK-43 just fixed a few minutes earlier in this session. That fix isn't scoped to any particular booking-creation path, so a trainer-created booking for a brand-new client (no `ClientIntake` row at all) already reads correctly now.
+- **Payment** -- `createBookingForClient` runs through the exact same `priceBooking()` → `BookingPricing.price()` path every other confirm uses; nothing in it sets `paymentStatus` to anything but the real computed value (`UNPAID` with a real `amountDue`, for a trainer with a real rate).
+- **Payment code** -- `createBookingForClient` never touches `Booking.paymentCode`, and `BookingResponse` doesn't even expose a code field today, so there's nothing to misrepresent as used.
+
+No default/template-stamp bug found at any of the three. Added a dedicated regression test locking in the payment leg with a real hourly rate (`com.berliz`@`068ae94`) -- the existing on-behalf tests all use an unrated trainer, which prices to `null` either way and would have passed even if this were broken, so it wasn't real coverage of this claim before now.
