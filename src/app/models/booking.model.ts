@@ -91,6 +91,7 @@ export interface MyClientSummary {
   photo?: string;
   status: string;
   lastBookingAt: Date;
+  /** BK-46: completed sessions only -- pending/confirmed/cancelled/no-show/withdrawn never count. */
   bookingCount: number;
 }
 
