@@ -226,6 +226,14 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **BK-42 (CRITICAL): a system-cancelled booking now says why.** A booking the system cancels
+  automatically (unpaid in time, request withdrawn for no answer, a group that couldn't go ahead,
+  a dropped weekly-subscription occurrence) now carries a `cancellationReason`, shown on the
+  booking card -- previously silent, with no visible reason or audit trail. The "confirm flips
+  straight to cancelled" report was investigated but not reproduced in the current confirm code
+  path; the closest match (BK-38's old payment-deadline formula landing within a minute of session
+  start for a short-lead-time booking) was already fixed Nov 12, before this fix. `com.berliz`
+  commit `2ee7f5b`, `berliz` commit `6bf9bbf90`.
 - **Group-pack session bookings now record their real paid share.** `memberBooking()` sets
   `amountPaid`/`paymentStatus=PAID` from the pack's pinned `groupPackShare` at creation, instead of
   leaving them unset and relying on a price-field guess every time a payout or the booking's own
