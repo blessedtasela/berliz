@@ -226,6 +226,11 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **BK-43: a booking no longer claims its intake is Complete with nothing submitted.** The trainer's
+  booking card read "Intake complete" the moment a client intake row existed, even if the client
+  never answered anything -- a row is created the instant "Fill Together"/"Send Intake Form" is
+  first opened. Now checks the existing `submittedAt` field before claiming complete; the "reopen
+  an existing draft" behavior (BK-24) is untouched. `berliz` commit `41129b467`.
 - **BK-42 (CRITICAL): a system-cancelled booking now says why.** A booking the system cancels
   automatically (unpaid in time, request withdrawn for no answer, a group that couldn't go ahead,
   a dropped weekly-subscription occurrence) now carries a `cancellationReason`, shown on the
