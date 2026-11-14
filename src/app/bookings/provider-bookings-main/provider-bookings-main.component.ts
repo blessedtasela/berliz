@@ -64,6 +64,13 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   onboardingByClient: Record<number, number> = {};
   /** This client's existing intake form id, by client user id, if one has already been started or submitted. */
   intakeIdByClient: Record<number, number> = {};
+  /**
+   * BK-43: whether that existing intake was actually submitted, not just created. A row exists the
+   * moment "Fill Together"/"Send Intake Form" is first opened, before the client ever answers
+   * anything -- intakeIdByClient alone can't tell "complete" from "never touched", which is exactly
+   * how the card came to claim Complete with nothing behind it.
+   */
+  submittedIntakeByClient: Record<number, boolean> = {};
   loading = false;
   /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
   loadError: string | null = null;
@@ -109,10 +116,15 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.clientIntakeService.getMyIntakes().pipe(take(1)).subscribe({
       next: res => {
         const byClient: Record<number, number> = {};
-        for (const intake of res?.data ?? []) byClient[intake.clientId] = intake.id;
+        const submittedByClient: Record<number, boolean> = {};
+        for (const intake of res?.data ?? []) {
+          byClient[intake.clientId] = intake.id;
+          if (intake.submittedAt) submittedByClient[intake.clientId] = true;
+        }
         this.intakeIdByClient = byClient;
+        this.submittedIntakeByClient = submittedByClient;
       },
-      error: () => { this.intakeIdByClient = {}; },
+      error: () => { this.intakeIdByClient = {}; this.submittedIntakeByClient = {}; },
     });
   }
 
