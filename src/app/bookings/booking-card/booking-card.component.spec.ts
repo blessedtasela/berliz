@@ -629,4 +629,25 @@ describe('BookingCardComponent', () => {
       expect(emitted).toEqual([]);
     });
   });
+
+  describe('cancellation reason (BK-42)', () => {
+    it('shows the reason on a system-cancelled booking', () => {
+      component.booking = { ...component.booking, status: 'cancelled', cancellationReason: 'Not paid in time -- auto-cancelled.' } as Booking;
+      fixture.detectChanges();
+      const el = fixture.nativeElement.querySelector('[data-testid=cancellation-reason]');
+      expect(el?.textContent).toContain('Not paid in time');
+    });
+
+    it('shows nothing when the client cancelled it themselves (no reason recorded)', () => {
+      component.booking = { ...component.booking, status: 'cancelled', cancellationReason: null } as Booking;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid=cancellation-reason]')).toBeFalsy();
+    });
+
+    it('never shows a leftover reason on a non-cancelled booking', () => {
+      component.booking = { ...component.booking, status: 'confirmed', cancellationReason: 'stale text' } as Booking;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid=cancellation-reason]')).toBeFalsy();
+    });
+  });
 });

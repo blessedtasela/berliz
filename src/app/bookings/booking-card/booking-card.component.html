@@ -42,6 +42,13 @@
             </span>
         </div>
 
+        <!-- BK-42: a cancellation the client/provider didn't personally trigger must say why, never silently. -->
+        <p *ngIf="booking.status === 'cancelled' && booking.cancellationReason"
+            class="flex items-start gap-1 text-[11px] text-amber-700 dark:text-amber-400 mt-1" data-testid="cancellation-reason">
+            <i-feather name="info" style="width:11px;height:11px;" class="shrink-0 mt-0.5"></i-feather>
+            <span>{{ booking.cancellationReason }}</span>
+        </p>
+
         <p *ngIf="booking.locationLabel" class="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5 flex items-center gap-1 min-w-0">
             <i-feather name="map-pin" class="shrink-0 text-gray-400 dark:text-gray-500" style="width:11px;height:11px;"></i-feather>
             <span class="truncate">{{ booking.locationLabel }}</span>

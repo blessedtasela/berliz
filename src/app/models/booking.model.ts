@@ -22,6 +22,8 @@ export interface Booking {
 
   /** pending | confirmed | cancelled | completed | no_show */
   status: string;
+  /** BK-42: why, set only when something other than the client's own explicit cancel moved this to cancelled. */
+  cancellationReason?: string | null;
   notes: string;
 
   /** True when the client explicitly requested a time outside the provider's normal lead-time/availability rules. */
