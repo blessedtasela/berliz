@@ -53,4 +53,18 @@ export class MyClientIntakesComponent implements OnInit, OnDestroy {
   clientName(intake: ClientIntake): string {
     return `${intake.clientFirstname ?? ''} ${intake.clientLastname ?? ''}`.trim() || intake.clientEmail || 'Client';
   }
+
+  statusLabel(intake: ClientIntake): string {
+    switch (intake.status) {
+      case 'SENT': return 'Awaiting signature';
+      case 'COMPLETED': case 'LOCKED': return 'Signed & locked';
+      case 'EDIT_REQUESTED': return 'Edit requested';
+      case 'EDIT_GRANTED': return 'Edit window open';
+      default: return intake.status;
+    }
+  }
+
+  isSigned(intake: ClientIntake): boolean {
+    return intake.status === 'COMPLETED' || intake.status === 'LOCKED';
+  }
 }

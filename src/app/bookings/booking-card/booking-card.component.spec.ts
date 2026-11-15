@@ -558,7 +558,7 @@ describe('BookingCardComponent', () => {
     // BK-24 (Nov 5 escalation): the questionnaire tracker and the signed intake are two separate
     // records -- a client could have a completed, signed intake while this tracker still read 0%,
     // so the chip told the trainer the opposite of the truth. The intake now always wins.
-    it('shows "Intake complete" -- never "Onboarding incomplete" -- when a signed intake is on file', () => {
+    it('shows "PAR-Q signed" -- never "Onboarding incomplete" -- when a signed PAR-Q is on file', () => {
       component.mode = 'provider';
       component.booking = { ...component.booking, status: 'pending' } as Booking;
       component.onboardingPercent = 0;
@@ -566,7 +566,7 @@ describe('BookingCardComponent', () => {
       fixture.detectChanges();
 
       const chip = fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement;
-      expect(chip.textContent).toContain('Intake complete');
+      expect(chip.textContent).toContain('PAR-Q signed');
       expect(chip.textContent).not.toContain('incomplete');
     });
 
@@ -592,22 +592,22 @@ describe('BookingCardComponent', () => {
       component.booking = { ...component.booking, status: 'confirmed' } as Booking;
     });
 
-    it('offers "Fill Together" and "Send Intake Form" when no intake exists yet', () => {
+    it('offers "Fill Together" and "Send PAR-Q" when no signed PAR-Q exists yet', () => {
       component.hasIntake = false;
       fixture.detectChanges();
 
       const fillButton = fixture.nativeElement.querySelector('[data-testid="intake-fill-or-view"]') as HTMLElement;
       expect(fillButton.textContent).toContain('Fill Together');
-      expect(fixture.nativeElement.textContent).toContain('Send Intake Form');
+      expect(fixture.nativeElement.textContent).toContain('Send PAR-Q');
     });
 
-    it('switches to "View Intake Form" and hides "Send Intake Form" once one exists', () => {
+    it('switches to "View PAR-Q" and hides "Send PAR-Q" once one is signed', () => {
       component.hasIntake = true;
       fixture.detectChanges();
 
       const fillButton = fixture.nativeElement.querySelector('[data-testid="intake-fill-or-view"]') as HTMLElement;
-      expect(fillButton.textContent).toContain('View Intake Form');
-      expect(fixture.nativeElement.textContent).not.toContain('Send Intake Form');
+      expect(fillButton.textContent).toContain('View PAR-Q');
+      expect(fixture.nativeElement.textContent).not.toContain('Send PAR-Q');
     });
   });
 

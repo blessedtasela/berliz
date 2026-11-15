@@ -7,7 +7,7 @@
         <i-feather name="file-text" class="text-red-600" style="width:16px;height:16px;"></i-feather>
       </div>
       <div>
-        <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Client Intake</h1>
+        <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">PAR-Q</h1>
         <p class="text-[11px] text-gray-400 dark:text-gray-500" *ngIf="clientName">{{ clientName }}</p>
       </div>
     </div>
@@ -17,95 +17,268 @@
       class="rounded-2xl border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/20 p-5 flex items-start gap-3">
       <i-feather name="shield-off" class="text-red-600 shrink-0" style="width:18px;height:18px;"></i-feather>
       <div>
-        <p class="text-sm font-bold text-red-700 dark:text-red-400">You don't have access to this intake</p>
+        <p class="text-sm font-bold text-red-700 dark:text-red-400">You don't have access to this PAR-Q</p>
         <p class="text-xs text-red-600 dark:text-red-400 mt-1">
-          Only the client this intake is about, or the trainer who created it, can view it.
+          Only the client this PAR-Q is about, or the trainer who sent it, can view it.
         </p>
       </div>
     </div>
 
     <!-- Not found -->
     <div *ngIf="notFound" data-testid="intake-not-found" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 p-5">
-      <p class="text-sm font-bold text-gray-700 dark:text-gray-300">Intake not found</p>
+      <p class="text-sm font-bold text-gray-700 dark:text-gray-300">PAR-Q not found</p>
     </div>
 
-    <app-load-error *ngIf="loadError && !accessDenied && !notFound" title="Couldn't load this intake"
+    <app-load-error *ngIf="loadError && !accessDenied && !notFound" title="Couldn't load this PAR-Q"
       [message]="loadError" (retry)="retryLoad()"></app-load-error>
 
-    <form *ngIf="!accessDenied && !notFound && !loadError" [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <ng-container *ngIf="!accessDenied && !notFound && !loadError">
 
-      <!-- Medical conditions -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Medical conditions</label>
-        <textarea aria-label="Medical conditions" formControlName="medicalConditions" rows="3" data-testid="medical-conditions"
-          placeholder="e.g. asthma, high blood pressure, diabetes..."
-          class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
-      </div>
+      <!-- ============== CREATE: trainer sending a brand-new PAR-Q ============== -->
+      <form *ngIf="mode === 'create'" [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+        <ng-container [ngTemplateOutlet]="fieldsTemplate"></ng-container>
 
-      <!-- Medications -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Current medications</label>
-        <textarea aria-label="Current medications" formControlName="medications" rows="2" data-testid="medications"
-          placeholder="List any medications currently being taken..."
-          class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
-      </div>
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
 
-      <!-- Injuries / limitations -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Injuries or physical limitations</label>
-        <textarea aria-label="Injuries or physical limitations" formControlName="injuriesOrLimitations" rows="3" data-testid="injuries-or-limitations"
-          placeholder="e.g. previous knee surgery, lower back pain..."
-          class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
-      </div>
+        <button type="submit" [disabled]="loading" data-testid="submit-intake"
+          class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition disabled:opacity-50">
+          Send PAR-Q
+        </button>
+      </form>
 
-      <!-- Training history -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Training history</label>
-        <textarea aria-label="Training history" formControlName="trainingHistory" rows="3" data-testid="training-history"
-          placeholder="Previous training experience, activity level, goals..."
-          class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
-      </div>
+      <!-- ============== EDIT: an existing record ============== -->
+      <ng-container *ngIf="mode === 'edit' && intake">
 
-      <!-- Emergency contact -->
-      <div class="flex flex-col gap-3">
-        <span class="text-[11px] font-bold tracking-[0.15em] uppercase text-red-500">Emergency Contact</span>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Name</label>
-            <input aria-label="Name" formControlName="emergencyContactName" type="text" data-testid="emergency-contact-name"
-              class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
-            <span *ngIf="(f['emergencyContactName'].dirty || f['emergencyContactName'].touched) && f['emergencyContactName'].invalid"
-              class="text-[11px] text-red-600 dark:text-red-400">Emergency contact name is required.</span>
+        <div class="flex items-center gap-2" data-testid="intake-status">
+          <span class="text-[11px] font-bold tracking-[0.1em] uppercase px-2 py-1 rounded-lg"
+            [ngClass]="{
+              'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400': intake.status === 'SENT',
+              'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400': intake.status === 'COMPLETED' || intake.status === 'LOCKED',
+              'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400': intake.status === 'EDIT_REQUESTED' || intake.status === 'EDIT_GRANTED'
+            }">
+            <i-feather [name]="isReadOnlyLocked ? 'lock' : 'unlock'" style="width:11px;height:11px;display:inline;margin-right:4px;"></i-feather>
+            {{ intake.status === 'SENT' ? 'Awaiting signature'
+              : intake.status === 'COMPLETED' ? 'Signed & locked'
+              : intake.status === 'LOCKED' ? 'Signed & locked'
+              : intake.status === 'EDIT_REQUESTED' ? 'Edit requested'
+              : 'Edit window open' }}
+          </span>
+          <span *ngIf="intake.requiresPhysicianClearance" class="text-[11px] font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
+            <i-feather name="alert-triangle" style="width:11px;height:11px;"></i-feather>
+            Physician clearance recommended
+          </span>
+        </div>
+
+        <!-- Signed & read-only -->
+        <div *ngIf="isReadOnlyLocked" data-testid="intake-readonly" class="flex flex-col gap-4">
+          <div class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3 text-xs text-gray-700 dark:text-gray-300">
+            <div *ngFor="let q of questions" class="flex items-start justify-between gap-3">
+              <span>{{ q.text }}</span>
+              <span class="font-semibold shrink-0" [ngClass]="intake[q.key] ? 'text-red-600 dark:text-red-400' : 'text-gray-400'">
+                {{ intake[q.key] ? 'Yes' : 'No' }}
+              </span>
+            </div>
           </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Phone</label>
-            <input aria-label="Phone" formControlName="emergencyContactPhone" type="tel" data-testid="emergency-contact-phone"
-              class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
-            <span *ngIf="(f['emergencyContactPhone'].dirty || f['emergencyContactPhone'].touched) && f['emergencyContactPhone'].invalid"
-              class="text-[11px] text-red-600 dark:text-red-400">Emergency contact phone is required.</span>
+
+          <div class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-2 text-xs text-gray-700 dark:text-gray-300">
+            <p *ngIf="intake.medicalConditions"><span class="font-semibold">Medical conditions:</span> {{ intake.medicalConditions }}</p>
+            <p *ngIf="intake.medications"><span class="font-semibold">Medications:</span> {{ intake.medications }}</p>
+            <p *ngIf="intake.injuriesOrLimitations"><span class="font-semibold">Injuries/limitations:</span> {{ intake.injuriesOrLimitations }}</p>
+            <p *ngIf="intake.trainingHistory"><span class="font-semibold">Training history:</span> {{ intake.trainingHistory }}</p>
+            <p><span class="font-semibold">Emergency contact:</span> {{ intake.emergencyContactName }} — {{ intake.emergencyContactPhone }}</p>
+          </div>
+
+          <div class="rounded-2xl border border-emerald-100 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/10 p-4 text-xs text-gray-600 dark:text-gray-400" data-testid="signature-line">
+            Signed by <span class="font-semibold">{{ intake.signedName }}</span> on {{ intake.signedAt | date:'medium' }}. This record is locked: no further edits by the client or trainer.
+          </div>
+
+          <!-- Client: request an edit -->
+          <div *ngIf="canRequestEdit && !showRequestEdit" class="flex justify-start">
+            <button type="button" (click)="openRequestEdit()" data-testid="open-request-edit"
+              class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
+              <i-feather name="edit-3" style="width:12px;height:12px;"></i-feather>
+              Request an edit
+            </button>
+          </div>
+          <div *ngIf="showRequestEdit" class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Why do you need this reopened?</label>
+            <textarea [(ngModel)]="requestEditReason" rows="2" data-testid="request-edit-reason"
+              class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+            <p *ngIf="requestEditError" class="text-[11px] text-red-600 dark:text-red-400">{{ requestEditError }}</p>
+            <div class="flex items-center justify-end gap-2">
+              <button type="button" (click)="showRequestEdit = false" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Cancel</button>
+              <button type="button" (click)="submitRequestEdit()" [disabled]="requestEditSaving" data-testid="submit-request-edit"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 transition disabled:opacity-50">Send request</button>
+            </div>
+          </div>
+
+          <!-- Client: waiting on admin -->
+          <div *ngIf="intake.status === 'EDIT_REQUESTED' && isSigner" class="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/10 p-4 text-xs text-blue-700 dark:text-blue-400">
+            Your edit request has been sent for review. You'll be notified once a super admin decides.
+          </div>
+
+          <!-- Admin: decide a pending edit request -->
+          <div *ngIf="canDecideEditRequest" data-testid="decide-edit-request" class="rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/10 p-4 flex flex-col gap-2">
+            <p class="text-xs font-semibold text-blue-700 dark:text-blue-400">The client has requested an edit window.</p>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Note (required to deny)</label>
+            <textarea [(ngModel)]="decideNote" rows="2" data-testid="decide-note"
+              class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+            <p *ngIf="decideError" class="text-[11px] text-red-600 dark:text-red-400">{{ decideError }}</p>
+            <div class="flex items-center justify-end gap-2">
+              <button type="button" (click)="decideEditRequest(false)" [disabled]="decidingEdit" data-testid="deny-edit-request"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-50">Deny</button>
+              <button type="button" (click)="decideEditRequest(true)" [disabled]="decidingEdit" data-testid="grant-edit-request"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-50">Grant edit window</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Consent -->
-      <label class="flex items-start gap-2.5 rounded-xl border border-gray-200 dark:border-gray-700 p-3.5 cursor-pointer">
-        <input type="checkbox" formControlName="consentAcknowledged" class="mt-0.5" data-testid="consent-checkbox" />
-        <span class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-          I confirm this information is accurate to the best of my knowledge.
-        </span>
-      </label>
-      <span *ngIf="f['consentAcknowledged'].touched && f['consentAcknowledged'].invalid"
-        class="text-[11px] text-red-600 dark:text-red-400 -mt-3">
-        You must confirm this information is accurate before submitting.
-      </span>
+        <!-- Admin: edit directly, regardless of lock state -->
+        <div *ngIf="isAdmin" class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <button type="button" (click)="showAdminEdit ? (showAdminEdit = false) : openAdminEdit()" data-testid="toggle-admin-edit"
+              class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
+              <i-feather name="edit-3" style="width:12px;height:12px;"></i-feather>
+              {{ showAdminEdit ? 'Cancel admin edit' : 'Edit directly (admin)' }}
+            </button>
+            <button type="button" (click)="toggleAuditLog()" data-testid="toggle-audit-log"
+              class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
+              <i-feather name="clock" style="width:12px;height:12px;"></i-feather>
+              {{ auditLog !== null ? 'Hide audit log' : 'View audit log' }}
+            </button>
+          </div>
 
-      <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+          <div *ngIf="auditLog !== null" data-testid="audit-log" class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-2 text-xs">
+            <p *ngIf="auditLoading" class="text-gray-400">Loading…</p>
+            <p *ngIf="!auditLoading && auditLog.length === 0" class="text-gray-400">No activity yet.</p>
+            <div *ngFor="let entry of auditLog" class="flex items-start justify-between gap-3 border-b border-gray-100 dark:border-gray-800 last:border-0 pb-2 last:pb-0">
+              <div>
+                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ entry.action }}</span>
+                <span class="text-gray-400"> — {{ entry.actorName || 'system' }}</span>
+                <p *ngIf="entry.reason" class="text-gray-500 dark:text-gray-400 mt-0.5">{{ entry.reason }}</p>
+              </div>
+              <span class="text-gray-400 shrink-0">{{ entry.date | date:'short' }}</span>
+            </div>
+          </div>
 
-      <button type="submit" [disabled]="loading" data-testid="submit-intake"
-        class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition disabled:opacity-50">
-        {{ mode === 'create' ? 'Submit intake' : 'Save changes' }}
-      </button>
-    </form>
+          <form *ngIf="showAdminEdit" [formGroup]="adminForm" (ngSubmit)="submitAdminEdit()" data-testid="admin-edit-form"
+            class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
+            <ng-container [ngTemplateOutlet]="fieldsTemplate" [ngTemplateOutletContext]="{ group: adminForm }"></ng-container>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Reason for this edit</label>
+              <textarea formControlName="reason" rows="2" data-testid="admin-edit-reason"
+                class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+            </div>
+            <button type="submit" data-testid="submit-admin-edit"
+              class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 transition self-start">
+              Save admin edit
+            </button>
+          </form>
+        </div>
+
+        <!-- Open: trainer/admin co-filling, client not yet signing -->
+        <form *ngIf="canSaveDraftNow" [formGroup]="form" (ngSubmit)="saveDraft()" data-testid="draft-form" class="flex flex-col gap-5">
+          <p class="text-xs text-gray-500 dark:text-gray-400">Fill in what you can together -- the client still has to answer the PAR-Q questions and sign before this is complete.</p>
+          <ng-container [ngTemplateOutlet]="fieldsTemplate"></ng-container>
+          <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+          <button type="submit" [disabled]="loading" data-testid="save-draft"
+            class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 transition disabled:opacity-50 self-start">
+            Save answers
+          </button>
+        </form>
+
+        <!-- Open: client signing -->
+        <form *ngIf="canSignNow" [formGroup]="form" (ngSubmit)="sign()" data-testid="sign-form" class="flex flex-col gap-5">
+          <ng-container [ngTemplateOutlet]="fieldsTemplate"></ng-container>
+
+          <div [formGroup]="signForm" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-3">
+              <span class="text-[11px] font-bold tracking-[0.15em] uppercase text-red-500">PAR-Q questions</span>
+              <div *ngFor="let q of questions" class="flex items-center justify-between gap-3 rounded-xl border border-gray-200 dark:border-gray-700 p-3">
+                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ q.text }}</span>
+                <div class="flex gap-1.5 shrink-0" [attr.data-testid]="'parq-' + q.key">
+                  <button type="button" (click)="sf[q.key].setValue(true)"
+                    class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition"
+                    [ngClass]="sf[q.key].value === true ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-400' : 'border-gray-200 dark:border-gray-700 text-gray-500'">Yes</button>
+                  <button type="button" (click)="sf[q.key].setValue(false)"
+                    class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition"
+                    [ngClass]="sf[q.key].value === false ? 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300' : 'border-gray-200 dark:border-gray-700 text-gray-500'">No</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Type your full name to sign</label>
+              <input formControlName="signedName" type="text" data-testid="signed-name"
+                class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
+            </div>
+
+            <label class="flex items-start gap-2.5 rounded-xl border border-gray-200 dark:border-gray-700 p-3.5 cursor-pointer">
+              <input type="checkbox" formControlName="consentAcknowledged" class="mt-0.5" data-testid="consent-checkbox" />
+              <span class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                I confirm these answers are accurate to the best of my knowledge, and this typed name is my signature.
+              </span>
+            </label>
+          </div>
+
+          <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
+          <button type="submit" [disabled]="loading" data-testid="submit-intake"
+            class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition disabled:opacity-50">
+            Sign PAR-Q
+          </button>
+        </form>
+
+      </ng-container>
+    </ng-container>
 
   </section>
 </main>
+
+<ng-template #fieldsTemplate let-group="group">
+  <ng-container [formGroup]="group || form">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Medical conditions</label>
+      <textarea aria-label="Medical conditions" formControlName="medicalConditions" rows="3" data-testid="medical-conditions"
+        placeholder="e.g. asthma, high blood pressure, diabetes..."
+        class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Current medications</label>
+      <textarea aria-label="Current medications" formControlName="medications" rows="2" data-testid="medications"
+        placeholder="List any medications currently being taken..."
+        class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Injuries or physical limitations</label>
+      <textarea aria-label="Injuries or physical limitations" formControlName="injuriesOrLimitations" rows="3" data-testid="injuries-or-limitations"
+        placeholder="e.g. previous knee surgery, lower back pain..."
+        class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Training history</label>
+      <textarea aria-label="Training history" formControlName="trainingHistory" rows="3" data-testid="training-history"
+        placeholder="Previous training experience, activity level, goals..."
+        class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="text-[11px] font-bold tracking-[0.15em] uppercase text-red-500">Emergency Contact</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Name</label>
+          <input aria-label="Name" formControlName="emergencyContactName" type="text" data-testid="emergency-contact-name"
+            class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Phone</label>
+          <input aria-label="Phone" formControlName="emergencyContactPhone" type="tel" data-testid="emergency-contact-phone"
+            class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>

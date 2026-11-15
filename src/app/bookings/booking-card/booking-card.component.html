@@ -135,12 +135,12 @@
             <button *ngIf="canStartIntake" type="button" (click)="startIntake()" data-testid="intake-fill-or-view"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather [name]="hasIntake ? 'eye' : 'file-text'" style="width:11px;height:11px;"></i-feather>
-                {{ hasIntake ? 'View Intake Form' : 'Fill Together' }}
+                {{ hasIntake ? 'View PAR-Q' : 'Fill Together' }}
             </button>
             <button *ngIf="canStartIntake && !hasIntake" type="button" (click)="sendIntake()"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather name="send" style="width:11px;height:11px;"></i-feather>
-                Send Intake Form
+                Send PAR-Q
             </button>
 
             <button *ngIf="canProviderReopen" type="button" (click)="reopen()"

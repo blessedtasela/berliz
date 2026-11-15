@@ -126,23 +126,23 @@ describe('ProviderBookingsMainComponent', () => {
       httpMock.verify();
     });
 
-    // BK-43: a row existing (even one the client never touched) is not the same as it being
-    // submitted -- the card must not claim Complete off the first alone.
-    it('only counts an intake as submitted when submittedAt is actually set', () => {
+    // BK-43/BK-47: a row existing (even one the client never touched) is not the same as it
+    // being signed -- the card must not claim the PAR-Q is done off the first alone.
+    it('only counts a PAR-Q as signed when status is COMPLETED or LOCKED', () => {
       const httpMock = initWithBooking();
       httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes'))
-        .flush({ data: [{ id: 42, clientId: 5, submittedAt: '2026-11-01T00:00:00Z' }] });
+        .flush({ data: [{ id: 42, clientId: 5, status: 'COMPLETED' }] });
 
-      expect(component.submittedIntakeByClient[5]).toBe(true);
+      expect(component.signedIntakeByClient[5]).toBe(true);
       httpMock.verify();
     });
 
-    it('does not count a never-submitted intake as submitted, even though the row exists', () => {
+    it('does not count an unsigned PAR-Q as signed, even though the row exists', () => {
       const httpMock = initWithBooking();
       httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes'))
-        .flush({ data: [{ id: 42, clientId: 5, submittedAt: null }] });
+        .flush({ data: [{ id: 42, clientId: 5, status: 'SENT' }] });
 
-      expect(component.submittedIntakeByClient[5]).toBeUndefined();
+      expect(component.signedIntakeByClient[5]).toBeUndefined();
       // ...but the existing-draft lookup still works -- BK-24 must not regress.
       expect(component.intakeIdByClient[5]).toBe(42);
       httpMock.verify();

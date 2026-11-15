@@ -36,7 +36,7 @@ export class BookingCardComponent {
   @Input() booking!: Booking;
   /** The client's onboarding completion (0-100) for the provider view; undefined while unknown, so nothing is shown. */
   @Input() onboardingPercent: number | null | undefined;
-  /** Whether this client already has an intake form started or submitted -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send Intake Form" (nothing left to ask for). */
+  /** BK-47: whether this client's PAR-Q has actually been signed (not just sent) -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send PAR-Q" (nothing left to ask for). */
   @Input() hasIntake = false;
   /** PF-43: does the client still have an unreviewed completed session with this trainer --
    *  undefined while unknown (chip hidden), never a guess. The parent fetches this per trainer. */
@@ -145,7 +145,7 @@ export class BookingCardComponent {
     if (this.mode !== 'provider') return null;
     if (this.booking.status !== 'pending' && this.booking.status !== 'confirmed') return null;
     if (this.hasIntake) {
-      return { label: 'Intake complete', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' };
+      return { label: 'PAR-Q signed', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' };
     }
     if (this.onboardingPercent == null) return null;
     return this.onboardingPercent >= 100
@@ -155,7 +155,7 @@ export class BookingCardComponent {
 
   get onboardingChipTitle(): string {
     return this.hasIntake
-      ? 'Signed intake form on file. Tap to read it.'
+      ? 'Signed PAR-Q on file. Tap to read it.'
       : `${this.onboardingPercent}% of the required onboarding answers. Tap to read them.`;
   }
 
