@@ -226,6 +226,27 @@ Newest first.
 
 ### 2026-11-14 — BK-47: locked, signed PAR-Q
 
+- **BK-48: deleting availability now warns about affected bookings, and a trainer/center can
+  pause a single date without touching their recurring hours.** Removing or shrinking a weekly
+  availability block produced no warning at all, even when a confirmed, paid booking depended on
+  that time -- the bulk "Save schedule" never consulted existing bookings before replacing the
+  week. A new read-only dry run (`POST /availability/previewCollisions`, admin equivalent
+  `/previewProviderCollisions`) runs before every save (trainer/center editor and the admin
+  modal): it names every upcoming, non-cancelled booking that fits the current schedule but would
+  fit none of the proposed one, shown as an inline "this would affect N bookings" panel with
+  "Save anyway" / "Go back" -- the booking itself is never cancelled by this, it just stops being
+  covered by the new hours, and the warning says so. A booking that was never covered by any
+  declared hours in the first place (e.g. admin-created or urgent) never triggers a false warning
+  on every future save.
+  Owner directive Nov 11, 2026, elevating this from "nice to have" to required: a new "Pause a
+  date" tool blocks out a whole date or a time range on a date (`AvailabilityPause`, migration
+  V107) in one action, entirely separate from the recurring weekly schedule -- no more deleting a
+  recurring block just to take a Thursday off and then forgetting to put it back. A pause
+  auto-expires once its date passes (no cleanup job needed -- every read site filters on the date
+  at query time, same pattern as `payment_code`'s `expires_at`) and is listed with an "Unpause"
+  action. Creating a pause runs the identical collision check first. `com.berliz` commit
+  `8f80c5c`, `berliz` commit `2caad6b7d`.
+
 - **BK-47: the "Fill Together" client intake is replaced by a locked, signed PAR-Q.** The old
   form could be resubmitted at any time -- including flipping the consent checkbox back off --
   so there was never an actual locked record of what a client had attested to. New status machine
