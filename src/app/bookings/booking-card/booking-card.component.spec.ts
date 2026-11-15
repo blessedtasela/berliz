@@ -7,6 +7,7 @@ import { BookingCardComponent } from './booking-card.component';
 import { Booking } from 'src/app/models/booking.model';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
 import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
+import { SettleBookingModalComponent } from '../settle-booking-modal/settle-booking-modal.component';
 import { Router } from '@angular/router';
 
 describe('BookingCardComponent', () => {
@@ -230,6 +231,45 @@ describe('BookingCardComponent', () => {
       component.mode = 'provider';
 
       component.setStatus('no_show');
+
+      expect(emitted).toEqual([]);
+    });
+
+    it('BK-44: offers Settle payment only for a confirmed, unpaid session, in provider mode', () => {
+      component.mode = 'provider';
+      component.booking.status = 'confirmed';
+      component.booking.paymentStatus = 'UNPAID';
+      expect(component.canSettlePayment).toBeTrue();
+
+      component.booking.paymentStatus = 'PAID';
+      expect(component.canSettlePayment).toBeFalse();
+
+      component.booking.paymentStatus = 'UNPAID';
+      component.booking.status = 'pending';
+      expect(component.canSettlePayment).toBeFalse();
+
+      component.booking.status = 'confirmed';
+      component.mode = 'client';
+      expect(component.canSettlePayment).toBeFalse();
+    });
+
+    it('BK-44: opening the settle modal and closing with a result emits settled', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
+      const emitted: number[] = [];
+      component.settled.subscribe(id => emitted.push(id));
+
+      component.openSettleModal();
+
+      expect(dialogSpy.open).toHaveBeenCalledWith(SettleBookingModalComponent, jasmine.any(Object));
+      expect(emitted).toEqual([1]);
+    });
+
+    it('BK-44: dismissing the settle modal without settling emits nothing', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
+      const emitted: number[] = [];
+      component.settled.subscribe(id => emitted.push(id));
+
+      component.openSettleModal();
 
       expect(emitted).toEqual([]);
     });

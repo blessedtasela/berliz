@@ -61,6 +61,12 @@ export interface Booking {
   /** While confirmed and unpaid: the moment it is cancelled automatically for non-payment. */
   paymentDueAt?: Date | null;
 
+  /** BK-44: set once the provider (or super admin) settled this booking themselves instead of the client paying through Stripe. */
+  settlementMode?: 'DIRECT' | 'CARD_ON_BEHALF' | null;
+  settlementChannel?: 'CASH' | 'E_TRANSFER' | 'OTHER' | null;
+  settlementNote?: string | null;
+  settledAt?: Date | null;
+
   /** Set when this session is part of a monthly plan. */
   planId?: number | null;
   /** This session's share of the plan total (discount already included). */

@@ -29,6 +29,7 @@ import { CalendarFeedCardComponent } from '../shared/calendar-feed-card/calendar
 import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
 import { ReviewBookingModalComponent } from './review-booking-modal/review-booking-modal.component';
+import { SettleBookingModalComponent } from './settle-booking-modal/settle-booking-modal.component';
 import { BookingDetailsModalComponent } from './booking-details-modal/booking-details-modal.component';
 import { BookForClientModalComponent } from './book-for-client-modal/book-for-client-modal.component';
 
@@ -42,6 +43,7 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     EarningsViewComponent,
     ManageBookingsComponent,
     ReviewBookingModalComponent,
+    SettleBookingModalComponent,
     BookingDetailsModalComponent,
     BookForClientModalComponent
   ],

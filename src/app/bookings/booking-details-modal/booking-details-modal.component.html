@@ -76,6 +76,14 @@
                 {{ paymentLabel }}
             </span>
         </div>
+        <!-- BK-44: who settled it, how, and any note -- the ledger detail the badge alone doesn't show. -->
+        <div *ngIf="booking.settlementMode" class="flex items-start gap-1.5 text-gray-500 dark:text-gray-400" data-testid="settlement-detail">
+            <i-feather name="check-circle" style="width:12px;height:12px;" class="text-emerald-500 mt-0.5 shrink-0"></i-feather>
+            <span>
+                Settled by your provider{{ booking.settlementChannel ? ' via ' + settlementChannelLabel : '' }}{{ booking.settledAt ? ' on ' + (booking.settledAt | date:'mediumDate') : '' }}
+                <span *ngIf="booking.settlementNote" class="italic"> — "{{ booking.settlementNote }}"</span>
+            </span>
+        </div>
         <div *ngIf="payByText" class="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
             <i-feather name="clock" style="width:12px;height:12px;"></i-feather>
             {{ payByText }}

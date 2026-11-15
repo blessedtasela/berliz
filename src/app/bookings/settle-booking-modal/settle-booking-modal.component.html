@@ -1,0 +1,55 @@
+<div class="font-sans flex flex-col gap-4 p-1 max-w-sm w-full">
+
+    <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Settle payment</h2>
+        <button type="button" (click)="close()" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center" aria-label="Close">
+            <i-feather name="x" style="width:16px;height:16px;"></i-feather>
+        </button>
+    </div>
+
+    <p class="text-xs text-gray-500 dark:text-gray-400">
+        The client already paid you directly. Record it here so the session settles properly instead of auto-cancelling for non-payment.
+    </p>
+
+    <div class="flex flex-col gap-1">
+        <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Amount the client paid</label>
+        <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">CA$</span>
+            <input type="number" min="0.01" step="0.01" [(ngModel)]="amount" placeholder="0.00"
+                class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">How did they pay?</label>
+        <div class="grid grid-cols-3 gap-2">
+            <button type="button" *ngFor="let c of channelOptions" (click)="channel = c.value"
+                class="px-2 py-2 rounded-xl border text-[11px] font-semibold transition"
+                [ngClass]="channel === c.value ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'">
+                {{ c.label }}
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Note (optional)</label>
+        <textarea [(ngModel)]="note" rows="2" placeholder="e.g. paid me at the gym after the session"
+            class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+    </div>
+
+    <p *ngIf="error" class="text-[11px] text-red-600 dark:text-red-400">{{ error }}</p>
+
+    <div class="border-t border-gray-100 dark:border-gray-800 pt-3 flex items-center justify-end gap-2">
+        <button type="button" (click)="close()"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            Cancel
+        </button>
+        <button type="button" (click)="submit()" [disabled]="!canSubmit"
+            class="disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+            {{ saving ? 'Settling…' : 'Mark as paid' }}
+        </button>
+    </div>
+
+</div>

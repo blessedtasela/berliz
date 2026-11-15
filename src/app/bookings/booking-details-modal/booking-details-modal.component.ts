@@ -111,6 +111,13 @@ export class BookingDetailsModalComponent {
     return paymentBadge(this.booking, this.mode)?.label ?? null;
   }
 
+  /** BK-44: "CASH" / "E_TRANSFER" / "OTHER" -> "Cash" / "E-transfer" / "Other". */
+  get settlementChannelLabel(): string {
+    const c = this.booking.settlementChannel;
+    if (!c) return '';
+    return c.charAt(0) + c.slice(1).toLowerCase().replace(/_/g, '-');
+  }
+
   get payByText(): string | null {
     return payByNote(this.booking);
   }

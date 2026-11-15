@@ -67,6 +67,13 @@ export function paymentBadge(b: Booking, mode: BookingMode): PaymentBadge | null
 
   switch (b.paymentStatus) {
     case 'PAID':
+      // BK-44: the client already paid the provider directly -- say so plainly, so nobody is asked to pay twice.
+      if (b.settlementMode && mode !== 'provider') {
+        return {
+          label: 'Paid via your trainer',
+          classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900',
+        };
+      }
       return {
         label: `Paid CA$${money(b.amountPaid ?? 0)}`,
         classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900',

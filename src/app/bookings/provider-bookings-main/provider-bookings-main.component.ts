@@ -227,6 +227,11 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(updateBookingStatus(event));
   }
 
+  /** BK-44: settled directly in the modal -- reload so the new Paid state shows. */
+  onSettled(_id: number): void {
+    this.refresh();
+  }
+
   /** Moves a pending (typically urgent) request to a new time and confirms it in one step. Plain service call, same as the lead-time/session-length settings elsewhere -- one lightweight action with no other state to coordinate with. */
   onRescheduleRequested(event: RescheduleRequest): void {
     this.bookingService.reschedule(event.id, {

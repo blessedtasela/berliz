@@ -117,6 +117,27 @@ describe('BookingDetailsModalComponent', () => {
       expect(text).not.toContain('location fee');
     });
 
+    it('BK-44: shows who settled a directly-settled booking, the channel, and any note', () => {
+      setup({
+        booking: {
+          ...paidTrial,
+          settlementMode: 'DIRECT',
+          settlementChannel: 'E_TRANSFER',
+          settlementNote: 'sent right after the session',
+          settledAt: new Date('2026-11-10T00:00:00Z'),
+        },
+        mode: 'client',
+      });
+      const el = fixture.nativeElement.querySelector('[data-testid="settlement-detail"]');
+      expect(el?.textContent).toContain('E-transfer');
+      expect(el?.textContent).toContain('sent right after the session');
+    });
+
+    it('BK-44: shows nothing when the booking was never settled directly', () => {
+      setup({ booking: paidTrial, mode: 'client' });
+      expect(fixture.nativeElement.querySelector('[data-testid="settlement-detail"]')).toBeNull();
+    });
+
     it('shows the travel fee inline on the location line for a custom location with no travelZone', () => {
       setup({ booking: { ...paidTrial, locationCustom: true, travelZone: null, locationFee: 30 }, mode: 'client' });
       const text = (fixture.nativeElement.textContent as string).replace(/\s+/g, ' ');

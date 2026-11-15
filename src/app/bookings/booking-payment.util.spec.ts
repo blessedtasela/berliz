@@ -62,6 +62,13 @@ describe('booking-payment.util', () => {
       expect(paymentBadge(booking({ paymentStatus: 'PARTIALLY_REFUNDED', status: 'cancelled', amountPaid: 40 }), 'client')?.label).toBe('Partly refunded · kept CA$40.00');
     });
 
+    it('BK-44: tells the client it was settled via their provider, never asking them to pay again', () => {
+      const settled = booking({ paymentStatus: 'PAID', amountPaid: 115, settlementMode: 'DIRECT' });
+      expect(paymentBadge(settled, 'client')?.label).toBe('Paid via your trainer');
+      // The provider already knows they settled it themselves -- show the real figure, not a vague note.
+      expect(paymentBadge(settled, 'provider')?.label).toBe('Paid CA$115.00');
+    });
+
     it('has no badge for an unpriced booking, a pending one, or a cancelled one that was never paid', () => {
       expect(paymentBadge(booking({ paymentStatus: null }), 'client')).toBeNull();
       expect(paymentBadge(booking({ status: 'pending' }), 'client')).toBeNull();
