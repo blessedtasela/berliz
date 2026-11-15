@@ -224,6 +224,29 @@ instead).
 
 Newest first.
 
+### 2026-11-14 — BK-47: locked, signed PAR-Q
+
+- **BK-47: the "Fill Together" client intake is replaced by a locked, signed PAR-Q.** The old
+  form could be resubmitted at any time -- including flipping the consent checkbox back off --
+  so there was never an actual locked record of what a client had attested to. New status machine
+  on the same `client_intake` table: `SENT` (trainer sent it) -&gt; `COMPLETED` (client answered
+  the seven PAR-Q+ screening questions and signed with a typed name) -&gt; `[EDIT_REQUESTED -&gt;
+  EDIT_GRANTED -&gt; LOCKED]` (client asks a super admin to reopen it; admin grants a one-time
+  window, denies with a note, or edits directly -- every step audit-logged in a new
+  `client_intake_audit_log` table). Once signed, the record is read-only for client and trainer
+  alike. The trainer (or an admin) can still co-fill the free-text answers together with the
+  client before signing (`PUT /client-intake/draft`) -- the original "Fill Together" value,
+  preserved -- but only the client can answer the PAR-Q questions, sign, and lock it. A "yes" to
+  any PAR-Q question flags the record for the trainer as recommending physician clearance (a soft
+  flag, never a hard block). Renamed the old `submittedAt`/`consentAcknowledgedAt` fields to
+  `sentAt`/`signedAt` -- the old names were being read as "the client submitted/signed this", when
+  `submittedAt` only ever meant "the trainer created/sent this", which is exactly the confusion
+  BK-43's fix had to work around; BK-43's own "signed" check now reads the real `status` instead.
+  **Not built:** the exact PAR-Q+ question wording is seeded from the standard published
+  instrument to the best of this implementation's knowledge, not from a live, dated copy --
+  compliance/the owner should verify it against the currently-published PAR-Q+ before this is
+  relied on for real screening. `com.berliz` commit `4d1641a`, `berliz` commit `5dadcb6bd`.
+
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
 - **BK-44 (mode a): a provider can mark a booking as paid directly, when the client paid them
