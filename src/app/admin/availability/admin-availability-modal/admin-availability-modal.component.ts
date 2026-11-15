@@ -2,7 +2,7 @@ import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AvailabilityService } from 'src/app/services/availability.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { DAY_NAMES_SHORT } from 'src/app/models/availability.model';
+import { AvailabilityCollisionResult, DAY_NAMES_SHORT } from 'src/app/models/availability.model';
 import { genericError } from 'src/validators/form-validators.module';
 
 interface DayRow {
@@ -38,6 +38,9 @@ export class AdminAvailabilityModalComponent implements OnInit {
   days: DayRow[] = this.buildDefaultDays();
   loading = true;
   saving = false;
+  checkingCollisions = false;
+  /** BK-48: set once a save would affect an upcoming booking; "Save anyway" proceeds past this. */
+  collisions: AvailabilityCollisionResult | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<AdminAvailabilityModalComponent>,
@@ -100,8 +103,19 @@ export class AdminAvailabilityModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  private get daysPayload() {
+    return this.days.map(d => ({
+      dayOfWeek: d.dayOfWeek,
+      isActive: d.isActive,
+      startTime: d.startTime,
+      endTime: d.endTime,
+    }));
+  }
+
+  /** BK-48: checks for affected bookings before saving silently; a clean (or confirmed) result goes to doSave. */
   save(): void {
     if (this.saving) return;
+    this.collisions = null;
 
     let hasError = false;
     for (const d of this.days) {
@@ -113,13 +127,24 @@ export class AdminAvailabilityModalComponent implements OnInit {
       return;
     }
 
+    this.checkingCollisions = true;
+    this.availabilityService.previewProviderScheduleCollisions(this.trainerId, this.centerId, this.daysPayload).subscribe({
+      next: res => {
+        this.checkingCollisions = false;
+        if (res?.data?.hasCollisions) this.collisions = res.data;
+        else this.doSave();
+      },
+      error: () => {
+        this.checkingCollisions = false;
+        this.doSave();
+      },
+    });
+  }
+
+  doSave(): void {
     this.saving = true;
-    this.availabilityService.setProviderAvailability(this.trainerId, this.centerId, this.days.map(d => ({
-      dayOfWeek: d.dayOfWeek,
-      isActive: d.isActive,
-      startTime: d.startTime,
-      endTime: d.endTime,
-    }))).subscribe({
+    this.collisions = null;
+    this.availabilityService.setProviderAvailability(this.trainerId, this.centerId, this.daysPayload).subscribe({
       next: () => {
         this.saving = false;
         this.snackBar.openSnackBar('Availability updated.', '');

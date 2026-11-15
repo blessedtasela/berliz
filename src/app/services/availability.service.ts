@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { Availability, AvailabilityDay, AvailableSlotsResponse } from '../models/availability.model';
+import { Availability, AvailabilityCollisionResult, AvailabilityDay, AvailabilityPause, AvailableSlotsResponse } from '../models/availability.model';
 import { viewerZone } from '../utils/timezone-label.util';
 
 @Injectable({
@@ -97,5 +97,44 @@ export class AvailabilityService {
     return this.httpClient.put<ApiResponse<number>>(this.url + "/availability/slotDuration", { slotDurationMinutes: minutes }, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
+  }
+
+  /** BK-48: read-only dry run -- which upcoming bookings would stop fitting this proposed week. Call before setMyAvailability to decide whether to warn. */
+  previewMyScheduleCollisions(days: AvailabilityDay[], timezone?: string) {
+    return this.httpClient.post<ApiResponse<AvailabilityCollisionResult>>(this.url + "/availability/previewCollisions", {
+      days,
+      timezone: timezone || viewerZone() || undefined,
+    }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  /** Admin-only equivalent of previewMyScheduleCollisions, for a specific trainer/center. */
+  previewProviderScheduleCollisions(trainerId: number | undefined, centerId: number | undefined, days: AvailabilityDay[]) {
+    let params = '';
+    if (trainerId != null) params = `?trainerId=${trainerId}`;
+    else if (centerId != null) params = `?centerId=${centerId}`;
+    return this.httpClient.post<ApiResponse<AvailabilityCollisionResult>>(this.url + "/availability/previewProviderCollisions" + params, { days }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  /** BK-48: pauses a date (or a time range on a date) for the currently authenticated trainer/center.
+   *  See AvailabilityPause.persisted — false means collisions were found and nothing was saved yet. */
+  createMyPause(pauseDate: string, startTime: string | null, endTime: string | null, note?: string, confirmOverride?: boolean) {
+    return this.httpClient.post<ApiResponse<AvailabilityPause>>(this.url + "/availability/pause", {
+      pauseDate, startTime, endTime, note, confirmOverride,
+    }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  getMyPauses() {
+    return this.httpClient.get<ApiResponse<AvailabilityPause[]>>(this.url + "/availability/myPauses");
+  }
+
+  /** "Unpause" — removes a pause. */
+  removePause(id: number) {
+    return this.httpClient.delete<ApiResponse<void>>(this.url + `/availability/pause/${id}`);
   }
 }
