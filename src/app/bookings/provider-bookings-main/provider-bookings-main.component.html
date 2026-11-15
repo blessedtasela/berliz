@@ -67,7 +67,8 @@
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (rescheduleRequested)="onRescheduleRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
-                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"
+                    (settled)="onSettled($event)"></app-booking-card>
             </div>
 
             <!-- Confirmed -->
@@ -79,7 +80,8 @@
                 <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]" [hasIntake]="!!submittedIntakeByClient[b.clientId]"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
-                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"
+                    (settled)="onSettled($event)"></app-booking-card>
             </div>
 
             <!-- Completed -->
@@ -90,7 +92,8 @@
                 </span>
                 <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]" [hasIntake]="!!submittedIntakeByClient[b.clientId]"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
-                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"
+                    (settled)="onSettled($event)"></app-booking-card>
             </div>
 
             <!-- No-show -->
@@ -101,7 +104,8 @@
                 </span>
                 <app-booking-card *ngFor="let b of noShow" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]" [hasIntake]="!!submittedIntakeByClient[b.clientId]"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
-                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"
+                    (settled)="onSettled($event)"></app-booking-card>
             </div>
 
             <!-- Cancelled -->
@@ -114,7 +118,8 @@
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (deleteRequested)="onDeleteRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
-                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"
+                    (settled)="onSettled($event)"></app-booking-card>
             </div>
 
         </div>

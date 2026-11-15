@@ -5,6 +5,7 @@ import { Booking } from 'src/app/models/booking.model';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent, ReviewBookingModalResult } from '../review-booking-modal/review-booking-modal.component';
+import { SettleBookingModalComponent } from '../settle-booking-modal/settle-booking-modal.component';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
 import { nameSlug } from 'src/app/utils/closest-slug';
 import {
@@ -49,6 +50,8 @@ export class BookingCardComponent {
   @Output() payRequested = new EventEmitter<number>();
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
   @Output() sendIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
+  /** BK-44: settled successfully -- the parent reloads its list so the new Paid state shows. */
+  @Output() settled = new EventEmitter<number>();
 
   get counterpartyName(): string {
     if (this.mode === 'client') {
@@ -233,6 +236,11 @@ export class BookingCardComponent {
     return this.mode === 'provider' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
   }
 
+  /** BK-44: the client already paid outside the app -- settle it here instead of letting it auto-cancel for non-payment. */
+  get canSettlePayment(): boolean {
+    return this.mode === 'provider' && this.booking.status === 'confirmed' && this.booking.paymentStatus === 'UNPAID';
+  }
+
   /** A trainer can start (or revisit) an intake once they've actually taken the client on. */
   get canStartIntake(): boolean {
     return this.mode === 'provider' && (this.booking.status === 'confirmed' || this.booking.status === 'completed');
@@ -351,6 +359,17 @@ export class BookingCardComponent {
           durationMinutes: result.durationMinutes,
         });
       }
+    });
+  }
+
+  /** BK-44: the client already paid outside the app -- record it so the booking settles properly. */
+  openSettleModal(): void {
+    this.dialog.open(SettleBookingModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: { booking: this.booking },
+    }).afterClosed().subscribe(result => {
+      if (result) this.settled.emit(this.booking.id);
     });
   }
 

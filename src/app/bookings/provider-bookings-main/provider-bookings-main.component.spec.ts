@@ -85,6 +85,15 @@ describe('ProviderBookingsMainComponent', () => {
       expect(dispatch).toHaveBeenCalledWith(loadMyProviderBookings());
     });
 
+    it('BK-44: reloads the list once a booking is settled', () => {
+      const store = TestBed.inject(MockStore);
+      const dispatch = spyOn(store, 'dispatch');
+
+      component.onSettled(42);
+
+      expect(dispatch).toHaveBeenCalledWith(loadMyProviderBookings());
+    });
+
     it('shows the genuine empty state when there is no error', () => {
       fixture.detectChanges();
       expect(el().querySelector('app-bookings-empty')).not.toBeNull();

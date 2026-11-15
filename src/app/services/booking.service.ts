@@ -119,6 +119,11 @@ export class BookingService {
     return this.httpClient.delete<ApiResponse<string>>(this.url + `/booking/${id}`);
   }
 
+  /** BK-44: provider (or super admin) settles a confirmed, unpaid booking themselves -- the client already paid them directly. */
+  settleBooking(id: number, data: { mode: 'DIRECT'; amount: number; channel: 'CASH' | 'E_TRANSFER' | 'OTHER'; note?: string }) {
+    return this.httpClient.put<ApiResponse<Booking>>(this.url + `/booking/settle/${id}`, data);
+  }
+
   getBooking(id: number) {
     return this.httpClient.get<ApiResponse<Booking>>(this.url + `/booking/getBooking/${id}`);
   }
