@@ -226,6 +226,19 @@ Newest first.
 
 ### 2026-11-13 — Client's own trainer reviews, and a batch of fixes
 
+- **BK-44 (mode a): a provider can mark a booking as paid directly, when the client paid them
+  outside Stripe.** New `PUT /booking/settle/{id}` on a confirmed, unpaid booking: mode (`DIRECT`
+  only -- paying by card on the client's behalf is a separate mode, explicitly refused for now,
+  see below), amount, channel (cash/e-transfer/other), optional note. Sets the booking `PAID` and
+  records a `BookingSettlement` row carrying Berliz's 15% commission as a debt owed on that
+  booking, since the provider already has the other 85% in hand -- there's nothing to transfer for
+  that part. Owner decision Nov 13: that commission debt is collected automatically out of the
+  provider's *next* real Stripe payout (withheld before the transfer, never partially -- a single
+  debt bigger than the next payout waits for the one after), not invoiced or charged separately. A
+  failed Stripe transfer never marks the debt collected. New "Settle payment" button on the
+  provider's booking card; the client sees "Paid via your trainer" instead of a dollar amount; the
+  booking-details modal shows who settled it, how, and when. `com.berliz` commit `f674f4b`,
+  `berliz` commit `d209b0695`.
 - **BK-46: a client's completed-session count only counts sessions that actually happened.**
   `getMyClients`/`getMyTrainers` counted every booking with a person -- pending, confirmed,
   cancelled, no-show -- as a "session," so a client whose every booking was cancelled still showed
