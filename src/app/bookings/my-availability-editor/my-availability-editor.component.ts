@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
 import { take } from 'rxjs/operators';
-import { DAY_NAMES_SHORT } from 'src/app/models/availability.model';
+import { AvailabilityCollisionResult, AvailabilityPause, DAY_NAMES_SHORT } from 'src/app/models/availability.model';
 import { AvailabilityService } from 'src/app/services/availability.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import {
@@ -93,6 +93,26 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   slotDurationLoading = true;
   slotDurationSaving = false;
 
+  // ── BK-48: collision warning before a schedule save ─────────────────────
+  /** Set once previewMyScheduleCollisions comes back with affected bookings; the actual save waits
+   *  for an explicit "Save anyway" click rather than going through silently. */
+  scheduleCollisions: AvailabilityCollisionResult | null = null;
+  checkingCollisions = false;
+
+  // ── BK-48: date-specific pauses ──────────────────────────────────────────
+  pauses: AvailabilityPause[] = [];
+  pausesLoading = true;
+  pauseDate = '';
+  pauseAllDay = true;
+  pauseStartTime = '09:00';
+  pauseEndTime = '17:00';
+  pauseNote = '';
+  pauseSaving = false;
+  pauseError: string | null = null;
+  /** Set once a pause attempt comes back with collisions; "Pause anyway" resubmits with confirmOverride. */
+  pauseCollisions: AvailabilityCollisionResult | null = null;
+  unpausingId: number | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -114,6 +134,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     this.loadLeadTime();
     this.loadAcceptingReferrals();
     this.loadSlotDuration();
+    this.loadPauses();
 
     this.store.select(selectAvailabilityLoading)
       .pipe(takeUntil(this.destroy$))
@@ -230,11 +251,23 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     return ok;
   }
 
+  private get daysPayload() {
+    return this.days.flatMap(day => day.blocks.map(b => ({
+      dayOfWeek: day.dayOfWeek,
+      isActive: true,
+      startTime: b.startTime,
+      endTime: b.endTime,
+    })));
+  }
+
+  /** First checks whether this change would affect any upcoming booking; a clean result (or a
+   *  confirmed one) goes straight to the real save. Previously this just saved silently — deleting
+   *  a block under a confirmed, paid booking produced no warning at all (BK-48). */
   save(): void {
     if (this.saving) return;
     this.submitError = null;
+    this.scheduleCollisions = null;
 
-    // Saving without a zone would leave the hours read as server time (UTC).
     if (!this.timezone) {
       this.submitError = 'Choose the timezone your hours are in.';
       return;
@@ -249,15 +282,33 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.checkingCollisions = true;
+    this.availabilityService.previewMyScheduleCollisions(this.daysPayload, this.timezone)
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.checkingCollisions = false;
+          if (res?.data?.hasCollisions) {
+            this.scheduleCollisions = res.data;
+          } else {
+            this.doSave();
+          }
+        },
+        error: () => {
+          // The warning itself is advisory -- a failed check must not block a real save.
+          this.checkingCollisions = false;
+          this.doSave();
+        },
+      });
+  }
+
+  /** Proceeds with the actual save after the trainer has seen (or there were no) collisions. */
+  doSave(): void {
     this.saving = true;
+    this.scheduleCollisions = null;
     this.store.dispatch(setMyAvailability({
       timezone: this.timezone || undefined,
-      days: this.days.flatMap(day => day.blocks.map(b => ({
-        dayOfWeek: day.dayOfWeek,
-        isActive: true,
-        startTime: b.startTime,
-        endTime: b.endTime,
-      })))
+      days: this.daysPayload,
     }));
   }
 
@@ -386,5 +437,92 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   resetSlotDuration(): void {
     this.slotDurationMinutes = null;
     this.saveSlotDuration();
+  }
+
+  // ── BK-48: date-specific pauses ──────────────────────────────────────────
+  // Blocks out a whole date, or a time range on a date, without touching the
+  // recurring weekly schedule above -- it expires on its own once the date
+  // passes (loadPauses only ever asks for upcoming ones, nothing to clean up).
+
+  private loadPauses(): void {
+    this.pausesLoading = true;
+    this.availabilityService.getMyPauses()
+      .pipe(take(1))
+      .subscribe({
+        next: res => { this.pauses = res?.data ?? []; this.pausesLoading = false; },
+        error: () => { this.pausesLoading = false; },
+      });
+  }
+
+  savePause(): void {
+    if (this.pauseSaving) return;
+    this.pauseError = null;
+    this.pauseCollisions = null;
+
+    if (!this.pauseDate) {
+      this.pauseError = 'Pick a date to pause.';
+      return;
+    }
+    if (!this.pauseAllDay && (!this.pauseStartTime || !this.pauseEndTime || this.pauseStartTime >= this.pauseEndTime)) {
+      this.pauseError = 'Give a start time before the end time, or switch to pausing the whole date.';
+      return;
+    }
+
+    this.doSavePause(false);
+  }
+
+  /** Re-submits after the trainer has reviewed the collisions shown and chosen to pause anyway. */
+  savePauseAnyway(): void {
+    this.doSavePause(true);
+  }
+
+  private doSavePause(confirmOverride: boolean): void {
+    this.pauseSaving = true;
+    const startTime = this.pauseAllDay ? null : this.pauseStartTime;
+    const endTime = this.pauseAllDay ? null : this.pauseEndTime;
+
+    this.availabilityService.createMyPause(this.pauseDate, startTime, endTime, this.pauseNote || undefined, confirmOverride)
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.pauseSaving = false;
+          if (res?.data && !res.data.persisted) {
+            this.pauseCollisions = res.data.collisions ?? null;
+            return;
+          }
+          this.pauseCollisions = null;
+          this.pauseDate = '';
+          this.pauseNote = '';
+          this.pauseAllDay = true;
+          this.snackBar.openSnackBar(res?.message || 'Pause saved.', '');
+          this.loadPauses();
+        },
+        error: (err: any) => {
+          this.pauseSaving = false;
+          this.pauseError = err?.error?.message || genericError;
+        },
+      });
+  }
+
+  cancelPauseCollisionReview(): void {
+    this.pauseCollisions = null;
+  }
+
+  unpause(pause: AvailabilityPause): void {
+    if (this.unpausingId != null) return;
+    this.unpausingId = pause.id;
+    this.availabilityService.removePause(pause.id)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.unpausingId = null;
+          this.pauses = this.pauses.filter(p => p.id !== pause.id);
+          this.snackBar.openSnackBar('Pause removed.', '');
+        },
+        error: (err: any) => {
+          this.unpausingId = null;
+          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        },
+      });
   }
 }

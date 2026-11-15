@@ -90,18 +90,128 @@
 
         <p class="text-[11px] text-gray-400 flex items-start gap-1.5 mt-1">
             <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-            Existing bookings are always protected — clients can never book over a time you've already confirmed.
+            A new client can never book over a time you've already confirmed. Removing a block you've
+            already been booked into won't cancel that booking, but we'll warn you first (BK-48).
         </p>
 
         <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
 
+        <!-- BK-48: collision warning -- named bookings this change would stop covering. -->
+        <div *ngIf="scheduleCollisions" data-testid="schedule-collision-warning"
+            class="rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-3.5 flex flex-col gap-2.5">
+            <p class="text-xs font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
+                <i-feather name="alert-triangle" style="width:13px;height:13px;"></i-feather>
+                This would affect {{ scheduleCollisions.affectedBookings.length }} upcoming booking{{ scheduleCollisions.affectedBookings.length === 1 ? '' : 's' }}
+            </p>
+            <ul class="flex flex-col gap-1">
+                <li *ngFor="let b of scheduleCollisions.affectedBookings" class="text-[11px] text-amber-700 dark:text-amber-400">
+                    {{ b.reference }} — {{ b.clientName }}, {{ b.scheduledAt | date:'medium' }}
+                </li>
+            </ul>
+            <p class="text-[11px] text-amber-700 dark:text-amber-400">
+                These bookings will not be cancelled, but this time will no longer be open for new requests.
+            </p>
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" (click)="scheduleCollisions = null" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-white/50 transition">
+                    Go back
+                </button>
+                <button type="button" (click)="doSave()" data-testid="save-schedule-anyway" [disabled]="saving"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700 transition disabled:opacity-50">
+                    Save anyway
+                </button>
+            </div>
+        </div>
+
         <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 mt-1">
-            <button type="button" (click)="save()" [disabled]="saving" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+            <button type="button" (click)="save()" [disabled]="saving || checkingCollisions" data-testid="save-schedule" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2
                        disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
-                <i-feather [name]="saving ? 'loader' : 'save'" [ngClass]="{'animate-spin': saving}" style="width:13px;height:13px;"></i-feather>
-                {{ saving ? 'Saving…' : 'Save schedule' }}
+                <i-feather [name]="saving || checkingCollisions ? 'loader' : 'save'" [ngClass]="{'animate-spin': saving || checkingCollisions}" style="width:13px;height:13px;"></i-feather>
+                {{ saving ? 'Saving…' : (checkingCollisions ? 'Checking…' : 'Save schedule') }}
             </button>
+        </div>
+
+        <!-- ═══════════ DATE-SPECIFIC PAUSE (BK-48) ═══════════
+             Blocks out a date (or a time range on a date) without touching the recurring weekly
+             schedule above -- it expires on its own once the date passes. -->
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3.5 flex flex-col gap-3 mt-1" data-testid="pause-section">
+            <div>
+                <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100">Pause a date</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    Taking a day off, or just part of one? Pause it here instead of editing your weekly hours above --
+                    your recurring schedule stays exactly as it is, and the pause clears itself once the date passes.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+                <input type="date" [(ngModel)]="pauseDate" data-testid="pause-date"
+                    class="px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+
+                <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="pauseAllDay" data-testid="pause-all-day" />
+                    Whole day
+                </label>
+
+                <ng-container *ngIf="!pauseAllDay">
+                    <app-time-picker class="w-28" [(ngModel)]="pauseStartTime" placeholder="Start"></app-time-picker>
+                    <span class="text-gray-400 text-xs">to</span>
+                    <app-time-picker class="w-28" [(ngModel)]="pauseEndTime" placeholder="End"></app-time-picker>
+                </ng-container>
+            </div>
+
+            <input type="text" [(ngModel)]="pauseNote" placeholder="Note (optional) — e.g. out of town"
+                class="px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+
+            <app-inline-alert [message]="pauseError" (dismissed)="pauseError = null"></app-inline-alert>
+
+            <!-- BK-48: same collision warning as the weekly schedule, scoped to this one date. -->
+            <div *ngIf="pauseCollisions" data-testid="pause-collision-warning"
+                class="rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-3 flex flex-col gap-2">
+                <p class="text-xs font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
+                    <i-feather name="alert-triangle" style="width:12px;height:12px;"></i-feather>
+                    {{ pauseCollisions.affectedBookings.length }} upcoming booking{{ pauseCollisions.affectedBookings.length === 1 ? '' : 's' }} on this date
+                </p>
+                <ul class="flex flex-col gap-1">
+                    <li *ngFor="let b of pauseCollisions.affectedBookings" class="text-[11px] text-amber-700 dark:text-amber-400">
+                        {{ b.reference }} — {{ b.clientName }}, {{ b.scheduledAt | date:'medium' }}
+                    </li>
+                </ul>
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" (click)="cancelPauseCollisionReview()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-white/50 transition">
+                        Go back
+                    </button>
+                    <button type="button" (click)="savePauseAnyway()" data-testid="pause-anyway" [disabled]="pauseSaving"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700 transition disabled:opacity-50">
+                        Pause anyway
+                    </button>
+                </div>
+            </div>
+
+            <button type="button" (click)="savePause()" [disabled]="pauseSaving" data-testid="save-pause"
+                class="self-start px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800
+                       active:scale-[0.98] transition flex items-center gap-1.5
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                <i-feather [name]="pauseSaving ? 'loader' : 'pause-circle'" [ngClass]="{'animate-spin': pauseSaving}" style="width:12px;height:12px;"></i-feather>
+                {{ pauseSaving ? 'Saving…' : 'Pause this date' }}
+            </button>
+
+            <div *ngIf="!pausesLoading && pauses.length > 0" class="flex flex-col gap-1.5 pt-2 border-t border-gray-200 dark:border-gray-700" data-testid="pause-list">
+                <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Upcoming pauses</span>
+                <div *ngFor="let p of pauses" class="flex items-center justify-between gap-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-2.5 py-1.5">
+                    <span class="text-xs text-gray-700 dark:text-gray-300">
+                        {{ p.pauseDate | date:'mediumDate' }}
+                        <span *ngIf="p.startTime" class="text-gray-400"> · {{ p.startTime.slice(0,5) }}–{{ p.endTime?.slice(0,5) }}</span>
+                        <span *ngIf="!p.startTime" class="text-gray-400"> · whole day</span>
+                        <span *ngIf="p.note" class="text-gray-400"> · {{ p.note }}</span>
+                    </span>
+                    <button type="button" (click)="unpause(p)" [disabled]="unpausingId === p.id" data-testid="unpause"
+                        class="shrink-0 text-[11px] font-semibold text-red-600 hover:text-red-700 transition disabled:opacity-50">
+                        {{ unpausingId === p.id ? 'Removing…' : 'Unpause' }}
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- ═══════════ BOOKING NOTICE (lead time) ═══════════
