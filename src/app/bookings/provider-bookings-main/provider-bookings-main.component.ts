@@ -23,9 +23,9 @@ import {
 } from 'src/app/state/booking/booking.actions';
 import { selectBookingError, selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
 import {
-  createClientIntake,
-  createClientIntakeFailure,
-  createClientIntakeSuccess,
+  sendClientIntake,
+  sendClientIntakeFailure,
+  sendClientIntakeSuccess,
 } from 'src/app/state/client-intake/client-intake.actions';
 
 import { genericError } from 'src/validators/form-validators.module';
@@ -65,12 +65,14 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   /** This client's existing intake form id, by client user id, if one has already been started or submitted. */
   intakeIdByClient: Record<number, number> = {};
   /**
-   * BK-43: whether that existing intake was actually submitted, not just created. A row exists the
-   * moment "Fill Together"/"Send Intake Form" is first opened, before the client ever answers
-   * anything -- intakeIdByClient alone can't tell "complete" from "never touched", which is exactly
-   * how the card came to claim Complete with nothing behind it.
+   * BK-43/BK-47: whether that existing PAR-Q has actually been signed (status COMPLETED or
+   * LOCKED), not just sent. A row exists the moment "Fill Together"/"Send PAR-Q" is first opened,
+   * before the client has answered or signed anything -- intakeIdByClient alone can't tell
+   * "signed" from "never touched", which is exactly how the card came to claim Complete with
+   * nothing behind it. BK-47 also closed the gap this once had: the old submittedAt field was set
+   * at creation, not signing, so this flag used to be true the moment the form was sent.
    */
-  submittedIntakeByClient: Record<number, boolean> = {};
+  signedIntakeByClient: Record<number, boolean> = {};
   loading = false;
   /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
   loadError: string | null = null;
@@ -116,15 +118,15 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.clientIntakeService.getMyIntakes().pipe(take(1)).subscribe({
       next: res => {
         const byClient: Record<number, number> = {};
-        const submittedByClient: Record<number, boolean> = {};
+        const signedByClient: Record<number, boolean> = {};
         for (const intake of res?.data ?? []) {
           byClient[intake.clientId] = intake.id;
-          if (intake.submittedAt) submittedByClient[intake.clientId] = true;
+          if (intake.status === 'COMPLETED' || intake.status === 'LOCKED') signedByClient[intake.clientId] = true;
         }
         this.intakeIdByClient = byClient;
-        this.submittedIntakeByClient = submittedByClient;
+        this.signedIntakeByClient = signedByClient;
       },
-      error: () => { this.intakeIdByClient = {}; this.submittedIntakeByClient = {}; },
+      error: () => { this.intakeIdByClient = {}; this.signedIntakeByClient = {}; },
     });
   }
 
@@ -182,13 +184,13 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
       });
 
     this.actions$
-      .pipe(ofType(createClientIntakeSuccess), takeUntil(this.destroy$))
+      .pipe(ofType(sendClientIntakeSuccess), takeUntil(this.destroy$))
       .subscribe(() => {
         this.snackBar.openSnackBar('Intake form sent', '');
       });
 
     this.actions$
-      .pipe(ofType(createClientIntakeFailure), takeUntil(this.destroy$))
+      .pipe(ofType(sendClientIntakeFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.snackBar.openSnackBar(error || genericError, 'error');
       });
@@ -267,7 +269,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   }
 
   onSendIntakeRequested(event: { clientId: number; clientName: string }): void {
-    this.store.dispatch(createClientIntake({ data: { clientId: event.clientId } }));
+    this.store.dispatch(sendClientIntake({ data: { clientId: event.clientId } }));
   }
 
   /** Create a new, already-confirmed booking directly for one of this provider's own clients. */

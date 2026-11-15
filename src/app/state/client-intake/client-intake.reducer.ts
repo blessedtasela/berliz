@@ -16,16 +16,16 @@ export const clientIntakeReducer = createReducer(
   initialClientIntakeState,
 
   on(
-    A.createClientIntake, A.loadClientIntake, A.updateClientIntake, A.loadMyClientIntakes,
+    A.sendClientIntake, A.loadClientIntake, A.saveClientIntakeDraft, A.signClientIntake, A.loadMyClientIntakes,
     state => ({ ...state, loading: true, error: null })
   ),
 
   on(
-    A.createClientIntakeFailure, A.loadClientIntakeFailure, A.updateClientIntakeFailure, A.loadMyClientIntakesFailure,
+    A.sendClientIntakeFailure, A.loadClientIntakeFailure, A.saveClientIntakeDraftFailure, A.signClientIntakeFailure, A.loadMyClientIntakesFailure,
     (state, { error }) => ({ ...state, loading: false, error })
   ),
 
-  on(A.createClientIntakeSuccess, (s, { response }) => ({
+  on(A.sendClientIntakeSuccess, (s, { response }) => ({
     ...s, loading: false,
     selectedIntake: response.data ?? s.selectedIntake,
     myIntakes: response.data ? upsert(s.myIntakes, response.data) : s.myIntakes,
@@ -35,7 +35,7 @@ export const clientIntakeReducer = createReducer(
     ...s, loading: false, selectedIntake: response.data ?? null
   })),
 
-  on(A.updateClientIntakeSuccess, (s, { response }) => ({
+  on(A.saveClientIntakeDraftSuccess, A.signClientIntakeSuccess, (s, { response }) => ({
     ...s, loading: false,
     selectedIntake: response.data ?? s.selectedIntake,
     myIntakes: response.data ? upsert(s.myIntakes, response.data) : s.myIntakes,

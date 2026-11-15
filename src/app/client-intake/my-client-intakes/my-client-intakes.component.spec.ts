@@ -44,9 +44,9 @@ describe('MyClientIntakesComponent', () => {
       actions$.next(loadMyClientIntakesFailure({ error: 'Server exploded' }));
       fixture.detectChanges();
 
-      expect(el().textContent).toContain("Couldn't load your client intakes");
+      expect(el().textContent).toContain("Couldn't load your PAR-Qs");
       expect(el().textContent).toContain('Server exploded');
-      expect(el().textContent).not.toContain("You haven't started any client intakes yet");
+      expect(el().textContent).not.toContain("You haven't sent any PAR-Qs yet");
     });
 
     it('retrying reloads, and a success clears the error', () => {
@@ -63,7 +63,7 @@ describe('MyClientIntakesComponent', () => {
     });
 
     it('shows the genuine empty state when nothing failed', () => {
-      expect(el().textContent).toContain("You haven't started any client intakes yet");
+      expect(el().textContent).toContain("You haven't sent any PAR-Qs yet");
     });
   });
 });

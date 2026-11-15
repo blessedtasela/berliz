@@ -12,11 +12,11 @@ export class ClientIntakeEffects {
     private svc: ClientIntakeService,
   ) { }
 
-  createClientIntake$ = createEffect(() => this.actions$.pipe(
-    ofType(A.createClientIntake),
-    mergeMap(({ data }) => this.svc.createIntake(data).pipe(
-      map(response => A.createClientIntakeSuccess({ response })),
-      catchError(e => of(A.createClientIntakeFailure({ error: e?.error?.message || 'Failed to submit intake' })))
+  sendClientIntake$ = createEffect(() => this.actions$.pipe(
+    ofType(A.sendClientIntake),
+    mergeMap(({ data }) => this.svc.sendIntake(data).pipe(
+      map(response => A.sendClientIntakeSuccess({ response })),
+      catchError(e => of(A.sendClientIntakeFailure({ error: e?.error?.message || 'Failed to send PAR-Q' })))
     ))
   ));
 
@@ -24,15 +24,23 @@ export class ClientIntakeEffects {
     ofType(A.loadClientIntake),
     mergeMap(({ id }) => this.svc.getIntake(id).pipe(
       map(response => A.loadClientIntakeSuccess({ response })),
-      catchError(e => of(A.loadClientIntakeFailure({ error: e?.error?.message || 'Failed to load intake' })))
+      catchError(e => of(A.loadClientIntakeFailure({ error: e?.error?.message || 'Failed to load PAR-Q' })))
     ))
   ));
 
-  updateClientIntake$ = createEffect(() => this.actions$.pipe(
-    ofType(A.updateClientIntake),
-    mergeMap(({ data }) => this.svc.updateIntake(data).pipe(
-      map(response => A.updateClientIntakeSuccess({ response })),
-      catchError(e => of(A.updateClientIntakeFailure({ error: e?.error?.message || 'Failed to update intake' })))
+  saveClientIntakeDraft$ = createEffect(() => this.actions$.pipe(
+    ofType(A.saveClientIntakeDraft),
+    mergeMap(({ data }) => this.svc.saveDraft(data).pipe(
+      map(response => A.saveClientIntakeDraftSuccess({ response })),
+      catchError(e => of(A.saveClientIntakeDraftFailure({ error: e?.error?.message || 'Failed to save' })))
+    ))
+  ));
+
+  signClientIntake$ = createEffect(() => this.actions$.pipe(
+    ofType(A.signClientIntake),
+    mergeMap(({ data }) => this.svc.signIntake(data).pipe(
+      map(response => A.signClientIntakeSuccess({ response })),
+      catchError(e => of(A.signClientIntakeFailure({ error: e?.error?.message || 'Failed to sign PAR-Q' })))
     ))
   ));
 
