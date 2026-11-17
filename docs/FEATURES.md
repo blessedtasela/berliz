@@ -224,6 +224,15 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — PF-58: admin can copy a client's direct review link
+
+- **PF-58: the admin bookings table now has a "Copy review link" action** on any completed
+  trainer booking -- copies the exact `/trainers/:slug#add-review` deep link a client would
+  otherwise have to find themselves from their own My Bookings page, ready to hand to that
+  client directly. Also added a "Booking ref" search field so a specific booking (e.g.
+  "BK-000017") can actually be found by the reference it's named by, not just its internal id.
+  `berliz` commit `a6ec15c2a`.
+
 ### 2026-11-17 — GN-49: logout now clears the in-memory user state too
 
 - **GN-49: signing out actually resets who the app thinks you are.** Logout cleared the stored
