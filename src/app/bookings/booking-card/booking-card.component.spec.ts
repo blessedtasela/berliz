@@ -372,6 +372,59 @@ describe('BookingCardComponent', () => {
     });
   });
 
+  describe('payment code (PY-29)', () => {
+    beforeEach(() => {
+      component.mode = 'client';
+      component.booking.status = 'confirmed';
+      component.booking.paymentStatus = 'UNPAID';
+      component.booking.amountDue = 115;
+    });
+
+    it('shows "I have a code" only while the client can actually pay', () => {
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="have-code"]')).not.toBeNull();
+
+      component.booking.paymentStatus = 'PAID';
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="have-code"]')).toBeNull();
+    });
+
+    it('opens the code box and emits askForCodeRequested with the booking id', () => {
+      const emitted: number[] = [];
+      component.askForCodeRequested.subscribe((id: number) => emitted.push(id));
+      fixture.detectChanges();
+
+      (fixture.nativeElement.querySelector('[data-testid="have-code"]') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="booking-code-box"]')).not.toBeNull();
+
+      (fixture.nativeElement.querySelector('[data-testid="ask-trainer-for-booking-code"]') as HTMLButtonElement).click();
+      expect(emitted).toEqual([1]);
+    });
+
+    it('emits redeemCodeRequested with the booking id and the typed code, trimmed', () => {
+      const emitted: { id: number; code: string }[] = [];
+      component.redeemCodeRequested.subscribe((e: { id: number; code: string }) => emitted.push(e));
+      component.showCodeBox = true;
+      component.paymentCode = '  bz-test-1  ';
+
+      component.redeemCode();
+
+      expect(emitted).toEqual([{ id: 1, code: 'bz-test-1' }]);
+    });
+
+    it('does nothing on an empty or blank code', () => {
+      const emitted: unknown[] = [];
+      component.redeemCodeRequested.subscribe((e: unknown) => emitted.push(e));
+      component.showCodeBox = true;
+      component.paymentCode = '   ';
+
+      component.redeemCode();
+
+      expect(emitted).toEqual([]);
+    });
+  });
+
   describe('showDetails (clicking the card body)', () => {
     it('opens the read-only details modal for a confirmed booking', () => {
       component.mode = 'client';

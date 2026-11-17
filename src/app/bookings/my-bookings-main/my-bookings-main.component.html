@@ -54,7 +54,8 @@
                 Confirmed
             </span>
             <app-booking-card *ngFor="let b of confirmed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"
-                (cancelRequested)="onCancelRequested($event)"></app-booking-card>
+                (cancelRequested)="onCancelRequested($event)" (askForCodeRequested)="onAskForCodeRequested($event)"
+                (redeemCodeRequested)="onRedeemCodeRequested($event)"></app-booking-card>
         </div>
 
         <!-- Completed -->
@@ -64,6 +65,7 @@
                 Completed
             </span>
             <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"
+                (askForCodeRequested)="onAskForCodeRequested($event)" (redeemCodeRequested)="onRedeemCodeRequested($event)"
                 [reviewSlotAvailable]="reviewSlotAvailable(b)"></app-booking-card>
         </div>
 

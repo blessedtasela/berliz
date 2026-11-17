@@ -9,6 +9,7 @@ import { MyBookingsMainComponent } from './my-bookings-main.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { PaymentCodeService } from 'src/app/services/payment-code.service';
 import { selectBookingError, selectBookingLoading, selectMyBookings } from 'src/app/state/booking/booking.selectors';
 import { loadMyBookings } from 'src/app/state/booking/booking.actions';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
@@ -21,12 +22,14 @@ describe('MyBookingsMainComponent', () => {
   let stripeSpy: jasmine.SpyObj<StripeService>;
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
   let trainerServiceSpy: jasmine.SpyObj<TrainerService>;
+  let paymentCodeServiceSpy: jasmine.SpyObj<PaymentCodeService>;
 
   beforeEach(() => {
     snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     stripeSpy = jasmine.createSpyObj('StripeService', ['createBookingCheckout']);
     trainerServiceSpy = jasmine.createSpyObj('TrainerService', ['getMyReviewSlotStatus']);
     trainerServiceSpy.getMyReviewSlotStatus.and.returnValue(of({ success: true, statusCode: 200, message: '', data: { available: true } }));
+    paymentCodeServiceSpy = jasmine.createSpyObj('PaymentCodeService', ['askTrainer', 'redeem']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
@@ -43,7 +46,8 @@ describe('MyBookingsMainComponent', () => {
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackBarSpy },
         { provide: StripeService, useValue: stripeSpy },
-        { provide: TrainerService, useValue: trainerServiceSpy }
+        { provide: TrainerService, useValue: trainerServiceSpy },
+        { provide: PaymentCodeService, useValue: paymentCodeServiceSpy }
       ]
     });
 
@@ -142,6 +146,63 @@ describe('MyBookingsMainComponent', () => {
       expect(redirect).not.toHaveBeenCalled();
       expect(snackBarSpy.openSnackBar).toHaveBeenCalled();
       expect(component.payingBookingId).toBeNull();
+    });
+  });
+
+  describe('asking a trainer for a payment code (PY-29)', () => {
+    it('asks against the specific booking and shows the server confirmation', () => {
+      paymentCodeServiceSpy.askTrainer.and.returnValue(of({ success: true, statusCode: 200, data: {} as any, message: 'Your trainer has been told.' }));
+
+      component.onAskForCodeRequested(50);
+
+      expect(paymentCodeServiceSpy.askTrainer).toHaveBeenCalledWith({ targetType: 'BOOKING', bookingId: 50 });
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Your trainer has been told.', '');
+      expect(component.askingForCodeBookingId).toBeNull();
+    });
+
+    it('shows the specific failure (e.g. already asked) and clears the busy flag', () => {
+      paymentCodeServiceSpy.askTrainer.and.returnValue(throwError(() => ({ error: { message: 'There is already an open request for this.' } })));
+
+      component.onAskForCodeRequested(50);
+
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('There is already an open request for this.', 'error');
+      expect(component.askingForCodeBookingId).toBeNull();
+    });
+
+    it('ignores a second ask while one is in flight', () => {
+      paymentCodeServiceSpy.askTrainer.and.returnValue(new Subject<any>());
+
+      component.onAskForCodeRequested(50);
+      component.onAskForCodeRequested(50);
+
+      expect(paymentCodeServiceSpy.askTrainer).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('redeeming a payment code against a booking (PY-29)', () => {
+    it('redeems against the specific booking, confirms, and reloads the list', () => {
+      const store = TestBed.inject(MockStore);
+      const dispatch = spyOn(store, 'dispatch');
+      paymentCodeServiceSpy.redeem.and.returnValue(of({ success: true, statusCode: 200, message: 'Your code is applied. Nothing to pay.', data: {} as any }));
+
+      component.onRedeemCodeRequested({ id: 50, code: 'BZ-TEST-1' });
+
+      expect(paymentCodeServiceSpy.redeem).toHaveBeenCalledWith({ code: 'BZ-TEST-1', bookingId: 50 });
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Your code is applied. Nothing to pay.', '');
+      expect(dispatch).toHaveBeenCalledWith(loadMyBookings());
+      expect(component.redeemingCodeBookingId).toBeNull();
+    });
+
+    it('shows the specific rejection reason and does not reload on failure', () => {
+      const store = TestBed.inject(MockStore);
+      const dispatch = spyOn(store, 'dispatch');
+      paymentCodeServiceSpy.redeem.and.returnValue(throwError(() => ({ error: { message: 'This code has expired. Ask your trainer to request a new one.' } })));
+
+      component.onRedeemCodeRequested({ id: 50, code: 'BZ-TEST-1' });
+
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('This code has expired. Ask your trainer to request a new one.', 'error');
+      expect(dispatch).not.toHaveBeenCalledWith(loadMyBookings());
+      expect(component.redeemingCodeBookingId).toBeNull();
     });
   });
 
