@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TagService } from 'src/app/services/tag.service';
-import { genericError, imageValidator } from 'src/validators/form-validators.module';
+import { genericError } from 'src/validators/form-validators.module';
 import { CategoryService } from 'src/app/services/category.service';
 import { Tags } from 'src/app/models/tags.interface';
 import { Subscription, take } from 'rxjs';
@@ -48,11 +48,22 @@ export class AddCategoryModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // GN-54: no 'photo' control here, deliberately -- the cropper flow
+    // (confirmCrop()) stores the uploaded photo in `photoRequest`, a plain
+    // component property, never into a form control. A 'photo' control
+    // with Validators.required used to sit here anyway, so its value
+    // stayed permanently empty and addCategoryForm.invalid was permanently
+    // true the moment a user actually picked a photo -- every real
+    // submission failed with nothing but a generic "Invalid form" toast,
+    // even though every individually-checked field (name, description,
+    // tagIds) was genuinely valid. `photoRequest` is already checked
+    // separately below ("Please select a photo"), matching how
+    // UpdateCategoryModalComponent's own form has never had a 'photo'
+    // control either.
     this.addCategoryForm = this.formBuilder.group({
       'name': ['', [Validators.required, Validators.minLength(2)]],
       'description': ['', [Validators.required, Validators.minLength(20)]],
       'likes': ['0',],
-      'photo': ['', [Validators.required, imageValidator()]],
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
@@ -174,7 +185,7 @@ export class AddCategoryModalComponent implements OnInit {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addCategoryForm.value.tagIds.map((tag: any) => tag.tagIds);
       const tagIdsString = selectedTagIds.join(',');
-      const { photo, ...formValue } = this.addCategoryForm.value;
+      const formValue = this.addCategoryForm.value;
       const formData = {
         ...formValue,
         tagIds: tagIdsString,
