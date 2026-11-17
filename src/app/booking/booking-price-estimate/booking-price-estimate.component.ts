@@ -60,6 +60,10 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
           <span>Travel fee ({{ travelZoneText }})</span>
           <span>{{ travelZonePending ? 'set by the trainer' : 'none' }}</span>
         </span>
+        <span *ngIf="e.offListGymFee > 0" class="flex justify-between gap-3" data-testid="off-list-gym-fee-line">
+          <span>Off-list gym fee</span>
+          <span>{{ e.offListGymFee | currency:'CAD':'symbol':'1.2-2' }}</span>
+        </span>
       </div>
       <p *ngIf="e.discounted" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400" data-testid="you-save">
         You save {{ e.sessionPrice - e.sessionAfterRewards | currency:'CAD':'symbol':'1.2-2' }} — the total above already includes it.
@@ -126,6 +130,8 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   @Input() newMemberPercent: number | null | undefined = null;
   /** What the gym charges at the door; shown separately and never added to the total. */
   @Input() gymDropIn: number | null | undefined = null;
+  /** BK-37: the trainer's own fee for a gym they haven't listed -- unlike gymDropIn above, this one IS added to the total. */
+  @Input() offListGymFee: number | null | undefined = null;
   /** DOWNTOWN | NEARBY | FAR | PENDING of the chosen gym, named next to the travel fee. */
   @Input() travelZone: string | null | undefined = null;
   /** Summary lines from the booking page: when and where the session is. */
@@ -166,6 +172,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
       trialPrice: this.trial ? this.trialPrice : null,
       introPercent: this.trial ? this.newMemberPercent : null,
       dropInFee: this.gymDropIn,
+      offListGymFee: this.offListGymFee,
     });
   }
 

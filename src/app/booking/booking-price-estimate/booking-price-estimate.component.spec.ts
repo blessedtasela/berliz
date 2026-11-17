@@ -46,6 +46,14 @@ describe('BookingPriceEstimateComponent', () => {
     expect(text()).toContain('after Coach Jane confirms');
   });
 
+  // BK-37: unlike gymDropIn (shown separately, never added), offListGymFee is part of the total.
+  it('includes the off-list gym fee in the estimated total, as its own line', () => {
+    show({ trainerId: 9, minutes: 60, locationFee: 30, offListGymFee: 25, providerName: 'Coach Jane' });
+    expect(text()).toContain('$155.00');
+    const line = fixture.nativeElement.querySelector('[data-testid="off-list-gym-fee-line"]') as HTMLElement;
+    expect(line.textContent).toContain('25.00');
+  });
+
   it('explains the request hold, in the numbers the server uses', () => {
     show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
     expect(text()).toContain('Your time is held while Coach Jane answers');

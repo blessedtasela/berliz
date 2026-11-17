@@ -33,6 +33,8 @@ export interface PriceEstimateInput {
   introPercent?: number | null;
   /** What the gym charges at the door. Paid to the gym, never part of the Berliz total. */
   dropInFee?: number | null;
+  /** BK-37: the trainer's own fee for a gym they haven't listed -- unlike dropInFee above, this one IS part of the Berliz total. */
+  offListGymFee?: number | null;
 }
 
 export interface PriceEstimate {
@@ -41,6 +43,8 @@ export interface PriceEstimate {
   /** What the session part comes to after rewards (0 when a package covers it). */
   sessionAfterRewards: number;
   locationFee: number;
+  /** BK-37: the trainer's own off-list-gym fee (0 when none) -- part of `total`/`payable`, unlike `dropInFee`. */
+  offListGymFee: number;
   total: number;
   /** True when a reward or package brought the session part down. */
   discounted: boolean;
@@ -96,11 +100,13 @@ export function estimateBookingPrice(input: PriceEstimateInput): PriceEstimate |
   }
   const fee = input.locationFee && input.locationFee > 0 ? input.locationFee : 0;
   const dropIn = input.dropInFee && input.dropInFee > 0 ? round2(input.dropInFee) : 0;
-  const total = round2(session + fee);
+  const offListFee = input.offListGymFee && input.offListGymFee > 0 ? round2(input.offListGymFee) : 0;
+  const total = round2(session + fee + offListFee);
   return {
     sessionPrice: base,
     sessionAfterRewards: session,
     locationFee: fee,
+    offListGymFee: offListFee,
     total,
     discounted: session < base,
     trial,

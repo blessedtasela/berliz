@@ -45,6 +45,8 @@ export interface Booking {
   travelZone?: string | null;
   /** What the gym charges at the door: paid to the gym, not part of amountDue. */
   gymDropInFee?: number | null;
+  /** BK-37: the trainer's own fee for this off-list gym -- unlike gymDropInFee above, this one IS part of amountDue. Null at a listed location or a client's own custom address. */
+  offListGymFee?: number | null;
   locationMapsUrl?: string | null;
 
   /** What the client owes for this session (price + location fee, less rewards); set when the provider confirms it. */

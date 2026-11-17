@@ -272,7 +272,8 @@
       [locationFee]="locationSelection?.fee ?? null"
       [usesPackage]="selectedOption.kind === 'ownedPackage'"
       [sessionType]="requestedSessionType" [newMemberPercent]="requestedSessionType === 'TRIAL' ? newMemberPercent : null"
-      [gymDropIn]="locationSelection?.dropInFee ?? null" [travelZone]="locationSelection?.travelZone ?? null"></app-booking-price-estimate>
+      [gymDropIn]="locationSelection?.dropInFee ?? null" [offListGymFee]="locationSelection?.offListGymFee ?? null"
+      [travelZone]="locationSelection?.travelZone ?? null"></app-booking-price-estimate>
 
     <!-- ── A unique code from the trainer ───────────────────────────── -->
     <div *ngIf="availabilityConfigured === true && !isGroup" class="flex flex-col gap-1.5" data-testid="payment-code">
