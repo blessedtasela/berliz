@@ -224,6 +224,12 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — PY-30: a searchable picker for the provider's "ask for a code" form
+
+- **The provider's "ask for a code" form now searches instead of demanding a typed id**: a
+  recent-first, searchable picker over the provider's own bookings, clients and packages, with
+  manual entry kept as an explicit fallback toggle. `berliz` commit `d53af5efa`.
+
 ### 2026-11-17 — PY-29: ask for (or redeem) a payment code on an existing booking
 
 - **The client booking card now has "I have a code" and "Ask my trainer for one"** wherever a
