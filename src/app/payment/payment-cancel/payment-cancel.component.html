@@ -14,10 +14,27 @@
             </p>
         </div>
 
+        <!-- PY-31: a known checkout to pick back up -- retry it directly, or (packages/plans) go straight back to
+             where it was started with the same selection, before falling back to the generic links below. -->
+        <div *ngIf="type" class="flex flex-col items-center gap-2 w-full" data-testid="resume-checkout">
+            <button *ngIf="type !== 'subscription' || subscription" type="button" (click)="retryPayment()" [disabled]="retrying"
+                data-testid="retry-payment"
+                class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold w-full max-w-xs
+                       hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-60">
+                {{ retrying ? 'Starting checkout…' : retryLabel }}
+            </button>
+            <p *ngIf="retryError" class="text-xs text-red-600 dark:text-red-400" role="alert" data-testid="retry-error">{{ retryError }}</p>
+            <a *ngIf="backToProviderLink" [routerLink]="backToProviderLink.path" [queryParams]="backToProviderLink.query"
+                data-testid="back-to-provider"
+                class="text-xs text-gray-600 dark:text-gray-300 underline">
+                Back to this purchase
+            </a>
+        </div>
+
         <div class="flex flex-wrap items-center justify-center gap-2">
             <a routerLink="/dashboard/my-bookings"
-                class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
-                       hover:bg-red-700 active:scale-[0.98] transition">
+                class="px-5 py-2.5 rounded-xl text-xs font-semibold active:scale-[0.98] transition"
+                [ngClass]="type ? 'border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800' : 'bg-red-600 text-white hover:bg-red-700'">
                 Back to my bookings
             </a>
             <a routerLink="/dashboard/my-subscriptions"
