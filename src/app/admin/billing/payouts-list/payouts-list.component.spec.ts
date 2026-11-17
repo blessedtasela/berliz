@@ -6,9 +6,10 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { of } from 'rxjs';
 
 import { PayoutsListComponent } from './payouts-list.component';
+import { PayoutService } from 'src/app/services/payout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Payout } from 'src/app/models/payout.model';
-import { recalculatePayout } from 'src/app/state/payout/payout.actions';
+import { payOutViaStripe, recalculatePayout } from 'src/app/state/payout/payout.actions';
 
 describe('PayoutsListComponent', () => {
   let component: PayoutsListComponent;
@@ -34,6 +35,7 @@ describe('PayoutsListComponent', () => {
         provideMockActions(() => of()),
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: jasmine.createSpyObj('SnackBarService', ['openSnackBar']) },
+        { provide: PayoutService, useValue: jasmine.createSpyObj('PayoutService', { getPayoutScheduleStatus: of({ data: null }) }) },
       ]
     });
 
@@ -59,10 +61,17 @@ describe('PayoutsListComponent', () => {
     expect(component.statusClasses('PENDING')).toContain('amber');
   });
 
-  it('only opens the confirm dialog for a PENDING payout', () => {
+  it('refuses a payout that is already PAID', () => {
     fixture.detectChanges();
     component.payOut({ ...pendingPayout, status: 'PAID' } as Payout);
     expect(dialogSpy.open).not.toHaveBeenCalled();
+  });
+
+  it('allows retrying a FAILED payout, not just a PENDING one', () => {
+    fixture.detectChanges();
+    dialogSpy.open.and.returnValue({ componentInstance: { onEmitStatusChange: of() } } as any);
+    component.payOut({ ...pendingPayout, status: 'FAILED' } as Payout);
+    expect(dialogSpy.open).toHaveBeenCalled();
   });
 
   it('does not open a second confirm dialog while one payout is already being paid', () => {
@@ -70,6 +79,18 @@ describe('PayoutsListComponent', () => {
     component.payingId = 99;
     component.payOut(pendingPayout);
     expect(dialogSpy.open).not.toHaveBeenCalled();
+  });
+
+  it('requires a reason, and dispatches it with the payOutViaStripe action', () => {
+    fixture.detectChanges();
+    const dispatchSpy = spyOn(store, 'dispatch');
+    dialogSpy.open.and.returnValue({ componentInstance: { onEmitStatusChange: of('Trainer asked for an early release') }, close: () => {} } as any);
+
+    component.payOut(pendingPayout);
+
+    const config: any = dialogSpy.open.calls.mostRecent().args[1];
+    expect(config.data.requireReason).toBe(true);
+    expect(dispatchSpy).toHaveBeenCalledWith(payOutViaStripe({ id: pendingPayout.id, reason: 'Trainer asked for an early release' }));
   });
 
   // PY-24: a "Recalculate" action for a payout created before the real-payment basis fix.

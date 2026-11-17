@@ -4,7 +4,6 @@ import { Payout } from '../../models/payout.model';
 
 type Res<T> = { response: ApiResponse<T> };
 type Err = { error: string };
-type Id = { id: number };
 
 export const loadMyPayouts = createAction('[Payout] Load Mine');
 export const loadMyPayoutsSuccess = createAction('[Payout] Load Mine Success', props<Res<Payout[]>>());
@@ -14,7 +13,8 @@ export const loadAllPayouts = createAction('[Payout] Load All');
 export const loadAllPayoutsSuccess = createAction('[Payout] Load All Success', props<Res<Payout[]>>());
 export const loadAllPayoutsFailure = createAction('[Payout] Load All Failure', props<Err>());
 
-export const payOutViaStripe = createAction('[Payout] Pay Via Stripe', props<Id>());
+/** PY-22: `reason` is mandatory -- no payout moves without a reason note, logged server-side. */
+export const payOutViaStripe = createAction('[Payout] Pay Via Stripe', props<{ id: number; reason: string }>());
 export const payOutViaStripeSuccess = createAction('[Payout] Pay Via Stripe Success', props<Res<Payout>>());
 export const payOutViaStripeFailure = createAction('[Payout] Pay Via Stripe Failure', props<Err>());
 

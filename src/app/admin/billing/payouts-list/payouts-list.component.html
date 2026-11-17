@@ -1,5 +1,24 @@
 <app-load-error *ngIf="loadError && payouts.length === 0" title="Couldn't load payouts" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 
+<!-- PY-22: proof the weekly automatic payout job is actually running -- tells "still PENDING" apart
+     from "the job never ran" or "it ran and silently failed". -->
+<div *ngIf="scheduleStatus" data-testid="schedule-status-card"
+  class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 mb-3 flex flex-col gap-1">
+  <div class="flex items-center justify-between gap-3">
+    <p class="text-xs font-bold text-gray-700 dark:text-gray-300">Automatic weekly payout job</p>
+    <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ scheduleStatus.scheduleDescription }}</p>
+  </div>
+  <p class="text-[11px] text-gray-500 dark:text-gray-400" *ngIf="scheduleStatus.lastRunDate; else neverRun" data-testid="schedule-status-last-run">
+    Last ran {{ scheduleStatus.lastRunDate | date:'MMM d, y · h:mm a' }} —
+    {{ scheduleStatus.lastRunPaidCount }} paid, {{ scheduleStatus.lastRunSkippedCount }} skipped (provider not Stripe-ready), {{ scheduleStatus.lastRunFailedCount }} failed.
+    <span *ngIf="scheduleStatus.lastRunFailureDetail" class="text-red-600 dark:text-red-400"> {{ scheduleStatus.lastRunFailureDetail }}</span>
+  </p>
+  <ng-template #neverRun>
+    <p class="text-[11px] text-amber-600 dark:text-amber-400" data-testid="schedule-status-never-run">Has not run yet.</p>
+  </ng-template>
+  <p class="text-[11px] text-gray-400 dark:text-gray-500">Next run: {{ scheduleStatus.nextRunDate | date:'MMM d, y · h:mm a' }}</p>
+</div>
+
 <div *ngIf="!(loadError && payouts.length === 0)" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
 
   <!-- Mobile: card rows -->
@@ -21,9 +40,9 @@
           class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-60 transition">
           {{ recalculatingId === payout.id ? 'Recalculating…' : 'Recalculate' }}
         </button>
-        <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+        <button type="button" *ngIf="payout.status === 'PENDING' || payout.status === 'FAILED'" (click)="payOut(payout)" [disabled]="!!payingId"
           class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
-          {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+          {{ payingId === payout.id ? 'Paying…' : (payout.status === 'FAILED' ? 'Retry payout' : 'Pay out') }}
         </button>
       </div>
     </div>
@@ -62,9 +81,9 @@
                 class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-60 transition">
                 {{ recalculatingId === payout.id ? 'Recalculating…' : 'Recalculate' }}
               </button>
-              <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+              <button type="button" *ngIf="payout.status === 'PENDING' || payout.status === 'FAILED'" (click)="payOut(payout)" [disabled]="!!payingId"
                 class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
-                {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+                {{ payingId === payout.id ? 'Paying…' : (payout.status === 'FAILED' ? 'Retry payout' : 'Pay out') }}
               </button>
             </div>
           </td>
