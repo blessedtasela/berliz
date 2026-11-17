@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-65 (gender slice): the gender picker is now a dropdown, matching the design-system rule
+
+- **Gender now renders as a dropdown everywhere it's picked** (signup, the signup modal, the
+  profile-edit modal, and the admin edit-user modal) instead of 4 pill-style buttons -- the
+  owner's own standing rule is that any selector with 4+ options is a dropdown. First slice of
+  a larger inventory across every selection control in the app. `berliz`.
+
 ### 2026-11-17 — GN-63 (profile edits slice): editing your name or avatar from the navbar now shows up without a reload
 
 - **Editing your profile or changing/removing your avatar from the navbar dropdown's "Edit
