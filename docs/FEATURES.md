@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — PY-29: ask for (or redeem) a payment code on an existing booking
+
+- **The client booking card now has "I have a code" and "Ask my trainer for one"** wherever a
+  session can be paid for -- single, trial, group, and plan-a-month sessions alike. Previously
+  a code could only be entered at the moment a brand-new request was first sent; there was no
+  way to ask for or redeem one against a booking that already existed. `berliz` commit `1ffedbade`.
+
 ### 2026-11-17 — PY-31: checkout-cancel offers a direct retry, not just generic links
 
 - **Backing out of Stripe Checkout now offers a one-click way back** instead of only "my
