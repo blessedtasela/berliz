@@ -11,6 +11,8 @@ import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { loadAllBookings } from 'src/app/state/booking/booking.actions';
 import { selectBookings } from 'src/app/state/booking/booking.selectors';
+import { nameSlug } from 'src/app/utils/closest-slug';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-bookings-list',
@@ -89,6 +91,26 @@ export class BookingsListComponent {
           this.snackbarService.openSnackBar(this.responseMessage, 'error');
         });
     });
+  }
+
+  /** PF-58: only a completed trainer session has a review slot to send a link to -- a review
+   *  always has to be left against a trainer (TrainerReview), centers have no equivalent flow. */
+  canCopyReviewLink(booking: Booking): boolean {
+    return booking.status === 'completed' && !!booking.trainerName;
+  }
+
+  /** PF-58: the exact deep link a client already reaches by tapping "Leave a review" on their own
+   *  My Bookings page (booking-card.component.ts) -- copied here so the owner can hand it to a
+   *  specific client directly (text, WhatsApp, email) instead of waiting for them to find it. */
+  async copyReviewLink(booking: Booking): Promise<void> {
+    if (!this.canCopyReviewLink(booking)) return;
+    const url = `${environment.baseUrl}/trainers/${nameSlug(booking.trainerName)}#add-review`;
+    try {
+      await navigator.clipboard.writeText(url);
+      this.snackbarService.openSnackBar('Review link copied', '');
+    } catch {
+      this.snackbarService.openSnackBar(url, 'error');
+    }
   }
 
   formatDate(dateString: any): any {
