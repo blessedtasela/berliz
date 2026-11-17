@@ -7,6 +7,7 @@ import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { PaymentCodeService } from 'src/app/services/payment-code.service';
 
 import {
   cancelBooking,
@@ -43,6 +44,9 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
   loadError: string | null = null;
   /** The booking whose Stripe Checkout is being created, so its Pay button can't be double-tapped. */
   payingBookingId: number | null = null;
+  /** PY-29: the booking whose "ask my trainer for a code" / code redemption is in flight. */
+  askingForCodeBookingId: number | null = null;
+  redeemingCodeBookingId: number | null = null;
 
   /** PF-43: per-trainer "do they still have an unreviewed completed session" -- fetched once per
    *  trainer (several completed bookings can share one), not re-checked per booking. */
@@ -57,6 +61,7 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
     private stripeService: StripeService,
     private trainerService: TrainerService,
+    private paymentCodeService: PaymentCodeService,
   ) { }
 
   ngOnInit(): void {
@@ -162,6 +167,41 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
   /** A real browser navigation (Stripe's page is off-site); its own method so tests can stub it. */
   protected redirect(url: string): void {
     window.location.href = url;
+  }
+
+  /** PY-29: the booking flow had code entry (at creation) but no way to ASK for one on an already-confirmed,
+   *  unpaid session -- unlike Level Up, which only ever offers this before a sale exists to attach to. */
+  onAskForCodeRequested(id: number): void {
+    if (this.askingForCodeBookingId !== null) return;
+    this.askingForCodeBookingId = id;
+    this.paymentCodeService.askTrainer({ targetType: 'BOOKING', bookingId: id }).subscribe({
+      next: (res) => {
+        this.askingForCodeBookingId = null;
+        this.snackBar.openSnackBar(res?.message || 'Your trainer has been told. If they agree, they ask the administration and you both receive the code.', '');
+      },
+      error: (err) => {
+        this.askingForCodeBookingId = null;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
+  }
+
+  /** PY-29: redeems a code against an already-confirmed, unpaid booking -- the only redemption path before this
+   *  was at the moment the request was first sent (booking-page.component.ts), before this card could even exist. */
+  onRedeemCodeRequested({ id, code }: { id: number; code: string }): void {
+    if (this.redeemingCodeBookingId !== null) return;
+    this.redeemingCodeBookingId = id;
+    this.paymentCodeService.redeem({ code, bookingId: id }).subscribe({
+      next: (res) => {
+        this.redeemingCodeBookingId = null;
+        this.snackBar.openSnackBar(res?.message || 'Your code is applied. Nothing to pay.', '');
+        this.loadBookings();
+      },
+      error: (err) => {
+        this.redeemingCodeBookingId = null;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
   }
 
   /** The card has already asked "Cancel this booking?" -- including the refund the client will get for a paid session -- so this goes straight to the server rather than asking a second, less informed time. */

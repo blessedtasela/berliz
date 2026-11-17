@@ -48,6 +48,14 @@ export class BookingCardComponent {
   @Output() deleteRequested = new EventEmitter<number>();
   /** Client tapped "Pay" on a confirmed session; the parent starts Stripe Checkout. */
   @Output() payRequested = new EventEmitter<number>();
+  /** PY-29: client has no code and wants to ask their trainer for one against this specific booking. */
+  @Output() askForCodeRequested = new EventEmitter<number>();
+  /** PY-29: client typed a code and wants it redeemed against this specific booking. */
+  @Output() redeemCodeRequested = new EventEmitter<{ id: number; code: string }>();
+
+  /** PY-29: "I have a code" box state, local to this card. */
+  showCodeBox = false;
+  paymentCode = '';
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
   @Output() sendIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
   /** BK-44: settled successfully -- the parent reloads its list so the new Paid state shows. */
@@ -129,6 +137,19 @@ export class BookingCardComponent {
 
   pay(): void {
     this.payRequested.emit(this.booking.id);
+  }
+
+  /** PY-29: the booking flow had code entry (the "pay" step itself) but no way to ASK for one --
+   *  unlike Level Up, which only ever shows this before a sale exists to attach to. A booking
+   *  already exists by the time this is visible, so it can target this exact booking right away. */
+  askForCode(): void {
+    this.askForCodeRequested.emit(this.booking.id);
+  }
+
+  redeemCode(): void {
+    const code = this.paymentCode.trim();
+    if (!code) return;
+    this.redeemCodeRequested.emit({ id: this.booking.id, code });
   }
 
   /** A client can withdraw a pending request, or cancel a confirmed session (the refund depends on how late -- see clientCancelNote). */
