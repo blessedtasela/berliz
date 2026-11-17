@@ -68,7 +68,8 @@
             </div>
 
             <ng-container *ngIf="disciplines$ | async as disciplines">
-                <p *ngIf="disciplines.length === 0" class="text-xs text-zinc-500 italic">No disciplines yet.</p>
+                <app-list-skeleton *ngIf="disciplines.length === 0 && !firstLoaded" [count]="4"></app-list-skeleton>
+                <p *ngIf="disciplines.length === 0 && firstLoaded" class="text-xs text-zinc-500 italic">No disciplines yet.</p>
                 <div *ngIf="disciplines.length > 0" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     <a *ngFor="let d of disciplines; trackBy: trackById" [routerLink]="['/disciplines', d.id, d.name]"
                         class="group flex flex-col items-center gap-2 text-center bg-zinc-900 rounded-xl border border-zinc-800 p-4

@@ -224,6 +224,15 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-52: the Services page no longer bakes in "No disciplines yet" for crawlers/slow loads
+
+- **The Services page's disciplines block now shows a loading skeleton, not a false "No
+  disciplines yet"**, before the first load resolves -- the same `firstLoaded` gate the
+  Disciplines page already had. The prerendered `/services` snapshot (what a crawler or a
+  no-JS visitor actually gets) was baking in the empty message regardless of the 15 real
+  disciplines, since the gate wasn't there to tell "still loading" apart from "genuinely empty."
+  `berliz`.
+
 ### 2026-11-17 — GN-59: a device clock running ahead of the server no longer logs out a live session
 
 - **Route guards (dashboard entry, every `/dashboard` page, sign-up) stopped comparing the
