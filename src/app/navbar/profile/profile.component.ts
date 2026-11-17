@@ -15,6 +15,7 @@ import { BerlizFeedbackModalComponent } from 'src/app/footer/berliz-feedback-mod
 import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
+import { refreshUser } from 'src/app/state/user/user.actions';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
@@ -160,6 +161,11 @@ export class ProfileComponent {
         this.responseMessage = response?.message || 'Profile photo updated';
         this.snackbarService.openSnackBar(this.responseMessage, "");
         this.showCropper = false;
+        // GN-63: handleEmitEvent() only re-subscribes to the CURRENT store value -- it
+        // never re-fetches. Without this dispatch the store's user.data was never told
+        // the photo changed, so the new avatar never appeared anywhere (navbar, this
+        // dropdown, anywhere else selectUser feeds) until a page reload.
+        this.store.dispatch(refreshUser());
         this.handleEmitEvent()
       }, (error: any) => {
         this.ngxService.stop();
@@ -198,6 +204,8 @@ export class ProfileComponent {
             this.responseMessage = response?.message || 'Profile photo removed';
             this.snackbarService.openSnackBar(this.responseMessage, "");
             dialogRef.close('Profile photo removed succesfully')
+            // GN-63: see updatePhoto() -- same missing refresh.
+            this.store.dispatch(refreshUser());
             this.handleEmitEvent()
           }, (error: any) => {
             this.ngxService.stop();
