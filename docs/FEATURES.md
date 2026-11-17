@@ -224,6 +224,29 @@ instead).
 
 Newest first.
 
+### 2026-11-16 — PY-22: automatic weekly payout release, fixed
+
+- **PY-22: the Sunday-midnight automatic payout sweep now actually completes instead of
+  crashing.** The scheduler itself (`WeeklyPayoutScheduler`, merged Nov 12) was firing on time
+  every week, but every run threw a `LazyInitializationException` and silently failed --
+  `processWeeklyAutomaticPayouts` had no transaction boundary around its lazy
+  trainer/center/store lookups. Fixed with `@Transactional`. The sweep now also retries any
+  payout left `FAILED` by a previous run, not just `PENDING`, so a transient Stripe error
+  doesn't strand a payout forever.
+- **Every payout release -- automatic or manual -- now carries who/how/why.** An admin's manual
+  "Pay out" (and the new "Retry payout" on a FAILED row) requires a reason note, same pattern as
+  the existing PY-25 "Recalculate" flow; automatic releases record the fixed note "Automatic
+  weekly payout." Stored on the payout as `releaseMethod`/`releaseReason`/`paidDate`.
+- **Admin-visible proof the job is actually running.** A new schedule-status card on the admin
+  Payouts tab shows the schedule itself, when it last ran, and the paid/skipped/failed counts (and
+  why anything failed) -- `GET /payout/schedule-status`, backed by a `PayoutScheduleRun` row
+  written once per sweep.
+- **Earnings page no longer overclaims.** The readiness banner states the real weekly schedule
+  instead of implying every session's money has already moved; a payout row only says "Sent to
+  your bank" once it's `PAID` with a real Stripe transfer reference, and a still-`PENDING`/`FAILED`
+  row now states the next automatic release date. Migration `V109`. `com.berliz` commit `7614bb5`
+  (merged `ce59481`), `berliz` commit `a33b804b1` (merged `8991bea5c`).
+
 ### 2026-11-16 — BK-37: off-list gym fee
 
 - **BK-37: off-list gym bookings now charge the trainer's own drop-in fee, through Berliz.**
