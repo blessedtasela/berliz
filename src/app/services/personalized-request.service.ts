@@ -13,7 +13,7 @@ import { StripeCheckoutSessionResponse } from '../models/stripe.model';
 export class PersonalizedRequestService {
 
   private url = environment.api + '/personalizedRequest';
-  private stripeUrl = environment.api + '/stripe';
+  private stripeUrl = environment.api + '/payment/stripe';
 
   constructor(private httpClient: HttpClient) { }
 
