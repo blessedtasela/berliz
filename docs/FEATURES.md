@@ -224,6 +224,14 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-49: logout now clears the in-memory user state too
+
+- **GN-49: signing out actually resets who the app thinks you are.** Logout cleared the stored
+  tokens but never the NgRx `user` state, so a second account signing in on the same browser tab
+  without a hard reload could briefly show the previous user's name/photo/role in the
+  navbar/sidebar. `AuthService`/`UserService` now dispatch the existing (but previously unused
+  for this) `logoutUser()` reset action on every real logout. `berliz` commit `bc5f12e0e`.
+
 ### 2026-11-17 — GN-62: Dashboard client count matches the Clients list
 
 - **GN-62: the Dashboard Hub's "My Clients" tile can no longer disagree with the actual Clients
