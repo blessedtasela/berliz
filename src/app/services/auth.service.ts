@@ -1,7 +1,9 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Store } from '@ngrx/store';
 import jwt_decode from 'jwt-decode';
 import { AuthRedirectService } from './auth-redirect.service';
+import { logoutUser } from '../state/user/user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +12,7 @@ export class AuthService {
 
   constructor(
     private authRedirect: AuthRedirectService,
+    private store: Store,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
@@ -107,8 +110,12 @@ export class AuthService {
     }
   }
 
+  /** GN-49: must reset the NgRx `user` state too, not just localStorage -- see
+   *  UserService#logout for the full explanation (this is the InactivityService's own logout
+   *  path, the other of the two real "sign this browser tab out" entry points). */
   logout(): void {
     this.clearTokens();
+    this.store.dispatch(logoutUser());
     this.authRedirect.goToLogin();
   }
 }

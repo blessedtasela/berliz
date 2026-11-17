@@ -1,24 +1,28 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { environment } from 'src/environments/environment';
 
 import { UserService } from './user.service';
 import { ApiResponse } from '../models/Api.interface';
 import { AuthResponse } from '../models/Auth.interface';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { logoutUser } from '../state/user/user.actions';
 
 describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
+  let store: MockStore;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
     imports: [RouterTestingModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(), provideMockStore()]
 });
     service = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
+    store = TestBed.inject(MockStore);
   });
 
   afterEach(() => {
@@ -27,6 +31,27 @@ describe('UserService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  // GN-49: the navbar/sidebar could show the PREVIOUS user's data after a logout, because the
+  // NgRx `user` state was never reset -- only localStorage tokens were cleared.
+  describe('logout', () => {
+    beforeEach(() => {
+      localStorage.setItem('token', 'old-access');
+      localStorage.setItem('refresh_token', 'old-refresh');
+      localStorage.setItem('todaysTodo', 'something');
+    });
+
+    it('clears the stored tokens and dispatches logoutUser() to reset the NgRx user state', () => {
+      const dispatchSpy = spyOn(store, 'dispatch');
+
+      service.logout();
+
+      expect(localStorage.getItem('token')).toBeNull();
+      expect(localStorage.getItem('refresh_token')).toBeNull();
+      expect(localStorage.getItem('todaysTodo')).toBeNull();
+      expect(dispatchSpy).toHaveBeenCalledWith(logoutUser());
+    });
   });
 
   describe('loginWithGoogle', () => {
