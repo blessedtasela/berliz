@@ -224,6 +224,21 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — PY-31: checkout-cancel offers a direct retry, not just generic links
+
+- **Backing out of Stripe Checkout now offers a one-click way back** instead of only "my
+  bookings" / "my subscriptions": a direct retry for a booking, group pack share, shop order
+  or personalized-request plan, or (for a package/plan purchase) a link straight back to the
+  provider's Level Up page with the same package pre-selected. `com.berliz` commit `b8774a1`,
+  `berliz` commit `4ba28e159`.
+
+### 2026-11-17 — PY-28: payment code redemption no longer NPEs on an unresolved provider
+
+- **A payment code whose trainer/center account link never resolved used to NPE** into a
+  generic "An error occurred" banner instead of failing with a clear reason, and could never
+  be redeemed. Fixed with a proper guard + specific message, plus reference codes on the two
+  REST-layer catch blocks that were swallowing the real exception. `com.berliz` commit `496c0e3`.
+
 ### 2026-11-17 — PF-58: admin can copy a client's direct review link
 
 - **PF-58: the admin bookings table now has a "Copy review link" action** on any completed
