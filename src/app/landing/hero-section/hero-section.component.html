@@ -45,12 +45,20 @@
 
             <!-- CTAs -->
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start mt-1">
-                <a [routerLink]="['/sign-up']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                <a *ngIf="!isAuthenticated()" [routerLink]="['/sign-up']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                           shadow-[0_2px_10px_rgba(220,38,38,0.35)]
                           hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)]
                           active:scale-[0.98] transition">
                     <i-feather name="zap" style="width:13px;height:13px;"></i-feather>
                     Join for Free
+                </a>
+
+                <a *ngIf="isAuthenticated()" [routerLink]="['/dashboard']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                          shadow-[0_2px_10px_rgba(220,38,38,0.35)]
+                          hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)]
+                          active:scale-[0.98] transition">
+                    <i-feather name="zap" style="width:13px;height:13px;"></i-feather>
+                    Go to Dashboard
                 </a>
 
                 <a [routerLink]="['/centers']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300

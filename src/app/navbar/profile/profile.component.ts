@@ -28,6 +28,11 @@ export class ProfileComponent {
   private destroyRef = inject(DestroyRef);
   @Output() isMenuOpen = new EventEmitter<boolean>();
   @Input() userData!: Users | null;
+  /** 'dark' is for mounting on the dark marketing navbar (GN-49) -- the
+   *  default 'light' trigger text (text-gray-900) is unreadable on that
+   *  bar's bg-gray-950 outside of dark mode, since that background isn't
+   *  tied to the app's light/dark theme toggle at all. */
+  @Input() theme: 'light' | 'dark' = 'light';
   profileOpen: boolean = false;
   responseMessage: any;
   /** Inline error shown inside the photo cropper when saving the new profile photo fails. */

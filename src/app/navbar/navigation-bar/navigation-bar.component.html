@@ -34,17 +34,47 @@
                 </a>
             </li>
 
-            <li class="py-0.5 lg:py-0 lg:ml-3">
-                <a *ngIf="!getUser()" [routerLink]="['/login']" class="block px-4 py-2 rounded-xl text-sm font-semibold
+            <li class="py-0.5 lg:py-0 lg:ml-3" *ngIf="!getUser()">
+                <a [routerLink]="['/login']" class="block px-4 py-2 rounded-xl text-sm font-semibold
                  bg-red-600 text-white shadow-[0_2px_10px_rgba(220,38,38,0.35)] hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)] active:scale-[0.98]
                  transition whitespace-nowrap">
                     Login
                 </a>
-                <a *ngIf="getUser()" [routerLink]="['/dashboard']" class="block px-4 py-2 rounded-xl text-sm font-semibold
-                 bg-red-600 text-white shadow-[0_2px_10px_rgba(220,38,38,0.35)] hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)] active:scale-[0.98]
-                 transition whitespace-nowrap">
-                    Dashboard
+            </li>
+
+            <!-- GN-49: signed-in visitors on a public page get the real app
+                 header controls here -- dashboard link, notifications, account
+                 menu -- instead of being stuck looking logged-out. -->
+            <li class="py-1.5 lg:py-0 lg:ml-3 flex items-center gap-2" *ngIf="getUser()">
+
+                <a [routerLink]="['/dashboard']" title="Dashboard" aria-label="Dashboard"
+                    class="w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
+                           text-white hover:bg-red-600 hover:border-red-600 transition shrink-0">
+                    <i-feather name="home" style="width:16px;height:16px;"></i-feather>
                 </a>
+
+                <div class="relative">
+                    <button type="button" (click)="toggleNotificationDropdown()"
+                        [attr.aria-label]="notificationLength > 0 ? 'Notifications, ' + notificationLength + ' unread' : 'Notifications'"
+                        class="w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
+                               text-white hover:bg-red-600 hover:border-red-600 transition relative">
+                        <i-feather name="bell" style="width:16px;height:16px;"></i-feather>
+                        <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
+                       px-1.5 py-px rounded-full font-bold leading-none badge-pulse">
+                            {{ notificationLength }}
+                        </span>
+                    </button>
+
+                    <div *ngIf="notificationDropdown" class="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
+                        (click)="closeNotificationDropdown()"></div>
+
+                    <div *ngIf="notificationDropdown" class="fixed top-16 left-1/2 -translate-x-1/2 w-[90vw] max-w-sm z-50">
+                        <notification-dropdown-component
+                            (close)="closeNotificationDropdown()"></notification-dropdown-component>
+                    </div>
+                </div>
+
+                <app-profile [userData]="userData" theme="dark"></app-profile>
             </li>
 
         </ul>

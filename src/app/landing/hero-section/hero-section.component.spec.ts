@@ -4,20 +4,25 @@ import { of } from 'rxjs';
 
 import { HeroSectionComponent } from './hero-section.component';
 import { DashboardService } from 'src/app/services/dashboard.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 describe('HeroSectionComponent', () => {
   let component: HeroSectionComponent;
   let fixture: ComponentFixture<HeroSectionComponent>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(() => {
     const dashboardServiceSpy = jasmine.createSpyObj('DashboardService', ['getBerlizDetails']);
     dashboardServiceSpy.getBerlizDetails.and.returnValue(of({ centers: 0, partners: 0, users: 0 }));
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    authServiceSpy.isAuthenticated.and.returnValue(false);
 
     TestBed.configureTestingModule({
       declarations: [HeroSectionComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: DashboardService, useValue: dashboardServiceSpy }
+        { provide: DashboardService, useValue: dashboardServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy }
       ]
     });
     fixture = TestBed.createComponent(HeroSectionComponent);
@@ -27,6 +32,24 @@ describe('HeroSectionComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('logged out: shows the sign-up CTA, not Dashboard (GN-49)', () => {
+    authServiceSpy.isAuthenticated.and.returnValue(false);
+    fixture.detectChanges();
+
+    const ctaText = fixture.nativeElement.textContent;
+    expect(ctaText).toContain('Join for Free');
+    expect(ctaText).not.toContain('Go to Dashboard');
+  });
+
+  it('signed in: shows a Dashboard CTA instead of "Join for Free" (GN-49)', () => {
+    authServiceSpy.isAuthenticated.and.returnValue(true);
+    fixture.detectChanges();
+
+    const ctaText = fixture.nativeElement.textContent;
+    expect(ctaText).not.toContain('Join for Free');
+    expect(ctaText).toContain('Go to Dashboard');
   });
 
   // Regression: the 9 MB background loop used to download for every visitor the moment the landing page opened.

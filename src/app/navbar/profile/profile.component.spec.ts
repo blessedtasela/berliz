@@ -101,6 +101,16 @@ describe('ProfileComponent', () => {
     expect(navigateSpy.calls.argsFor(0)[0]).toContain('_refresh=');
   });
 
+  it('theme="dark" renders the trigger name in plain white text, not the light-mode near-black default (GN-49)', () => {
+    component.userData = { firstname: 'A', lastname: 'B', role: 'trainer' } as any;
+    component.theme = 'dark';
+    fixture.detectChanges();
+
+    const name = fixture.nativeElement.querySelector('.hidden.md\\:flex span');
+    expect(name.className).toContain('text-white');
+    expect(name.className).not.toContain('text-gray-900');
+  });
+
   it('only shows the Partnership link for a provider (trainer/center)', () => {
     component.userData = { firstname: 'A', lastname: 'B', role: 'trainer' } as any;
     component.profileOpen = true;
