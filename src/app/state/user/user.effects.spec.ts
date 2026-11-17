@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { EMPTY, Observable } from 'rxjs';
 
 import { UserEffects } from './user.effects';
@@ -18,7 +19,8 @@ describe('UserEffects', () => {
         UserEffects,
         provideMockActions(() => actions$),
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideMockStore(),
     ]
 });
 

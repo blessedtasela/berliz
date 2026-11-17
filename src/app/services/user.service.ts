@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
 import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, SidebarDisplay, Users } from '../models/users.interface';
@@ -7,6 +8,7 @@ import { AuthResponse } from '../models/Auth.interface';
 import { ApiResponse } from '../models/Api.interface';
 import { AuthRedirectService } from './auth-redirect.service';
 import { EmailNotificationPreferences } from '../state/user-profile/user-profile.actions';
+import { logoutUser } from '../state/user/user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,8 @@ export class UserService {
   partnerFormIndex: number = 0;
 
   constructor(private httpClient: HttpClient,
-    private authRedirect: AuthRedirectService) { }
+    private authRedirect: AuthRedirectService,
+    private store: Store) { }
 
   signup(data: any): Observable<ApiResponse<string>> {
     return this.httpClient.post<ApiResponse<string>>(
@@ -359,8 +362,12 @@ export class UserService {
     localStorage.removeItem('refresh_token');
   }
 
+  /** GN-49: must reset the NgRx `user` state too, not just localStorage -- otherwise a second
+   *  account signing in on the same tab can briefly (or not-so-briefly) show the PREVIOUS
+   *  user's name/photo/role in the navbar/sidebar until loadUser()'s response overwrites it. */
   logout(): any {
     this.clearLogOutLocalStorage();
+    this.store.dispatch(logoutUser());
     this.authRedirect.goToLogin();
   }
 

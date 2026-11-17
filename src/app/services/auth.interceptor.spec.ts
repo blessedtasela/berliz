@@ -3,6 +3,7 @@ import { HttpClient, HttpEventType, HTTP_INTERCEPTORS, provideHttpClient, withIn
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './auth.service';
@@ -13,7 +14,8 @@ describe('TokenInterceptorInterceptor', () => {
     providers: [
         AuthInterceptor,
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideMockStore(),
     ]
 }));
 
@@ -47,6 +49,7 @@ describe('AuthInterceptor forceLogout routing', () => {
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
+        provideMockStore(),
     ]
 });
 
@@ -119,6 +122,7 @@ describe('AuthInterceptor upload timeouts', () => {
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
+        provideMockStore(),
       ]
     });
     httpMock = TestBed.inject(HttpTestingController);
