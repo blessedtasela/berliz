@@ -20,7 +20,7 @@
       class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'requests' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
       Requests <span *ngIf="askedOfMe.length" class="ml-1 font-semibold">({{ askedOfMe.length }})</span>
     </button>
-    <button *ngIf="isProvider" type="button" (click)="tab = 'new'" data-test="tab-new"
+    <button *ngIf="isProvider" type="button" (click)="openNewTab()" data-test="tab-new"
       class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'new' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
       Ask for a code
     </button>
@@ -149,23 +149,80 @@
   <!-- ===================== PROVIDER: ASK FOR A CODE ===================== -->
   <section *ngIf="tab === 'new' && isProvider" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3" data-test="request-form">
     <label class="text-xs text-gray-600 dark:text-gray-400">What is the code for?
-      <select [(ngModel)]="form.targetType" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
+      <select [(ngModel)]="form.targetType" (ngModelChange)="onTargetTypeChange()" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
         <option value="BOOKING">A booking</option>
         <option value="PACKAGE">A package or subscription (not bought yet)</option>
         <option value="SUBSCRIPTION">A purchase waiting for payment</option>
       </select>
     </label>
-    <label *ngIf="form.targetType === 'BOOKING'" class="text-xs text-gray-600 dark:text-gray-400">Booking number
-      <input type="number" [(ngModel)]="form.bookingId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
-    </label>
+
+    <!-- PY-30: a searchable picker over the provider's own bookings, recent first, instead of an id typed from memory. -->
+    <div *ngIf="form.targetType === 'BOOKING'" class="flex flex-col gap-1">
+      <label class="text-xs text-gray-600 dark:text-gray-400">Booking</label>
+      <ng-container *ngIf="!manualEntry.BOOKING">
+        <div class="relative">
+          <input type="text" [(ngModel)]="bookingQuery" (focus)="showBookingPicker = true" (input)="showBookingPicker = true; form.bookingId = null"
+            (blur)="hidePickerSoon('booking')" placeholder="Search by client, date or reference…" data-test="booking-search"
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+          <ul *ngIf="showBookingPicker" data-test="booking-results"
+            class="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
+            <li *ngFor="let b of filteredBookings" (click)="pickBooking(b)" [attr.data-test]="'booking-option-' + b.id"
+              class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">{{ bookingLabel(b) }}</li>
+            <li *ngIf="!filteredBookings.length" class="px-3 py-2 text-sm text-gray-400">No matching bookings</li>
+          </ul>
+        </div>
+      </ng-container>
+      <input *ngIf="manualEntry.BOOKING" type="number" [(ngModel)]="form.bookingId" placeholder="Booking number" data-test="booking-manual"
+        class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+      <button type="button" (click)="manualEntry.BOOKING = !manualEntry.BOOKING" class="self-start text-[11px] text-gray-500 dark:text-gray-400 underline">
+        {{ manualEntry.BOOKING ? 'Search instead' : 'Enter the number directly instead' }}
+      </button>
+    </div>
+
     <ng-container *ngIf="form.targetType === 'PACKAGE'">
-      <label class="text-xs text-gray-600 dark:text-gray-400">Package number
-        <input type="number" [(ngModel)]="form.packageId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
-      </label>
-      <label class="text-xs text-gray-600 dark:text-gray-400">Client number
-        <input type="number" [(ngModel)]="form.clientId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
-      </label>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs text-gray-600 dark:text-gray-400">Package</label>
+        <ng-container *ngIf="!manualEntry.PACKAGE">
+          <div class="relative">
+            <input type="text" [(ngModel)]="packageQuery" (focus)="showPackagePicker = true" (input)="showPackagePicker = true; form.packageId = null"
+              (blur)="hidePickerSoon('package')" placeholder="Search by name or price…" data-test="package-search"
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+            <ul *ngIf="showPackagePicker" data-test="package-results"
+              class="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
+              <li *ngFor="let p of filteredPackages" (click)="pickPackage(p)" [attr.data-test]="'package-option-' + p.id"
+                class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">{{ packageLabel(p) }}</li>
+              <li *ngIf="!filteredPackages.length" class="px-3 py-2 text-sm text-gray-400">No matching packages</li>
+            </ul>
+          </div>
+        </ng-container>
+        <input *ngIf="manualEntry.PACKAGE" type="number" [(ngModel)]="form.packageId" placeholder="Package number" data-test="package-manual"
+          class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        <button type="button" (click)="manualEntry.PACKAGE = !manualEntry.PACKAGE" class="self-start text-[11px] text-gray-500 dark:text-gray-400 underline">
+          {{ manualEntry.PACKAGE ? 'Search instead' : 'Enter the number directly instead' }}
+        </button>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs text-gray-600 dark:text-gray-400">Client</label>
+        <ng-container *ngIf="!manualEntry.PACKAGE">
+          <div class="relative">
+            <input type="text" [(ngModel)]="clientQuery" (focus)="showClientPicker = true" (input)="showClientPicker = true; form.clientId = null"
+              (blur)="hidePickerSoon('client')" placeholder="Search by name or email…" data-test="client-search"
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+            <ul *ngIf="showClientPicker" data-test="client-results"
+              class="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
+              <li *ngFor="let c of filteredClients" (click)="pickClient(c)" [attr.data-test]="'client-option-' + c.userId"
+                class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">{{ clientLabel(c) }}</li>
+              <li *ngIf="!filteredClients.length" class="px-3 py-2 text-sm text-gray-400">No matching clients</li>
+            </ul>
+          </div>
+        </ng-container>
+        <input *ngIf="manualEntry.PACKAGE" type="number" [(ngModel)]="form.clientId" placeholder="Client number" data-test="client-manual"
+          class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+      </div>
     </ng-container>
+
+    <!-- PY-30: no pre-purchase catalog id exists for a purchase that only exists because a checkout was already
+         started and abandoned -- manual entry stays the only way to name one (see docs/ISSUE_LOG.md, PY-29/PY-30). -->
     <label *ngIf="form.targetType === 'SUBSCRIPTION'" class="text-xs text-gray-600 dark:text-gray-400">Purchase number
       <input type="number" [(ngModel)]="form.subscriptionId" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
     </label>
