@@ -2,11 +2,13 @@ import { Component, EventEmitter, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { refreshUser } from 'src/app/state/user/user.actions';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -32,6 +34,7 @@ export class UpdateUserModalComponent {
     private userService: UserService,
     private countryService: CountryService,
     private router: Router,
+    private store: Store,
     public dialogRef: MatDialogRef<UpdateUserModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -112,7 +115,16 @@ export class UpdateUserModalComponent {
           this.ngxService.stop();
           this.responseMessage = response?.message || 'Account details updated';
           this.snackbarService.openSnackBar(this.responseMessage, "");
-         this.onUpdateUser.emit();
+          // GN-63: this went straight to the HTTP call, bypassing the NgRx action/effect
+          // pair (updateUser/updateUserSuccess) entirely -- whose own reducer only clears
+          // loading/error anyway, same as every other update-user effect (updateUserBio,
+          // updateUserEmail, updateUserProfilePhoto). None of them write the new data into
+          // the store; only a fresh fetch does. UserProfileSettingsComponent's own save
+          // method already dispatches refreshUser() for exactly this reason -- this modal
+          // (opened from the navbar "Edit Profile" menu) never did, so a name/bio/etc. edit
+          // here never appeared anywhere (navbar, profile dropdown) until a page reload.
+          this.store.dispatch(refreshUser());
+          this.onUpdateUser.emit();
         }
         , (error: any) => {
           this.ngxService.stop();

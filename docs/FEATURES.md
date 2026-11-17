@@ -224,6 +224,14 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-63 (profile edits slice): editing your name or avatar from the navbar now shows up without a reload
+
+- **Editing your profile or changing/removing your avatar from the navbar dropdown's "Edit
+  Profile" now updates the navbar and dropdown immediately** -- it used to only take effect
+  after a full page reload, even though the save itself succeeded. Doing the same edit from
+  the dedicated Settings page already worked correctly; the navbar dropdown's own path just
+  never told the app to re-fetch. `berliz`.
+
 ### 2026-11-17 — GN-54: creating a discipline category no longer fails with a generic "Invalid form"
 
 - **The super admin "Add a new category" form now actually submits** -- every valid attempt

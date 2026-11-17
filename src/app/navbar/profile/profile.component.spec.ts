@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
@@ -11,14 +11,17 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { BerlizFeedbackModalComponent } from 'src/app/footer/berliz-feedback-modal/berliz-feedback-modal.component';
+import { refreshUser } from 'src/app/state/user/user.actions';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
+  let userServiceSpy: jasmine.SpyObj<UserService>;
+  let store: MockStore;
 
   beforeEach(() => {
-    const userServiceSpy = jasmine.createSpyObj('UserService', ['updateProfilePhoto', 'removePhoto', 'logout']);
+    userServiceSpy = jasmine.createSpyObj('UserService', ['updateProfilePhoto', 'removePhoto', 'logout']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
@@ -30,7 +33,7 @@ describe('ProfileComponent', () => {
       declarations: [ProfileComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideMockStore(),
+        provideMockStore({ initialState: { user: { user: { data: null } } } }),
         { provide: UserService, useValue: userServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: MatDialog, useValue: dialogSpy },
@@ -39,6 +42,8 @@ describe('ProfileComponent', () => {
         { provide: RxStompService, useValue: rxStompSpy }
       ]
     });
+    store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -109,6 +114,31 @@ describe('ProfileComponent', () => {
     const name = fixture.nativeElement.querySelector('.hidden.md\\:flex span');
     expect(name.className).toContain('text-white');
     expect(name.className).not.toContain('text-gray-900');
+  });
+
+  // GN-63: updatePhoto/removePhoto used to only re-subscribe to the CURRENT (unchanged)
+  // store value -- never dispatch anything to actually refetch -- so a new/removed avatar
+  // never appeared anywhere selectUser feeds (navbar, this dropdown) until a page reload.
+  describe('photo updates dispatch refreshUser() (GN-63)', () => {
+    it('updatePhoto dispatches refreshUser() on success', () => {
+      component.userData = { id: 7 } as any;
+      component.croppedImage = new Blob();
+      userServiceSpy.updateProfilePhoto.and.returnValue(of({ message: 'Profile photo updated' } as any));
+
+      component.updatePhoto();
+
+      expect(store.dispatch).toHaveBeenCalledWith(refreshUser());
+    });
+
+    it('removePhoto dispatches refreshUser() once the user confirms', () => {
+      component.userData = { id: 7, email: 'a@b.com' } as any;
+      dialogSpy.open.and.returnValue({ componentInstance: { onEmitStatusChange: of({}) }, close: jasmine.createSpy('close') } as any);
+      userServiceSpy.removePhoto.and.returnValue(of({ message: 'Profile photo removed' } as any));
+
+      component.removePhoto();
+
+      expect(store.dispatch).toHaveBeenCalledWith(refreshUser());
+    });
   });
 
   it('only shows the Partnership link for a provider (trainer/center)', () => {
