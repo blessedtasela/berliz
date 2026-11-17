@@ -74,4 +74,39 @@ describe('BookingsListComponent', () => {
       expect(snack.openSnackBar).toHaveBeenCalledWith('Nothing to remind', 'error');
     });
   });
+
+  // PF-58: an admin needs to hand a specific client a direct review link.
+  describe('review link', () => {
+    it('is offered only for a completed trainer booking', () => {
+      expect(component.canCopyReviewLink({ status: 'completed', trainerName: 'Jane Trainer' } as any)).toBeTrue();
+      expect(component.canCopyReviewLink({ status: 'confirmed', trainerName: 'Jane Trainer' } as any)).toBeFalse();
+      expect(component.canCopyReviewLink({ status: 'completed', trainerName: null } as any)).toBeFalse();
+      expect(component.canCopyReviewLink({ status: 'completed', centerName: 'Big Gym' } as any)).toBeFalse();
+    });
+
+    it('copies the exact deep link a client reaches from "Leave a review" on their own booking', async () => {
+      const write = spyOn(navigator.clipboard, 'writeText').and.resolveTo();
+      const snack = TestBed.inject(SnackBarService) as jasmine.SpyObj<SnackBarService>;
+
+      await component.copyReviewLink({ status: 'completed', trainerName: 'Jane Trainer' } as any);
+
+      expect(write).toHaveBeenCalledWith(jasmine.stringMatching(/\/trainers\/jane-trainer#add-review$/));
+      expect(snack.openSnackBar).toHaveBeenCalledWith('Review link copied', '');
+    });
+
+    it('does nothing for a booking with no review slot', async () => {
+      const write = spyOn(navigator.clipboard, 'writeText').and.resolveTo();
+      await component.copyReviewLink({ status: 'confirmed', trainerName: 'Jane Trainer' } as any);
+      expect(write).not.toHaveBeenCalled();
+    });
+
+    it('falls back to showing the link itself if the clipboard write fails', async () => {
+      spyOn(navigator.clipboard, 'writeText').and.rejectWith(new Error('denied'));
+      const snack = TestBed.inject(SnackBarService) as jasmine.SpyObj<SnackBarService>;
+
+      await component.copyReviewLink({ status: 'completed', trainerName: 'Jane Trainer' } as any);
+
+      expect(snack.openSnackBar).toHaveBeenCalledWith(jasmine.stringMatching(/\/trainers\/jane-trainer#add-review$/), 'error');
+    });
+  });
 });

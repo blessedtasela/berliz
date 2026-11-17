@@ -34,6 +34,9 @@ export class BookingsComponent {
     { value: 'center', label: 'Center', accessor: b => b.centerName ?? '' },
     { value: 'status', label: 'Status', accessor: b => b.status },
     { value: 'id', label: 'Booking id', accessor: b => b.id?.toString() },
+    // PF-58: so the owner can find a booking by its human-readable reference (e.g. "BK-000017")
+    // instead of needing the internal numeric id.
+    { value: 'reference', label: 'Booking ref', accessor: b => b.reference ?? '' },
   ];
 
   constructor(private ngxService: NgxUiLoaderService,

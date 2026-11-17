@@ -33,4 +33,12 @@ describe('BookingsComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  // PF-58: the owner needs to find a specific booking (e.g. "BK-000017") to send its review link.
+  it('can search bookings by their human-readable reference', () => {
+    const refField = component.bookingSearchFields.find(f => f.value === 'reference');
+    expect(refField).toBeDefined();
+    expect(refField!.accessor({ reference: 'BK-000017' } as any)).toBe('BK-000017');
+    expect(refField!.accessor({ reference: null } as any)).toBe('');
+  });
 });
