@@ -224,6 +224,22 @@ instead).
 
 Newest first.
 
+### 2026-11-16 — BK-37: off-list gym fee
+
+- **BK-37: off-list gym bookings now charge the trainer's own drop-in fee, through Berliz.**
+  Booking at a gym the trainer hasn't listed used to tell the client the opposite of the new rule:
+  "the gym's drop-in fee is paid to the gym directly, not through Berliz." It's now a real,
+  itemized line -- the trainer's own configurable fee (default CA&#36;25, CA&#36;0-100,
+  `Trainer.offListGymFee`), stated on the booking page before any location is picked, included in
+  the estimated and actual total alongside the existing zone travel fee. Commission: the off-list
+  fee 0% (the trainer keeps all of it -- it's their own charge), the travel fee that comes with it
+  10%, the session price the normal rate -- but only for a booking that actually has an off-list
+  gym fee; a travel fee from any other cause (a listed spot's own zone fee, a client's
+  custom-location surcharge) still commissions at the full session rate exactly as before.
+  Bookings at a trainer's own listed location are completely unaffected -- that gym's own
+  day-pass charge (`gymDropInFee`) still shows, still gets paid to the gym, still isn't part of
+  the total. `com.berliz` commit `0ec94b6`, `berliz` commit `2299558d3`.
+
 ### 2026-11-14 — BK-47: locked, signed PAR-Q
 
 - **BK-48: deleting availability now warns about affected bookings, and a trainer/center can
