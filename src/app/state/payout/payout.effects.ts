@@ -30,7 +30,7 @@ export class PayoutEffects {
 
   payOutViaStripe$ = createEffect(() => this.actions$.pipe(
     ofType(A.payOutViaStripe),
-    mergeMap(({ id }) => this.svc.payOutViaStripe(id).pipe(
+    mergeMap(({ id, reason }) => this.svc.payOutViaStripe(id, reason).pipe(
       map(response => A.payOutViaStripeSuccess({ response })),
       catchError(e => of(A.payOutViaStripeFailure({ error: e?.error?.message || 'Failed to send payout' })))
     ))

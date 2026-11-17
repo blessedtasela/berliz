@@ -32,6 +32,15 @@ export interface Payout {
   date: Date;
   lastUpdate: Date;
 
+  /** PY-22: "AUTOMATIC" (the Sunday sweep) or "MANUAL" (an admin's own "Pay out"). Null until a release has been attempted. */
+  releaseMethod?: string | null;
+  /** PY-22: why this payout was released -- "Automatic weekly payout" for automatic releases, or the admin's own stated reason for a manual one. */
+  releaseReason?: string | null;
+  /** PY-22: when this payout actually reached PAID. Null while PENDING/FAILED. */
+  paidDate?: Date | null;
+  /** PY-22: when the automatic job will next attempt this payout, if it's still PENDING/FAILED (the coming Sunday 00:00 Pacific). Null once PAID. */
+  nextScheduledReleaseDate?: Date | null;
+
   /** BOOKING (a completed session) or ORDER (a shop sale): where the money came from. */
   source?: 'BOOKING' | 'ORDER' | null;
   /** One plain sentence: who paid for what. */
@@ -65,4 +74,17 @@ export interface Payout {
   events?: { label: string; at: Date }[];
 
   message?: string;
+}
+
+/** PY-22: admin-visible proof the weekly automatic payout job is actually running. */
+export interface PayoutScheduleStatus {
+  scheduleDescription: string;
+  nextRunDate: Date;
+
+  /** Null if the job has never run yet. */
+  lastRunDate: Date | null;
+  lastRunPaidCount: number | null;
+  lastRunSkippedCount: number | null;
+  lastRunFailedCount: number | null;
+  lastRunFailureDetail: string | null;
 }

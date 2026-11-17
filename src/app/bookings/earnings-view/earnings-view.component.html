@@ -14,7 +14,7 @@
                 </p>
                 <p class="text-[11px] text-gray-500 dark:text-gray-400">
                     {{ connect!.ready
-                        ? 'Your 85% share of each completed, paid session is sent to your bank through Stripe.'
+                        ? 'Your 85% share of each completed, paid session is automatically released to your bank through Stripe every Sunday.'
                         : 'Berliz pays you through Stripe. Until you finish setup, your earnings stay pending.' }}
                 </p>
             </div>
@@ -114,6 +114,17 @@
                 <p *ngIf="p.refundAdjusted" class="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 mt-1" data-testid="refund-adjusted-note">
                     <i-feather name="alert-triangle" style="width:11px;height:11px;"></i-feather>
                     Adjusted for a refund -- was {{ p.originalGrossAmount | currency }}, now {{ p.grossAmount | currency }}
+                </p>
+
+                <!-- PY-22: only ever claim money was sent once it actually was (PAID + a real Stripe
+                     transfer reference) -- a PENDING/FAILED row says when it'll next be tried instead. -->
+                <p *ngIf="p.status === 'PAID' && p.stripeTransferId" class="flex items-center gap-1 text-[11px] text-green-700 dark:text-green-400 mt-1" data-testid="payout-sent-note">
+                    <i-feather name="check" style="width:11px;height:11px;"></i-feather>
+                    Sent to your bank{{ (p.paidDate || p.lastUpdate) ? ' ' + ((p.paidDate || p.lastUpdate) | date:'MMM d, y') : '' }}
+                </p>
+                <p *ngIf="(p.status === 'PENDING' || p.status === 'FAILED') && p.nextScheduledReleaseDate" class="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 mt-1" data-testid="payout-pending-note">
+                    <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                    Pending -- next automatic release {{ p.nextScheduledReleaseDate | date:'MMM d, y' }}
                 </p>
 
                 <button type="button" (click)="toggleDetails(p.id)" [attr.aria-expanded]="expandedPayoutId === p.id"

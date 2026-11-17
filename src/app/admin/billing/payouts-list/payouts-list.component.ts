@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 
-import { Payout } from 'src/app/models/payout.model';
+import { Payout, PayoutScheduleStatus } from 'src/app/models/payout.model';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { PayoutService } from 'src/app/services/payout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
@@ -31,6 +32,9 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
   /** The payout currently mid "Recalculate" call. */
   recalculatingId: number | null = null;
 
+  /** PY-22: the weekly automatic payout job's schedule/last-run status, for the admin card below the table. Null while loading or if the fetch fails -- the table itself still works either way. */
+  scheduleStatus: PayoutScheduleStatus | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -38,11 +42,13 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private dialog: MatDialog,
     private snackBar: SnackBarService,
+    private payoutService: PayoutService,
   ) { }
 
   ngOnInit(): void {
     watchLoadError(this.actions$, loadAllPayoutsFailure, [loadAllPayouts, loadAllPayoutsSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadAllPayouts());
+    this.loadScheduleStatus();
 
     this.store.select(selectAllPayouts).pipe(takeUntil(this.destroy$))
       .subscribe(payouts => this.payouts = payouts ?? []);
@@ -80,22 +86,37 @@ export class PayoutsListComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadAllPayouts());
   }
 
+  /** PY-22: admin-visible proof the automatic job is actually running -- tells "still PENDING"
+   *  apart from "the job never ran" or "it ran and silently failed". */
+  private loadScheduleStatus(): void {
+    this.payoutService.getPayoutScheduleStatus().pipe(take(1)).subscribe({
+      next: res => { this.scheduleStatus = res?.data ?? null; },
+      error: () => { this.scheduleStatus = null; },
+    });
+  }
+
   providerName(payout: Payout): string {
     return payout.trainerName || payout.centerName || 'Unknown provider';
   }
 
+  /** PY-22: PENDING (never attempted) or FAILED (a previous attempt didn't go through -- e.g. a
+   *  Stripe error) can both be retried manually; PAID cannot. A reason is mandatory -- money
+   *  records must never change without a named actor and a logged reason. */
   payOut(payout: Payout): void {
-    if (payout.status !== 'PENDING' || this.payingId) return;
+    if (payout.status === 'PAID' || this.payingId) return;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       message: `Send ${payout.payoutAmount} to ${this.providerName(payout)} via Stripe? This triggers a real Connect transfer.`,
       confirmation: true,
       disableClose: true,
+      requireReason: true,
+      reasonLabel: 'Reason (kept in the audit log)',
+      reasonPlaceholder: 'e.g. trainer asked for an early release',
     };
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
-    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+    dialogRef.componentInstance.onEmitStatusChange.subscribe((reason: string) => {
       this.payingId = payout.id;
-      this.store.dispatch(payOutViaStripe({ id: payout.id }));
+      this.store.dispatch(payOutViaStripe({ id: payout.id, reason }));
       dialogRef.close('paying out');
     });
   }
