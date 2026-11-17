@@ -41,6 +41,24 @@ describe('PaymentCodesComponent', () => {
     page.myCodes = []; page.myRequests = []; page.adminRequests = []; page.adminCodes = [];
     page.decision = {};
     page.form = { targetType: 'BOOKING', bookingId: 50, packageId: null, subscriptionId: null, clientId: null, uses: 1, reason: 'Pays cash' };
+
+    // PY-30: the picker's own state, since this spec builds `page` directly off the prototype rather than
+    // through Angular's constructor -- same reason every other field above is set by hand.
+    page.myBookings = [];
+    page.myClients = [];
+    page.myPackages = [];
+    page.bookingQuery = '';
+    page.clientQuery = '';
+    page.packageQuery = '';
+    page.showBookingPicker = false;
+    page.showClientPicker = false;
+    page.showPackagePicker = false;
+    page.manualEntry = { BOOKING: false, PACKAGE: false, SUBSCRIPTION: false };
+    page.bookingService = {
+      getMyBookings: jasmine.createSpy('getMyBookings').and.returnValue(of({ data: [] })),
+      getMyClients: jasmine.createSpy('getMyClients').and.returnValue(of({ data: [] })),
+    };
+    page.providerPackageService = { getMine: jasmine.createSpy('getMine').and.returnValue(of({ data: [] })) };
   });
 
   describe('who sees what', () => {
@@ -72,11 +90,11 @@ describe('PaymentCodesComponent', () => {
 
       page.form = { ...page.form, reason: 'Hardship', bookingId: null };
       page.submitRequest();
-      expect(page.formError).toBe('Enter the booking number.');
+      expect(page.formError).toBe('Pick the booking (or enter its number).');
 
       page.form = { ...page.form, targetType: 'PACKAGE', packageId: 30, clientId: null };
       page.submitRequest();
-      expect(page.formError).toBe('Enter the package number and the client number.');
+      expect(page.formError).toBe('Pick the package and the client (or enter their numbers).');
       expect(codes['request']).not.toHaveBeenCalled();
     });
 
@@ -101,6 +119,85 @@ describe('PaymentCodesComponent', () => {
       expect(codes['forward']).toHaveBeenCalledWith(5);
       expect(codes['decline']).toHaveBeenCalledWith(6);
       expect(codes['cancel']).toHaveBeenCalledWith(7);
+    });
+  });
+
+  describe('the "ask for a code" picker (PY-30)', () => {
+    const booking = (over: any = {}): any => ({
+      id: 50, reference: 'BK-000050', clientFirstname: 'Sam', clientLastname: 'Client', clientEmail: 'sam@example.com',
+      scheduledAt: new Date('2026-11-10'), status: 'confirmed', ...over,
+    });
+    const client = (over: any = {}): any => ({ userId: 1, name: 'Sam Client', email: 'sam@example.com', status: 'active', lastBookingAt: new Date(), bookingCount: 2, ...over });
+    const pkg = (over: any = {}): any => ({ id: 30, name: '5-Session Pack', price: 200, sessionCount: 5, ...over });
+
+    it('loads the picker data once, the first time the tab is actually opened', () => {
+      page.pickerDataLoaded = false;
+      page.tab = 'codes';
+
+      page.openNewTab();
+      expect(page.tab).toBe('new');
+      expect(page.bookingService.getMyBookings).toHaveBeenCalledTimes(1);
+
+      page.openNewTab();
+      expect(page.bookingService.getMyBookings).toHaveBeenCalledTimes(1);
+    });
+
+    it('filters bookings by the search text, most recent first when empty', () => {
+      page.myBookings = [booking({ id: 1, scheduledAt: new Date('2026-11-01') }), booking({ id: 2, scheduledAt: new Date('2026-11-15') })];
+      page.bookingQuery = '';
+      expect(page.filteredBookings.map((b: any) => b.id)).toEqual([2, 1]);
+
+      page.bookingQuery = 'sam';
+      expect(page.filteredBookings.length).toBe(2);
+      page.bookingQuery = 'nobody-matches-this';
+      expect(page.filteredBookings.length).toBe(0);
+    });
+
+    it('picking a booking sets the id, fills the query with its label, and closes the list', () => {
+      page.showBookingPicker = true;
+      page.pickBooking(booking({ id: 7 }));
+      expect(page.form.bookingId).toBe(7);
+      expect(page.bookingQuery).toContain('Sam Client');
+      expect(page.showBookingPicker).toBeFalse();
+    });
+
+    it('filters clients and packages the same way, and picking one fills its own field', () => {
+      page.myClients = [client({ userId: 1, name: 'Sam Client' }), client({ userId: 2, name: 'Rishab Rohilla' })];
+      page.clientQuery = 'rish';
+      expect(page.filteredClients.map((c: any) => c.userId)).toEqual([2]);
+      page.pickClient(client({ userId: 2, name: 'Rishab Rohilla' }));
+      expect(page.form.clientId).toBe(2);
+      expect(page.showClientPicker).toBeFalse();
+
+      page.myPackages = [pkg({ id: 30, name: '5-Session Pack' }), pkg({ id: 31, name: '10-Session Pack' })];
+      page.packageQuery = '10-session';
+      expect(page.filteredPackages.map((p: any) => p.id)).toEqual([31]);
+      page.pickPackage(pkg({ id: 31 }));
+      expect(page.form.packageId).toBe(31);
+      expect(page.showPackagePicker).toBeFalse();
+    });
+
+    it('switching the target type drops whatever was already picked', () => {
+      page.form.bookingId = 50;
+      page.bookingQuery = 'something picked earlier';
+      page.manualEntry.BOOKING = true;
+
+      page.onTargetTypeChange();
+
+      expect(page.form.bookingId).toBeNull();
+      expect(page.form.packageId).toBeNull();
+      expect(page.form.clientId).toBeNull();
+      expect(page.bookingQuery).toBe('');
+    });
+
+    it('manual entry stays available as an explicit fallback', () => {
+      page.manualEntry.BOOKING = true;
+      page.form.bookingId = 999;
+      page.form.reason = 'Hardship';
+
+      page.submitRequest();
+
+      expect(codes['request']).toHaveBeenCalledWith(jasmine.objectContaining({ bookingId: 999 }));
     });
   });
 

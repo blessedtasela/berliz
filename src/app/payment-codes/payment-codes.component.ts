@@ -8,6 +8,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { PaymentCode, PaymentCodeDiscountType, PaymentCodeRequest, PaymentCodeTargetType } from 'src/app/models/payment-code.model';
 import { Users } from 'src/app/models/users.interface';
+import { Booking, MyClientSummary } from 'src/app/models/booking.model';
+import { ProviderPackage } from 'src/app/models/provider-package.model';
+import { BookingService } from 'src/app/services/booking.service';
+import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { PaymentCodeService } from 'src/app/services/payment-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -53,9 +57,34 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
   sending = false;
   formError = '';
 
+  /**
+   * PY-30: a smart picker over the provider's own bookings/clients/packages instead of making them
+   * type an id from memory -- recent first, searchable, manual id kept only as an explicit fallback.
+   * Loaded once, lazily, the first time the 'new' tab is actually opened (not every page load).
+   */
+  myBookings: Booking[] = [];
+  myClients: MyClientSummary[] = [];
+  myPackages: ProviderPackage[] = [];
+  private pickerDataLoaded = false;
+  bookingQuery = '';
+  clientQuery = '';
+  packageQuery = '';
+  showBookingPicker = false;
+  showClientPicker = false;
+  showPackagePicker = false;
+  /** Manual-id entry is the explicit fallback -- hidden by default, one per target so switching targets doesn't carry the toggle over. */
+  manualEntry: Record<PaymentCodeTargetType, boolean> = { BOOKING: false, PACKAGE: false, SUBSCRIPTION: false };
+
   private destroy$ = new Subject<void>();
 
-  constructor(private codes: PaymentCodeService, private store: Store, private snackBar: SnackBarService, private dialog: MatDialog) { }
+  constructor(
+    private codes: PaymentCodeService,
+    private store: Store,
+    private snackBar: SnackBarService,
+    private dialog: MatDialog,
+    private bookingService: BookingService,
+    private providerPackageService: ProviderPackageService,
+  ) { }
 
   get isProvider(): boolean {
     const role = this.user?.role;
@@ -133,12 +162,98 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
 
   // ---- provider ----
 
+  /** Switching what the code is for drops whatever was already picked -- a stale id from a different target must never be submitted. */
+  onTargetTypeChange(): void {
+    this.form.bookingId = null;
+    this.form.packageId = null;
+    this.form.subscriptionId = null;
+    this.form.clientId = null;
+    this.bookingQuery = '';
+    this.clientQuery = '';
+    this.packageQuery = '';
+    this.showBookingPicker = false;
+    this.showClientPicker = false;
+    this.showPackagePicker = false;
+  }
+
+  /** Called when the "Ask for a code" tab is opened (isProvider only) -- loads the picker data once. */
+  openNewTab(): void {
+    this.tab = 'new';
+    if (this.pickerDataLoaded) return;
+    this.pickerDataLoaded = true;
+    this.bookingService.getMyBookings().subscribe({ next: r => this.myBookings = r.data ?? [], error: () => this.myBookings = [] });
+    this.bookingService.getMyClients().subscribe({ next: r => this.myClients = r.data ?? [], error: () => this.myClients = [] });
+    this.providerPackageService.getMine().subscribe({ next: r => this.myPackages = r.data ?? [], error: () => this.myPackages = [] });
+  }
+
+  bookingLabel(b: Booking): string {
+    const who = `${b.clientFirstname ?? ''} ${b.clientLastname ?? ''}`.trim() || b.clientEmail;
+    const when = new Date(b.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `${b.reference ?? '#' + b.id} · ${who} · ${when} · ${b.status}`;
+  }
+
+  clientLabel(c: MyClientSummary): string {
+    return `${c.name} · ${c.email}`;
+  }
+
+  packageLabel(p: ProviderPackage): string {
+    return `${p.name} · CA$${p.price.toFixed(2)}${p.sessionCount ? ' · ' + p.sessionCount + ' sessions' : ''}`;
+  }
+
+  /** Recent first when the box is empty; otherwise whatever matches, most recent first too. */
+  get filteredBookings(): Booking[] {
+    const q = this.bookingQuery.trim().toLowerCase();
+    const sorted = [...this.myBookings].sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
+    const matches = q ? sorted.filter(b => this.bookingLabel(b).toLowerCase().includes(q)) : sorted;
+    return matches.slice(0, 8);
+  }
+
+  get filteredClients(): MyClientSummary[] {
+    const q = this.clientQuery.trim().toLowerCase();
+    const matches = q ? this.myClients.filter(c => this.clientLabel(c).toLowerCase().includes(q)) : this.myClients;
+    return matches.slice(0, 8);
+  }
+
+  get filteredPackages(): ProviderPackage[] {
+    const q = this.packageQuery.trim().toLowerCase();
+    const matches = q ? this.myPackages.filter(p => this.packageLabel(p).toLowerCase().includes(q)) : this.myPackages;
+    return matches.slice(0, 8);
+  }
+
+  /** Closes a picker shortly after its input loses focus -- delayed so a click on a result (which blurs the
+   *  input first) still registers before the list disappears. */
+  hidePickerSoon(which: 'booking' | 'client' | 'package'): void {
+    setTimeout(() => {
+      if (which === 'booking') this.showBookingPicker = false;
+      else if (which === 'client') this.showClientPicker = false;
+      else this.showPackagePicker = false;
+    }, 150);
+  }
+
+  pickBooking(b: Booking): void {
+    this.form.bookingId = b.id;
+    this.bookingQuery = this.bookingLabel(b);
+    this.showBookingPicker = false;
+  }
+
+  pickClient(c: MyClientSummary): void {
+    this.form.clientId = c.userId;
+    this.clientQuery = this.clientLabel(c);
+    this.showClientPicker = false;
+  }
+
+  pickPackage(p: ProviderPackage): void {
+    this.form.packageId = p.id;
+    this.packageQuery = this.packageLabel(p);
+    this.showPackagePicker = false;
+  }
+
   submitRequest(): void {
     this.formError = '';
     const f = this.form;
     if (!f.reason.trim()) { this.formError = 'Tell the administration why this client should not have to pay.'; return; }
-    if (f.targetType === 'BOOKING' && !f.bookingId) { this.formError = 'Enter the booking number.'; return; }
-    if (f.targetType === 'PACKAGE' && (!f.packageId || !f.clientId)) { this.formError = 'Enter the package number and the client number.'; return; }
+    if (f.targetType === 'BOOKING' && !f.bookingId) { this.formError = 'Pick the booking (or enter its number).'; return; }
+    if (f.targetType === 'PACKAGE' && (!f.packageId || !f.clientId)) { this.formError = 'Pick the package and the client (or enter their numbers).'; return; }
     if (f.targetType === 'SUBSCRIPTION' && !f.subscriptionId) { this.formError = 'Enter the purchase number.'; return; }
 
     this.sending = true;
@@ -150,6 +265,7 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
         this.sending = false;
         this.snackBar.openSnackBar(r.message || 'Request sent to the administration', '');
         this.form.reason = '';
+        this.onTargetTypeChange();
         this.tab = 'requests';
         this.reload();
       },
