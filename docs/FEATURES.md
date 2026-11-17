@@ -224,6 +224,14 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-62: Dashboard client count matches the Clients list
+
+- **GN-62: the Dashboard Hub's "My Clients" tile can no longer disagree with the actual Clients
+  list.** The tile used a narrower, Subscription-only count; the list page was widened under
+  PF-42 to also count clients who only exist via a paid booking. Both now share one definition
+  (`TrainerService#countMyTrainerClients`), so a trainer never sees two different numbers for
+  "how many clients do I have." `com.berliz` commit `482c0f5`/`89a65d4` (merged `6f1102c`).
+
 ### 2026-11-16 — PY-22: automatic weekly payout release, fixed
 
 - **PY-22: the Sunday-midnight automatic payout sweep now actually completes instead of
