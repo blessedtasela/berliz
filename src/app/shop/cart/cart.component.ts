@@ -60,8 +60,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
     // Buying requires an account -- same "log in to continue" gate used for booking a
     // trainer/center package, rather than letting a guest fill the whole checkout form
-    // only to be bounced by a 401 on submit.
-    if (!this.authService.isAuthenticated()) {
+    // only to be bounced by a 401 on submit. hasSession(), not isAuthenticated() --
+    // see AuthService#hasSession (GN-59): this must not bounce a signed-in buyer
+    // to login just because their device's clock reads the access token as expired.
+    if (!this.authService.hasSession()) {
       this.authRedirect.goToLogin();
       return;
     }

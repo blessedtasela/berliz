@@ -264,7 +264,10 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
    * The page itself is public, so an anonymous viewer gets sent to login first.
    */
   quickAdd(template: WorkoutResponse): void {
-    if (!this.authService.isAuthenticated()) {
+    // hasSession(), not isAuthenticated() -- see AuthService#hasSession (GN-59):
+    // must not tell an actually-signed-in viewer to log in just because their
+    // device's clock reads the access token as expired.
+    if (!this.authService.hasSession()) {
       this.snackBarService.openSnackBar('Log in to add this workout', '');
       this.authRedirect.goToLogin();
       return;

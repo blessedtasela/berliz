@@ -224,6 +224,24 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-59: a device clock running ahead of the server no longer logs out a live session
+
+- **Route guards (dashboard entry, every `/dashboard` page, sign-up) stopped comparing the
+  access token's expiry against the device's own clock** to decide whether to hard-redirect to
+  `/login` -- a device clock running even a little ahead of the server's made a perfectly live
+  session (1-hour access token, 30-day rotating refresh token, silent refresh on any 401) look
+  expired within minutes, with no refresh attempted at all since a route guard never makes the
+  API call that would trigger one. Guards, checkout, and the public-profile "quick add" gate now
+  check only "is there a token at all" -- the same check `InactivityService` already used, now
+  shared. `berliz`.
+
+### 2026-11-17 — GN-49: the public navbar is now auth-aware (bell, account menu, dashboard CTA)
+
+- **A signed-in visitor on a public page (home, trainers, centers, services...) now sees the
+  real notification bell and account menu**, not the logged-out marketing header with a plain
+  "Dashboard" link standing in for them. The home hero's CTA also swaps from "Join for Free" to
+  "Go to Dashboard" once signed in. `berliz` commit `9b829358e`.
+
 ### 2026-11-17 — PY-30: a searchable picker for the provider's "ask for a code" form
 
 - **The provider's "ask for a code" form now searches instead of demanding a typed id**: a

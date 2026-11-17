@@ -46,6 +46,29 @@ export class AuthService {
     }
   }
 
+  /**
+   * GN-59: a session exists as long as we hold a token -- deliberately NOT
+   * `isAuthenticated()`, which compares the access token's `exp` against
+   * THIS DEVICE's own clock. The access token lives only 1 hour, but the
+   * refresh token lives 30 days and silently renews on any 401
+   * (AuthInterceptor) -- so a merely access-token-expired session is still
+   * perfectly alive. `isAuthenticated()`'s local-clock check is fine for a
+   * refresh TRIGGER (my-rx-stomp.config.ts) or for cosmetic display
+   * (the navbar/hero CTA, where a wrong guess just self-corrects on the
+   * next load), but using it to GATE navigation is what caused GN-59: on
+   * any device whose clock runs ahead of the server's -- common, and this
+   * project has already hit a real one (see the BC-permanent-UTC-7 clock
+   * drift) -- the access token looks expired within minutes of signing in,
+   * and a route guard has no 401 to refresh against, so it hard-redirects
+   * to /login while the refresh token (and the real session) is still
+   * completely valid. Guards and other hard "are you logged in" gates
+   * should check this instead; `isAuthenticated()` stays as-is for the
+   * cases above that actually want the stricter, clock-sensitive check.
+   */
+  hasSession(): boolean {
+    return !!this.getToken();
+  }
+
   getCurrentUserEmail(): string | null {
     const token = this.getToken();
     if (!token) return null;

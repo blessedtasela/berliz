@@ -9,5 +9,8 @@ import { AuthService } from '../services/auth.service';
  */
 export const signedOutOnlyGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
-  return auth.isAuthenticated() ? inject(Router).createUrlTree(['/dashboard']) : true;
+  // GN-59: hasSession(), not isAuthenticated() -- see AuthService#hasSession.
+  // The inverse of the AuthGuard bug: a clock-skewed device would read a
+  // signed-in visitor as logged out and let them land on sign-up again.
+  return auth.hasSession() ? inject(Router).createUrlTree(['/dashboard']) : true;
 };

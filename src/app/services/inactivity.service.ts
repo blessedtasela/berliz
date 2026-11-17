@@ -104,14 +104,9 @@ export class InactivityService implements OnDestroy {
     this.stop();
   }
 
-  /**
-   * A session exists as long as we hold a token — deliberately NOT
-   * `AuthService.isAuthenticated()`, which returns false for a merely *expired*
-   * access token. Such a session is still perfectly alive: the interceptor
-   * refreshes it silently. Only the absence of a token means "no session".
-   */
+  /** See `AuthService#hasSession` -- this was the original reasoning behind it, now shared with the route guards (GN-59). */
   private hasSession(): boolean {
-    return !!this.authService.getToken();
+    return this.authService.hasSession();
   }
 
   /**

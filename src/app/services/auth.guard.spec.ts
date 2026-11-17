@@ -19,7 +19,7 @@ describe('AuthGuard', () => {
   }
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'getCurrentUserRole']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'hasSession', 'getCurrentUserRole']);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
@@ -37,7 +37,7 @@ describe('AuthGuard', () => {
   });
 
   it('redirects to /login carrying the attempted URL as returnUrl when logged out', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(false);
+    authServiceSpy.hasSession.and.returnValue(false);
 
     const result = guard.canActivate(route(['client']), state('/dashboard/my-progress'));
 
@@ -45,7 +45,7 @@ describe('AuthGuard', () => {
   });
 
   it('allows access when logged in and the route has no expectedRole', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+    authServiceSpy.hasSession.and.returnValue(true);
 
     const result = guard.canActivate(route(), state('/dashboard'));
 
@@ -53,7 +53,7 @@ describe('AuthGuard', () => {
   });
 
   it('allows access when logged in and the current role is in expectedRole', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+    authServiceSpy.hasSession.and.returnValue(true);
     authServiceSpy.getCurrentUserRole.and.returnValue('client');
 
     const result = guard.canActivate(route(['client', 'trainer']), state('/dashboard/my-bookings'));
@@ -62,11 +62,20 @@ describe('AuthGuard', () => {
   });
 
   it('redirects to /dashboard when logged in but the role is not allowed for this route', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+    authServiceSpy.hasSession.and.returnValue(true);
     authServiceSpy.getCurrentUserRole.and.returnValue('client');
 
     const result = guard.canActivate(route(['admin']), state('/dashboard/admin'));
 
     expect(router.serializeUrl(result as any)).toBe('/dashboard');
+  });
+
+  it('a device whose clock reads the access token as expired still gets in -- that is still a live session (GN-59)', () => {
+    authServiceSpy.hasSession.and.returnValue(true);
+    authServiceSpy.isAuthenticated.and.returnValue(false);
+
+    const result = guard.canActivate(route(), state('/dashboard'));
+
+    expect(result).toBe(true);
   });
 });

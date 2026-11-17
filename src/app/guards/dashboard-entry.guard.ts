@@ -13,7 +13,8 @@ import { AuthService } from '../services/auth.service';
  */
 export const dashboardEntryGuard: CanMatchFn = (_route, segments: UrlSegment[]) => {
   const auth = inject(AuthService);
-  if (auth.isAuthenticated()) return true;
+  // GN-59: hasSession(), not isAuthenticated() -- see AuthService#hasSession.
+  if (auth.hasSession()) return true;
 
   const router = inject(Router);
   const target = router.getCurrentNavigation()?.extractedUrl?.toString()

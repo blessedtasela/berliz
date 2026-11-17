@@ -22,7 +22,11 @@ export class AuthGuard implements CanActivate {
    * the user IS legitimately signed in, just not for this particular page).
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
-    if (!this.authService.isAuthenticated()) {
+    // GN-59: hasSession(), not isAuthenticated() -- see AuthService#hasSession
+    // for why. This guard re-runs on every /dashboard navigation, so using the
+    // local-clock-sensitive check here was hard-logging out sessions that were
+    // still perfectly alive server-side, sometimes within minutes of signing in.
+    if (!this.authService.hasSession()) {
       return this.router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
     }
 
