@@ -148,6 +148,43 @@ describe('BookingLocationPickerComponent', () => {
       component.selectListed(component['locations'][0]);
       expect(emitted.pop()!.fee).toBe(10);
     });
+
+    // BK-37: an off-list gym adds the trainer's own drop-in fee (charged through Berliz), separate
+    // from the travel fee above.
+    it('an off-list gym emits the platform default drop-in fee when the trainer has not set one', () => {
+      render(trainer());
+      component.selectGym();
+      component.gymName = 'Some Gym Across Town';
+      component.emit();
+      expect(emitted.pop()!.offListGymFee).toBe(25);
+    });
+
+    it('an off-list gym emits the trainer\'s own fee when they have set one', () => {
+      render(trainer({ offListGymFee: 40 }));
+      component.selectGym();
+      component.gymName = 'Some Gym Across Town';
+      component.emit();
+      expect(emitted.pop()!.offListGymFee).toBe(40);
+    });
+
+    it('a listed location never carries the off-list gym fee, even when the trainer has set one', () => {
+      render(trainer({ offListGymFee: 40 }));
+      component.selectListed(component.locations[0]);
+      expect(emitted.pop()!.offListGymFee).toBeNull();
+    });
+
+    it('shows the off-list gym rule before any location is picked', () => {
+      const el = render(trainer());
+      expect(el.querySelector('[data-testid="off-list-gym-rule"]')!.textContent).toContain('drop-in fee');
+    });
+
+    it('shows the off-list drop-in fee total once that gym is selected', () => {
+      const el = render(trainer({ offListGymFee: 40 }));
+      component.selectGym();
+      fixture.detectChanges();
+      expect(el.querySelector('[data-testid="off-list-gym-fee-total"]')!.textContent).toContain('40.00');
+      expect(el.querySelector('[data-testid="gym-dropin-note"]')).toBeNull();
+    });
   });
 
   it('hides the own-place option when the trainer does not allow it', () => {
@@ -192,7 +229,7 @@ describe('BookingLocationPickerComponent', () => {
         trainerLocationId: undefined, customLocation: '12 Elm St',
         customLocationCountry: 'USA', customLocationState: 'TX', customLocationCity: 'Austin',
         incomplete: false, fee: 25, label: 'Your place: 12 Elm St',
-        customGym: undefined, customGymMapsUrl: undefined, dropInFee: null, travelZone: null,
+        customGym: undefined, customGymMapsUrl: undefined, dropInFee: null, offListGymFee: null, travelZone: null,
       });
     });
 

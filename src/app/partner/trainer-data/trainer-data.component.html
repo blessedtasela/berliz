@@ -57,6 +57,18 @@
                 </p>
             </div>
 
+            <div class="flex flex-col gap-1" data-testid="off-list-gym-fee-field">
+                <label for="offListGymFee" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Off-list gym fee (CA$)</label>
+                <input id="offListGymFee" formControlName="offListGymFee" type="number" min="0" max="100" step="0.01" placeholder="Platform default: 25"
+                    class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">
+                    What you charge when a client books you at a gym you haven't listed above. Shown to the client as an itemized line and added
+                    to the booking total, alongside the usual travel fee. Berliz takes no commission on it (you keep every cent); the travel fee
+                    that comes with it commissions at 10%, and the session price stays at your normal rate. Leave empty to use the platform's CA$25.
+                </p>
+            </div>
+
             <div class="flex flex-col gap-1" data-testid="booking-policy-field">
                 <label for="bookingPolicy" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Booking policy</label>
                 <textarea id="bookingPolicy" formControlName="bookingPolicy" rows="5" [attr.maxlength]="MAX_BOOKING_POLICY_LENGTH"

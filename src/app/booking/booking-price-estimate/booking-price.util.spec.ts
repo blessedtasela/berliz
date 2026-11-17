@@ -94,6 +94,19 @@ describe('booking-price.util trial sessions', () => {
     expect(e.totalWithDropIn).toBe(105);
   });
 
+  // BK-37: unlike the gym's own dropInFee above, offListGymFee IS part of what Berliz charges.
+  it('includes the off-list gym fee in what is payable, unlike the gym\'s own drop-in', () => {
+    const e = estimateBookingPrice({ hourlyRate: 100, minutes: 60, locationFee: 30, offListGymFee: 25 })!;
+    expect(e.offListGymFee).toBe(25);
+    expect(e.payable).toBe(155); // 100 session + 30 travel + 25 off-list fee
+    expect(e.total).toBe(155);
+  });
+
+  it('has no off-list gym fee when none is given', () => {
+    const e = estimateBookingPrice({ hourlyRate: 100, minutes: 60 })!;
+    expect(e.offListGymFee).toBe(0);
+  });
+
   it('never gives the new-member offer to a regular session, and a package covers the whole session', () => {
     const regular = estimateBookingPrice({ hourlyRate: 100, minutes: 60, introPercent: 50 })!;
     expect(regular.introDiscount).toBe(0);

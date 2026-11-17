@@ -12,6 +12,9 @@ import { SelectComponent } from 'src/app/shared/select/select.component';
 import { TRAVEL_FEE, TravelZone, parseMapsLink, travelZoneFor, travelZoneLabel } from 'src/app/utils/travel-zone.util';
 import { ClientLocationQuote, groupLocations, normPlace, placeLabel, quoteClientLocation, sameCity, spotHeading } from 'src/app/utils/trainer-location.util';
 
+/** BK-37: what a trainer charges for a session at a gym they haven't listed, unless they've set their own -- matches ProviderPricingRules.DEFAULT_OFF_LIST_GYM_FEE on the backend. */
+export const DEFAULT_OFF_LIST_GYM_FEE = 25;
+
 /** What a booking request needs to carry; spread straight into the payload (see {@link locationPayload}). */
 export interface BookingLocationSelection {
   trainerLocationId?: number;
@@ -22,15 +25,17 @@ export interface BookingLocationSelection {
   customLocationCity?: string;
   /** True when the choice can't be submitted yet (own place picked but unfinished, or somewhere the trainer won't go). */
   incomplete: boolean;
-  /** The fee that comes with this choice (null when none), so the booking form can include it in the estimated total. */
+  /** The travel fee that comes with this choice (null when none) -- does NOT include offListGymFee; the booking form adds both to the estimated total. */
   fee: number | null;
   /** A readable name for the choice (a spot's venue or address and city, or the client's own place), for the booking summary. */
   label?: string;
   /** A gym the trainer has not listed: its name, and the Google Maps link that gives its travel zone. */
   customGym?: string;
   customGymMapsUrl?: string;
-  /** What the chosen gym charges at the door (shown, paid to the gym, never in the total); null when unknown. */
+  /** What the chosen LISTED gym charges at the door (shown, paid to the gym, never in the total); null when unknown or not a listed spot. */
   dropInFee?: number | null;
+  /** BK-37: the trainer's own fee for an off-list gym -- unlike dropInFee above, this one IS charged through Berliz, on top of the travel fee. Null unless a gym the trainer hasn't listed is chosen. */
+  offListGymFee?: number | null;
   /** DOWNTOWN | NEARBY | FAR, or PENDING when the trainer will settle it on accepting; null when there is no gym. */
   travelZone?: TravelZone | null;
 }
@@ -83,6 +88,13 @@ interface LocationGroup {
         Where would you like to train? <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
       </label>
 
+      <!-- BK-37: stated before any location is picked, not after -- a gym the trainer hasn't listed adds the
+           trainer's own drop-in fee (charged through Berliz) on top of any travel fee. -->
+      <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="off-list-gym-rule">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        Picking a gym the trainer hasn't listed adds their own drop-in fee to the total (shown before you pay), on top of any travel fee for the distance.
+      </p>
+
       <div *ngFor="let group of groups" class="flex flex-col gap-1.5">
         <p *ngIf="groups.length > 1 || customAllowed" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">{{ group.title }}</p>
         <button type="button" *ngFor="let loc of group.rows" (click)="selectListed(loc)"
@@ -115,7 +127,9 @@ interface LocationGroup {
           <i-feather name="map-pin" class="shrink-0 text-red-500" style="width:13px;height:13px;"></i-feather>
           <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Another gym — my own pick</span>
         </span>
-        <span class="shrink-0 text-[11px] font-semibold text-gray-400 dark:text-gray-500">Zone sets the travel fee</span>
+        <span class="shrink-0 text-[11px] font-semibold text-amber-700 dark:text-amber-400" data-testid="off-list-gym-fee-preview">
+          +CA&#36;{{ offListGymFeeAmount | number:'1.2-2' }} drop-in, plus travel
+        </span>
       </button>
 
       <div *ngIf="gymSelected" class="flex flex-col gap-2 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3" data-testid="custom-gym-form">
@@ -128,7 +142,9 @@ interface LocationGroup {
           <span *ngIf="gymZone !== 'PENDING'">{{ zoneText(gymZone) }}: {{ gymFee ? 'travel fee CA$' + (gymFee | number:'1.2-2') + '.' : 'no travel fee.' }}</span>
           <span *ngIf="gymZone === 'PENDING'">Without a Google Maps link the trainer confirms the zone when accepting (no travel fee downtown, CA&#36;30 up to 30&nbsp;km, CA&#36;50 beyond). You will see the final amount before you pay.</span>
         </p>
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">The gym may charge a drop-in fee up to CA$25 at the door: you pay that to the gym directly, not through Berliz.</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="off-list-gym-fee-detail">
+          The trainer's own drop-in fee for a gym they haven't listed: CA&#36;{{ offListGymFeeAmount | number:'1.2-2' }}, added to the total and paid through Berliz along with the session and travel fee.
+        </p>
       </div>
 
       <button type="button" *ngIf="customAllowed" (click)="selectCustom()"
@@ -187,9 +203,16 @@ interface LocationGroup {
         This location adds a CA&#36;{{ selectedFee | number:'1.2-2' }} travel fee on top of the session price, paid to Berliz.
       </p>
 
-      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="gym-dropin-note">
+      <!-- BK-37: an off-list gym's drop-in fee is a real, chargeable line through Berliz -- shown as its own
+           total alongside (not instead of) the travel fee line above. -->
+      <p *ngIf="gymSelected" class="text-[11px] text-amber-700 dark:text-amber-400 flex items-start gap-1.5" data-testid="off-list-gym-fee-total">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-        If the gym you pick charges a drop-in fee, you pay that to the gym directly. It is not part of the trainer fee and not paid through Berliz.
+        This gym also adds the trainer's own CA&#36;{{ offListGymFeeAmount | number:'1.2-2' }} drop-in fee, paid to Berliz along with the rest.
+      </p>
+
+      <p *ngIf="!gymSelected" class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="gym-dropin-note">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        If a listed gym charges a drop-in fee, you pay that to the gym directly. It is not part of the trainer fee and not paid through Berliz.
       </p>
     </div>
   `
@@ -244,6 +267,11 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
   }
 
   get gymFee(): number { return TRAVEL_FEE[this.gymZone]; }
+
+  /** BK-37: the trainer's own fee for this off-list gym -- their own figure if they've set one, else the platform default. Charged through Berliz, on top of the travel fee. */
+  get offListGymFeeAmount(): number {
+    return this.loadedTrainer?.offListGymFee ?? DEFAULT_OFF_LIST_GYM_FEE;
+  }
 
   zoneText(zone: string | null | undefined): string { return travelZoneLabel(zone); }
 
@@ -376,6 +404,7 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
       customGym: gym || undefined,
       customGymMapsUrl: gym && this.gymLink.trim() ? this.gymLink.trim() : undefined,
       dropInFee: chosen?.dropInFee ?? null,
+      offListGymFee: this.gymSelected ? this.offListGymFeeAmount : null,
       travelZone: this.gymSelected ? this.gymZone : (chosen ? this.spotZone(chosen) : null),
       trainerLocationId: this.selectedId ?? undefined,
       customLocation: this.customSelected && custom ? custom : undefined,
