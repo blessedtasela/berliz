@@ -10,19 +10,25 @@ describe('signedOutOnlyGuard', () => {
   const run = () => TestBed.runInInjectionContext(() => signedOutOnlyGuard({} as any, {} as any));
 
   beforeEach(() => {
-    auth = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    auth = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'hasSession']);
     router = jasmine.createSpyObj('Router', ['createUrlTree']);
     router.createUrlTree.and.callFake((commands: any[]) => ({ commands }) as unknown as UrlTree);
     TestBed.configureTestingModule({ providers: [{ provide: AuthService, useValue: auth }, { provide: Router, useValue: router }] });
   });
 
   it('lets a signed-out visitor see the sign-up page', () => {
-    auth.isAuthenticated.and.returnValue(false);
+    auth.hasSession.and.returnValue(false);
     expect(run()).toBeTrue();
   });
 
   it('sends someone who is already signed in to the dashboard', () => {
-    auth.isAuthenticated.and.returnValue(true);
+    auth.hasSession.and.returnValue(true);
+    expect((run() as any).commands).toEqual(['/dashboard']);
+  });
+
+  it('a device whose clock reads the access token as expired is still sent to the dashboard, not sign-up (GN-59)', () => {
+    auth.hasSession.and.returnValue(true);
+    auth.isAuthenticated.and.returnValue(false);
     expect((run() as any).commands).toEqual(['/dashboard']);
   });
 });

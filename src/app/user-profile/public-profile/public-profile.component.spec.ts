@@ -9,8 +9,10 @@ import { of } from 'rxjs';
 
 import { PublicProfileComponent } from './public-profile.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadPublicProfile, loadPublicProfileByUsername } from 'src/app/state/user-profile/user-profile.actions';
+import { cloneWorkoutTemplate } from 'src/app/state/workout/workout.actions';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PublicProfileComponent', () => {
@@ -96,5 +98,65 @@ describe('PublicProfileComponent routing by numeric id vs username', () => {
   it('dispatches loadPublicProfileByUsername when the route segment is a real username', () => {
     setup('alice');
     expect(store.dispatch).toHaveBeenCalledWith(loadPublicProfileByUsername({ username: 'alice' }));
+  });
+});
+
+describe('PublicProfileComponent quickAdd (GN-59)', () => {
+  let component: PublicProfileComponent;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let authRedirectSpy: jasmine.SpyObj<AuthRedirectService>;
+  let store: MockStore;
+
+  function setup() {
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'hasSession']);
+    authRedirectSpy = jasmine.createSpyObj('AuthRedirectService', ['goToLogin']);
+    const mockSnackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar', 'dismiss']);
+    const mockActivatedRoute = {
+      paramMap: of(convertToParamMap({})),
+      snapshot: { paramMap: convertToParamMap({}) },
+      queryParams: of({})
+    };
+
+    TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [PublicProfileComponent, RouterTestingModule],
+      providers: [
+        provideMockStore(),
+        { provide: Actions, useValue: of() },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: AuthRedirectService, useValue: authRedirectSpy },
+        { provide: SnackBarService, useValue: mockSnackBarService },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ]
+    });
+
+    store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch').and.callThrough();
+    const fixture = TestBed.createComponent(PublicProfileComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  it('sends a signed-out visitor to login instead of cloning the template', () => {
+    setup();
+    authServiceSpy.hasSession.and.returnValue(false);
+
+    component.quickAdd({ id: 7 } as any);
+
+    expect(authRedirectSpy.goToLogin).toHaveBeenCalled();
+    expect(store.dispatch).not.toHaveBeenCalledWith(cloneWorkoutTemplate({ id: 7 }));
+  });
+
+  it('a device whose clock reads the access token as expired can still clone the template -- that is still a live session', () => {
+    setup();
+    authServiceSpy.hasSession.and.returnValue(true);
+    authServiceSpy.isAuthenticated.and.returnValue(false);
+
+    component.quickAdd({ id: 7 } as any);
+
+    expect(authRedirectSpy.goToLogin).not.toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalledWith(cloneWorkoutTemplate({ id: 7 }));
   });
 });
