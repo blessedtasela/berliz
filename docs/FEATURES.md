@@ -224,6 +224,14 @@ instead).
 
 Newest first.
 
+### 2026-11-17 — GN-54: creating a discipline category no longer fails with a generic "Invalid form"
+
+- **The super admin "Add a new category" form now actually submits** -- every valid attempt
+  (name, description, tags, photo all filled in correctly) was being rejected with only a
+  generic "Invalid form" toast and no way to tell what was wrong, because of a dead form
+  control the photo-cropper flow never wrote to. The owner was blocked from creating
+  Calisthenics, CrossFit, Pilates and HIIT by this. `berliz`.
+
 ### 2026-11-17 — GN-52: the Services page no longer bakes in "No disciplines yet" for crawlers/slow loads
 
 - **The Services page's disciplines block now shows a loading skeleton, not a false "No
