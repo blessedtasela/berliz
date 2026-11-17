@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { statistics, hero } from '../../models/landing.model';
 import { DashboardService } from 'src/app/services/dashboard.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -26,9 +27,17 @@ export class HeroSectionComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dashboardService: DashboardService,
+    private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {
 
+  }
+
+  /** GN-49: the hero's own CTA was the one piece of this auth-unaware public
+   *  header that couldn't be fixed in the shared navbar -- a signed-in
+   *  visitor landing on the marketing home page still saw "Join for Free". */
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 
   ngAfterViewInit(): void {

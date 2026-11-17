@@ -1,7 +1,14 @@
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { Users } from 'src/app/models/users.interface';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
     selector: 'app-navigation-bar',
@@ -10,10 +17,20 @@ import { AuthService } from 'src/app/services/auth.service';
     standalone: false
 })
 
-export class NavigationBarComponent implements OnInit {
+export class NavigationBarComponent implements OnInit, OnDestroy {
   menuStatus: boolean = false;
   scrolled: boolean = false;
   currentRoute: any;
+
+  // GN-49: this bar mounts on every public page, signed in or not (see
+  // AppComponent#updateLayout) -- when signed in it also needs the bell and
+  // account menu TopBarComponent shows on /dashboard, so a signed-in visitor
+  // browsing a public page (or the home page itself) isn't stuck looking
+  // logged-out beyond a plain "Dashboard" link.
+  userData: Users | null = null;
+  notificationLength = 0;
+  notificationDropdown = false;
+  private subscriptions: Subscription[] = [];
   navLinks = [
   { label: 'Home', path: '/home' },
   { label: 'Contact', path: '/contact' },
@@ -30,6 +47,7 @@ export class NavigationBarComponent implements OnInit {
 
   constructor(private router: Router,
     private authService: AuthService,
+    private store: Store,
     @Inject(PLATFORM_ID) private platformId: Object,) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
@@ -50,6 +68,29 @@ export class NavigationBarComponent implements OnInit {
     this.subscribeToCloseNavBarOnScroll()
     // this.subscribeToCloseNavBarOnClick()
     this.scrolled = window.scrollY > 8;
+
+    if (this.getUser()) {
+      this.store.dispatch(loadUser());
+      this.store.dispatch(loadMyNotifications());
+      this.subscriptions.push(
+        this.store.select(selectUser).subscribe(user => this.userData = user),
+        this.store.select(selectMyNotifications).subscribe(notifications => {
+          this.notificationLength = notifications?.filter(n => !n.read).length ?? 0;
+        })
+      );
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  toggleNotificationDropdown() {
+    this.notificationDropdown = !this.notificationDropdown;
+  }
+
+  closeNotificationDropdown() {
+    this.notificationDropdown = false;
   }
 
   @HostListener('window:scroll')
