@@ -14,6 +14,7 @@ import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hove
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.comp
     IconsModule,
     UserHoverCardComponent,
     AdminSearchModule,
+    LoadErrorComponent,
     RouterModule.forChild([{ path: '', component: BookingsComponent }])
   ]
 })
