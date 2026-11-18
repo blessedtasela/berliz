@@ -113,17 +113,30 @@ describe('BookingPageComponent plans', () => {
     beforeEach(() => {
       page.kind = 'trainer';
       page.trialPrice = 100;
-      page.newMemberPercent = 50;
+      // Free-first-trial-per-trainer, not a platform-wide "new member" check any more:
+      // newMemberPercent is a getter derived from trialStatus (BK-32's own per-trainer lookup).
+      page.trialStatus = { used: false, usedAt: null, bookingId: null, bookingReference: null };
     });
 
-    it('states the new-member offer with the real prices', () => {
-      expect(page.trialOfferText).toBe('New members: 50% off your first trial session, CA$100 down to CA$50.');
+    it('states the free-trial offer with the real price', () => {
+      expect(page.trialOfferText).toBe('Your first session with this trainer is free -- a CA$100 value.');
       page.trialPrice = 80;
-      expect(page.trialOfferText).toBe('New members: 50% off your first trial session, CA$80 down to CA$40.');
+      expect(page.trialOfferText).toBe('Your first session with this trainer is free -- a CA$80 value.');
     });
 
-    it('has no offer text once the client is no longer new', () => {
-      page.newMemberPercent = null;
+    it('has no offer text once this trainer\'s trial is already used', () => {
+      page.trialStatus = { used: true, usedAt: '2026-01-01', bookingId: 1, bookingReference: 'BK-000001' };
+      expect(page.trialOfferText).toBeNull();
+    });
+
+    it('shows the generic offer to a visitor who is not signed in yet (trainer-specific status is unknown)', () => {
+      page.user = null;
+      page.trialStatus = null;
+      expect(page.trialOfferText).toBe('Your first session with this trainer is free -- a CA$100 value.');
+    });
+
+    it('shows no offer while a signed-in client\'s trial status is still loading, rather than guessing', () => {
+      page.trialStatus = null;
       expect(page.trialOfferText).toBeNull();
     });
 

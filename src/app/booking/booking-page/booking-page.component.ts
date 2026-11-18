@@ -159,17 +159,25 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   /** The trainer's own trial price, else the platform's CA$100. */
   trialPrice = DEFAULT_TRIAL_PRICE;
   /**
-   * Percent off a new member's first trial. A visitor who is not signed in is shown the offer ("New members: ...");
-   * a signed-in client sees it only while the server says they are still new.
+   * The first trial with THIS trainer is free, once per (client, trainer) pair -- not a platform-wide
+   * "new member" offer any more, so a returning client trying a NEW trainer still gets it. A visitor
+   * who isn't signed in yet is shown the generic offer (we don't know who they are); a signed-in
+   * client sees it only once `trialStatus` confirms they haven't used this trainer's trial already --
+   * hidden (not a guess) while that's still loading. 100 means free; kept as a percent rather than a
+   * boolean so `app-booking-price-estimate` (below) can keep working the same way it always has.
    */
-  newMemberPercent: number | null = 50;
-  private offerRequested = false;
+  get newMemberPercent(): number | null {
+    if (!this.user?.email) return 100;
+    return this.trialStatus && !this.trialStatus.used ? 100 : null;
+  }
 
-  /** "CA$100 down to CA$50": what the new-member offer does to this trainer's trial. */
+  /** "Your first session with this trainer is free" -- or the generic "down to CA$X" phrasing for any other discount percent. */
   get trialOfferText(): string | null {
-    if (!this.newMemberPercent) return null;
-    const after = Math.round(this.trialPrice * (100 - this.newMemberPercent)) / 100;
-    return `New members: ${this.newMemberPercent}% off your first trial session, CA$${this.trialPrice} down to CA$${after}.`;
+    const percent = this.newMemberPercent;
+    if (!percent) return null;
+    if (percent >= 100) return `Your first session with this trainer is free -- a CA$${this.trialPrice} value.`;
+    const after = Math.round(this.trialPrice * (100 - percent)) / 100;
+    return `New members: ${percent}% off your first trial session, CA$${this.trialPrice} down to CA$${after}.`;
   }
 
   get canChooseTrial(): boolean {
@@ -205,15 +213,6 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   /** True while submitError is specifically the "you already used your trial" rejection -- shown with its own one-tap recovery instead of the generic inline alert. */
   get isTrialAlreadyUsedError(): boolean {
     return !!this.submitError?.includes('already used your trial session');
-  }
-
-  private loadNewMemberOffer(): void {
-    if (this.offerRequested) return;
-    this.offerRequested = true;
-    this.bookingService.getNewMemberOffer().pipe(take(1), catchError(() => of(null))).subscribe(res => {
-      const offer = res?.data;
-      if (offer) this.newMemberPercent = offer.eligible ? offer.percent : null;
-    });
   }
 
   /** BK-32: whether this client already used their once-per-trainer trial with this provider -- shown on the trial option itself, before it's even picked. */
@@ -373,7 +372,6 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadUser());
     this.store.select(selectUser).pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
-      if (user?.email) this.loadNewMemberOffer();
       this.loadTrialStatus();
       // The profile can arrive after the provider does (back from sign-in): pick the saved choice up then.
       if (user?.email && this.providerId && this.restoreGuestDraft()) {

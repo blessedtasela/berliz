@@ -177,6 +177,14 @@ describe('BookingPriceEstimateComponent', () => {
       expect(text()).toContain('$30.00');
     });
 
+    it('labels a free first trial as free, not "100% off"', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 100, providerName: 'Coach Jane' });
+      expect(text()).toContain('First session with this trainer (free)');
+      expect(text()).not.toContain('100% off');
+      const total = fixture.nativeElement.querySelector('.text-sm.font-bold') as HTMLElement;
+      expect(total.textContent).toContain('$0.00');
+    });
+
     it('lists the gym drop-in as paid to the gym and keeps it out of the total', () => {
       show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50, gymDropIn: 25 });
       const line = fixture.nativeElement.querySelector('[data-testid="gym-dropin-line"]') as HTMLElement;

@@ -45,7 +45,7 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
           <span [ngClass]="e.discounted ? 'line-through text-gray-400 dark:text-gray-500' : ''">{{ e.sessionPrice | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
         <span *ngIf="e.introDiscount > 0" class="flex justify-between gap-3 text-emerald-700 dark:text-emerald-400 font-semibold" data-testid="intro-discount">
-          <span>New member offer ({{ newMemberPercent }}% off your first trial)</span>
+          <span>{{ newMemberPercent && newMemberPercent >= 100 ? 'First session with this trainer (free)' : 'New member offer (' + newMemberPercent + '% off your first trial)' }}</span>
           <span>&minus;{{ e.introDiscount | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
         <span *ngIf="e.discounted && e.introDiscount === 0" class="flex justify-between gap-3 text-emerald-700 dark:text-emerald-400">
