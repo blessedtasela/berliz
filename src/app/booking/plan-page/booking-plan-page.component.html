@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans pb-32">
 
   <!-- Resolving -->
-  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-400 dark:text-gray-500">
+  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-600 dark:text-gray-400">
     <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
     <span class="text-sm">Loading...</span>
   </div>
@@ -19,12 +19,12 @@
 
     <!-- Header -->
     <div class="flex items-center gap-3">
-      <img alt="" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
+      <img [alt]="providerName" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
         class="w-12 h-12 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700"
         data-fallback-src="../../../assets/icons/user.png" />
       <div class="flex-1 min-w-0">
         <h1 class="text-base font-bold text-gray-900 dark:text-gray-100">Plan your sessions with {{ providerName }}</h1>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500">Pick your days and times for the whole period. You pay for each session as you go.</p>
+        <p class="text-[11px] text-gray-600 dark:text-gray-400">Pick your days and times for the whole period. You pay for each session as you go.</p>
       </div>
     </div>
 
@@ -44,7 +44,7 @@
       <app-date-strip [selectedDate]="startDate" (dateSelected)="chooseStart($event)"></app-date-strip>
 
       <div class="flex flex-col gap-1.5">
-        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">For how long?</span>
+        <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">For how long?</span>
         <div class="flex flex-wrap gap-2">
           <button type="button" *ngFor="let p of periodOptions" (click)="choosePeriod(p.weeks)"
             class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition"
@@ -54,13 +54,13 @@
             {{ p.label }}
           </button>
         </div>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500">
+        <p class="text-[11px] text-gray-600 dark:text-gray-400">
           {{ longDayLabel(startDate) }} to {{ longDayLabel(endDate) }}
         </p>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">How long is each session?</span>
+        <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">How long is each session?</span>
         <div class="flex flex-wrap gap-2">
           <button type="button" *ngFor="let m of durationOptions" (click)="durationMinutes = m; changed()"
             class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition"
@@ -91,7 +91,7 @@
           {{ t.label }}
         </button>
       </div>
-      <p class="text-[11px] text-gray-400 dark:text-gray-500 -mt-2">{{ patternHint }}</p>
+      <p class="text-[11px] text-gray-600 dark:text-gray-400 -mt-2">{{ patternHint }}</p>
 
       <!-- Weekday chips (same time + different times) -->
       <div *ngIf="patternKind === 'weekly' || patternKind === 'weeklyCustom'" class="flex flex-col gap-3">
@@ -115,13 +115,13 @@
 
         <!-- Same time -->
         <div *ngIf="patternKind === 'weekly'" class="flex flex-col gap-1">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">What time?</span>
           <app-time-picker [(ngModel)]="weeklyTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
         </div>
 
         <!-- A time per day -->
         <div *ngIf="patternKind === 'weeklyCustom'" class="flex flex-col gap-2">
-          <p *ngIf="weekdays.length === 0" class="text-[11px] text-gray-400 dark:text-gray-500">Pick the days above, then choose a time for each.</p>
+          <p *ngIf="weekdays.length === 0" class="text-[11px] text-gray-600 dark:text-gray-400">Pick the days above, then choose a time for each.</p>
           <ng-container *ngFor="let w of weekdayLabels">
             <div *ngIf="isWeekdayOn(w.value)" class="flex items-center gap-3">
               <span class="w-12 text-xs font-bold text-gray-700 dark:text-gray-300">{{ w.short }}</span>
@@ -145,7 +145,7 @@
 
         <div *ngFor="let step of rotationSteps; let i = index"
           class="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 px-3 py-2.5">
-          <span class="text-[11px] font-bold text-gray-400 dark:text-gray-500 w-10">Step {{ i + 1 }}</span>
+          <span class="text-[11px] font-bold text-gray-600 dark:text-gray-400 w-10">Step {{ i + 1 }}</span>
           <div class="flex items-center gap-2">
             <span class="text-xs text-gray-600 dark:text-gray-300">Train</span>
             <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
@@ -177,10 +177,10 @@
         </button>
 
         <div class="flex flex-col gap-1">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">What time?</span>
           <app-time-picker [(ngModel)]="rotationTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
         </div>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500">The cycle starts on your first day and repeats until the end of the period.</p>
+        <p class="text-[11px] text-gray-600 dark:text-gray-400">The cycle starts on your first day and repeats until the end of the period.</p>
       </div>
 
       <!-- Pick dates -->
@@ -197,7 +197,7 @@
           </button>
         </div>
         <div class="grid grid-cols-7 gap-1 text-center">
-          <span *ngFor="let w of weekdayLabels" class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase">{{ w.short }}</span>
+          <span *ngFor="let w of weekdayLabels" class="text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">{{ w.short }}</span>
           <ng-container *ngFor="let cell of calendarCells">
             <span *ngIf="!cell"></span>
             <button *ngIf="cell" type="button" (click)="toggleDate(cell)" [disabled]="!cell.inPeriod"
@@ -213,10 +213,10 @@
           </ng-container>
         </div>
         <div class="flex flex-col gap-1">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">What time?</span>
           <app-time-picker [(ngModel)]="datesTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
         </div>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500">Need a different time on one day? Change it in the next step.</p>
+        <p class="text-[11px] text-gray-600 dark:text-gray-400">Need a different time on one day? Change it in the next step.</p>
       </div>
     </section>
 
@@ -226,7 +226,7 @@
         <span class="w-6 h-6 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">3</span>
         <div class="flex-1 min-w-0">
           <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Your sessions</h2>
-          <p class="text-[11px] text-gray-400 dark:text-gray-500 truncate">{{ patternSummary }}</p>
+          <p class="text-[11px] text-gray-600 dark:text-gray-400 truncate">{{ patternSummary }}</p>
         </div>
         <span class="text-[11px] font-semibold text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-300 rounded-full px-2.5 py-1">{{ sessions.length }} sessions</span>
       </header>
@@ -234,13 +234,13 @@
       <div *ngIf="sessions.length < 2" data-testid="empty-schedule"
         class="flex flex-col items-center justify-center gap-1.5 py-8 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
         <i-feather name="calendar" class="text-gray-300 dark:text-gray-700" style="width:20px;height:20px;"></i-feather>
-        <p class="text-xs text-gray-400 dark:text-gray-500 text-center px-4">
+        <p class="text-xs text-gray-600 dark:text-gray-400 text-center px-4">
           {{ sessions.length === 0 ? 'Choose your days and a time above to see your sessions.' : 'A plan needs at least 2 sessions. Add another day.' }}
         </p>
       </div>
 
       <!-- Checking -->
-      <div *ngIf="previewLoading" class="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-xs">
+      <div *ngIf="previewLoading" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-xs">
         <i-feather name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
         Checking {{ providerName }}'s availability...
       </div>
@@ -271,7 +271,7 @@
 
       <!-- Sessions by week -->
       <div *ngFor="let week of weeks" class="flex flex-col gap-1.5">
-        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">{{ week.label }}</span>
+        <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">{{ week.label }}</span>
         <div *ngFor="let row of week.rows; trackBy: trackByDate" data-testid="session-row"
           class="rounded-xl border px-3 py-2.5 flex flex-col gap-2"
           [ngClass]="row.available === false
@@ -285,7 +285,7 @@
             </span>
             <div class="flex-1 min-w-0">
               <p class="text-xs font-semibold text-gray-900 dark:text-gray-100">{{ longDayLabel(row.date) }} · {{ time12(row.time) }}</p>
-              <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ row.durationMinutes }} min<span *ngIf="row.price != null"> · {{ row.price | currency:'CAD':'symbol':'1.2-2' }}</span></p>
+              <p class="text-[11px] text-gray-600 dark:text-gray-400">{{ row.durationMinutes }} min<span *ngIf="row.price != null"> · {{ row.price | currency:'CAD':'symbol':'1.2-2' }}</span></p>
             </div>
             <button type="button" (click)="editTime(row.date)" [attr.aria-label]="'Change the time on ' + longDayLabel(row.date)"
               class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition">
@@ -318,7 +318,7 @@
 
       <!-- Offer on the whole plan -->
       <div *ngIf="offerChoices.length > 0" class="flex flex-col gap-1.5">
-        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Use an offer (optional)</span>
+        <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Use an offer (optional)</span>
         <select aria-label="Use an offer" [(ngModel)]="promotionId" (ngModelChange)="changed()"
           class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
@@ -331,7 +331,7 @@
         (selectionChange)="locationSelection = $event"></app-booking-location-picker>
 
       <div class="flex flex-col gap-1.5">
-        <label for="plan-notes" class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+        <label for="plan-notes" class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
           Notes <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
         </label>
         <textarea id="plan-notes" rows="3" [(ngModel)]="notes" (ngModelChange)="changed()" maxlength="1000"
@@ -343,7 +343,7 @@
 
     <!-- ═══ PRICE ═══ -->
     <section *ngIf="preview?.priced" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2" data-testid="price-summary">
-      <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Price</span>
+      <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Price</span>
       <div class="flex justify-between text-xs text-gray-600 dark:text-gray-300">
         <span>{{ preview!.sessionCount }} sessions</span>
         <span>{{ preview!.subtotal | currency:'CAD':'symbol':'1.2-2' }}</span>
@@ -361,7 +361,7 @@
         <span>You pay <strong class="text-gray-900 dark:text-gray-100">{{ preview!.perSession | currency:'CAD':'symbol':'1.2-2' }}</strong> per session, as you go, up to 24 hours before each one. Nothing is charged until {{ providerName }} accepts the plan.</span>
       </p>
     </section>
-    <p *ngIf="preview && !preview.priced && preview.sessionCount > 0" class="text-[11px] text-gray-400 dark:text-gray-500">
+    <p *ngIf="preview && !preview.priced && preview.sessionCount > 0" class="text-[11px] text-gray-600 dark:text-gray-400">
       {{ providerName }} agrees the price with you directly, so nothing is charged here.
     </p>
 
@@ -376,6 +376,6 @@
       <i-feather [name]="submitting ? 'loader' : 'send'" [ngClass]="{'animate-spin': submitting}" style="width:15px;height:15px;"></i-feather>
       {{ submitting ? 'Sending…' : (user?.email ? 'Send plan request' : 'Sign in to send') }}
     </button>
-    <p class="text-[11px] text-center text-gray-400 dark:text-gray-500">{{ providerName }} accepts or declines the whole plan. You can cancel upcoming sessions any time.</p>
+    <p class="text-[11px] text-center text-gray-600 dark:text-gray-400">{{ providerName }} accepts or declines the whole plan. You can cancel upcoming sessions any time.</p>
   </div>
 </div>

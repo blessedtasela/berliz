@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans">
 
   <!-- Resolving -->
-  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-400 dark:text-gray-500">
+  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-600 dark:text-gray-400">
     <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
     <span class="text-sm">Loading...</span>
   </div>
@@ -20,7 +20,7 @@
 
     <!-- Provider header -->
     <div class="flex items-center gap-3">
-      <img alt="" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
+      <img [alt]="providerName" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
         class="w-12 h-12 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700"
         data-fallback-src="../../../assets/icons/user.png" />
       <div class="flex-1 min-w-0">
@@ -32,7 +32,7 @@
           </span>
         </div>
         <a [routerLink]="kind === 'trainer' ? ['/trainers', providerName.replace(' ', '-')] : ['/centers', providerName.replace(' ', '-')]"
-          class="text-[11px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition">
+          class="text-[11px] text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition">
           View full profile
         </a>
       </div>
@@ -45,7 +45,7 @@
 
     <!-- Plans you already own: book this session out of one, or as a single session -->
     <div *ngIf="ownedPlans.length > 0" class="flex flex-col gap-2">
-      <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What would you like?</label>
+      <label class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">What would you like?</label>
 
       <button type="button" (click)="chooseSingle()"
         class="w-full text-left px-4 py-3 rounded-xl border transition flex items-center justify-between gap-3"
@@ -54,7 +54,7 @@
           : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
         <span>
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Single session</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">One session, no commitment. {{ providerName }} confirms it, then you pay.</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400">One session, no commitment. {{ providerName }} confirms it, then you pay.</span>
         </span>
         <i-feather *ngIf="isSingleSelected" name="check-circle" class="text-red-600 dark:text-red-400 shrink-0" style="width:16px;height:16px;"></i-feather>
       </button>
@@ -70,7 +70,7 @@
             <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">You have this</span>
           </span>
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100 truncate mt-1">{{ owned.providerPackage?.name }}</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500 truncate">
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400 truncate">
             {{ owned.sessionsRemaining ?? 'Unlimited' }}{{ owned.sessionsRemaining != null ? ' sessions left' : ' sessions' }}
           </span>
         </span>
@@ -86,7 +86,7 @@
 
     <!-- Trial or single session (trainers) -->
     <div *ngIf="canChooseTrial" class="flex flex-col gap-2" data-testid="session-type">
-      <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Session type</label>
+      <label class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Session type</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <button type="button" (click)="chooseSessionType('SINGLE')" data-testid="type-single"
           class="text-left px-4 py-3 rounded-xl border transition"
@@ -94,7 +94,7 @@
             ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
             : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Single session</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">The trainer's usual rate for the time you pick.</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400">The trainer's usual rate for the time you pick.</span>
         </button>
         <button type="button" (click)="chooseSessionType('TRIAL')" data-testid="type-trial" [disabled]="!!trialUsedNote"
           class="text-left px-4 py-3 rounded-xl border transition disabled:cursor-not-allowed disabled:opacity-60"
@@ -102,7 +102,7 @@
             ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
             : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Trial session · CA${{ trialPrice }}</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500" data-testid="trial-used-note">{{ trialUsedNote || 'A first session to see if you click. One per trainer.' }}</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400" data-testid="trial-used-note">{{ trialUsedNote || 'A first session to see if you click. One per trainer.' }}</span>
         </button>
         <button type="button" (click)="chooseSessionType('GROUP')" data-testid="type-group"
           class="text-left px-4 py-3 rounded-xl border transition"
@@ -110,7 +110,7 @@
             ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
             : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Group session · CA${{ groupPrice }} each</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Train with 2 to 5 people, booked together.</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400">Train with 2 to 5 people, booked together.</span>
         </button>
       </div>
       <p *ngIf="trialOfferText && sessionType !== 'GROUP'" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-xl px-3 py-2"
@@ -129,7 +129,7 @@
         </span>
         <span class="min-w-0">
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Want regular sessions? Plan a month at once</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Pick your days and times for the whole period, then pay for each session as you go.</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400">Pick your days and times for the whole period, then pay for each session as you go.</span>
         </span>
       </span>
       <i-feather name="arrow-right" class="shrink-0 text-gray-400" style="width:14px;height:14px;"></i-feather>
@@ -145,14 +145,14 @@
         </span>
         <span class="min-w-0">
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Training with {{ providerName }} regularly?</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Level up: subscribe, buy a session pack or get a membership.</span>
+          <span class="block text-[11px] text-gray-600 dark:text-gray-400">Level up: subscribe, buy a session pack or get a membership.</span>
         </span>
       </span>
       <i-feather name="arrow-right" class="shrink-0 text-gray-400" style="width:14px;height:14px;"></i-feather>
     </a>
 
     <!-- ── Initial probe loading ─────────────────────────────────────── -->
-    <div *ngIf="availabilityConfigured === null" class="flex items-center justify-center py-8 gap-2 text-gray-400 dark:text-gray-500">
+    <div *ngIf="availabilityConfigured === null" class="flex items-center justify-center py-8 gap-2 text-gray-600 dark:text-gray-400">
       <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
       <span class="text-xs">Checking availability...</span>
     </div>
@@ -161,16 +161,16 @@
     <ng-container *ngIf="availabilityConfigured === true">
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Pick a date</label>
+        <label class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Pick a date</label>
         <app-date-strip [selectedDate]="selectedDate" (dateSelected)="selectDate($event)"></app-date-strip>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Available times</label>
-        <p *ngIf="timezoneNote" class="text-[11px] text-gray-400 dark:text-gray-500" data-testid="timezone-note">{{ timezoneNote }}</p>
+        <label class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Available times</label>
+        <p *ngIf="timezoneNote" class="text-[11px] text-gray-600 dark:text-gray-400" data-testid="timezone-note">{{ timezoneNote }}</p>
         <p *ngIf="yourTimeNote" class="text-[11px] font-semibold text-gray-600 dark:text-gray-300" data-testid="your-time-note">{{ yourTimeNote }}</p>
 
-        <div *ngIf="slotsLoading" class="flex items-center justify-center py-6 gap-2 text-gray-400 dark:text-gray-500">
+        <div *ngIf="slotsLoading" class="flex items-center justify-center py-6 gap-2 text-gray-600 dark:text-gray-400">
           <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
           <span class="text-xs">Loading times...</span>
         </div>
@@ -178,7 +178,7 @@
         <div *ngIf="!slotsLoading && visibleSlots.length === 0"
           class="flex flex-col items-center justify-center gap-1.5 py-6 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
           <i-feather name="calendar" class="text-gray-300 dark:text-gray-700" style="width:18px;height:18px;"></i-feather>
-          <p class="text-xs text-gray-400 dark:text-gray-500">
+          <p class="text-xs text-gray-600 dark:text-gray-400">
             {{ allSlotsWithinLeadTime
               ? 'No more slots today — bookings need at least ' + minLeadTimeMinutes + ' minutes\' notice. Try tomorrow.'
               : (slotsMessage || 'No open slots on this day.') }}
@@ -227,14 +227,14 @@
     <div *ngIf="availabilityConfigured === true && isGroup" class="flex flex-col gap-3" data-testid="group-setup">
       <div class="grid grid-cols-2 gap-3">
         <label class="flex flex-col gap-1">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">People in the group</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">People in the group</span>
           <select [ngModel]="groupSize" (ngModelChange)="onGroupSize($event)" data-testid="group-size" aria-label="People in the group"
             class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100">
             <option *ngFor="let n of groupSizes" [ngValue]="n">{{ n }} people</option>
           </select>
         </label>
         <label class="flex flex-col gap-1">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Places you take</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Places you take</span>
           <select [(ngModel)]="groupSlots" data-testid="group-slots" aria-label="Places you take"
             class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100">
             <option *ngFor="let n of groupSlotOptions" [ngValue]="n">{{ n }} {{ n === 1 ? 'place' : 'places' }}</option>
@@ -244,14 +244,14 @@
 
       <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5" data-testid="group-summary">
         <div class="flex items-center justify-between gap-3">
-          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your total if the group fills</span>
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Your total if the group fills</span>
           <span class="text-sm font-bold text-gray-900 dark:text-gray-100" data-testid="group-total">{{ groupTotal | currency:'CAD':'symbol':'1.2-2' }}</span>
         </div>
         <p class="text-[11px] text-gray-500 dark:text-gray-400">
           {{ groupSlots }} {{ groupSlots === 1 ? 'place' : 'places' }} × {{ groupPrice | currency:'CAD':'symbol':'1.2-2' }} each.
           <span *ngIf="groupPlacesToFill > 0">You are responsible for filling the other {{ groupPlacesToFill }} {{ groupPlacesToFill === 1 ? 'place' : 'places' }}: friends join from this page, each paying for their own.</span>
         </p>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+        <p class="text-[11px] text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
           Nothing is charged now. It goes ahead only once every place is taken and {{ providerName }} confirms; you then have 24 hours to pay. If it is not full 24 hours before, it is cancelled and nobody is charged.
         </p>
@@ -287,7 +287,7 @@
           placeholder="Code from {{ providerName }}"
           class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+        <p class="text-[11px] text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
           The code is checked when you send the request. Once {{ providerName }} confirms, it settles this session, so there is nothing to pay.
         </p>
@@ -297,20 +297,20 @@
     <!-- ── Notes ─────────────────────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">
       <div class="flex items-center justify-between">
-        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-          Notes <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
+        <label for="booking-notes" class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+          Notes <span class="normal-case text-gray-500 dark:text-gray-500">(optional)</span>
         </label>
-        <span class="text-[11px]" [ngClass]="remainingNotesChars < 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'">
+        <span class="text-[11px]" [ngClass]="remainingNotesChars < 0 ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'">
           {{ remainingNotesChars }} left
         </span>
       </div>
-      <textarea [(ngModel)]="notes" rows="3" maxlength="500"
+      <textarea id="booking-notes" [(ngModel)]="notes" rows="3" maxlength="500"
         placeholder="Anything the trainer or center should know before your session."
         class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
     </div>
 
-    <p *ngIf="availabilityConfigured === true" class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+    <p *ngIf="availabilityConfigured === true" class="text-[11px] text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
       <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
       Your booking starts as pending until {{ providerName }} confirms it.
       <span *ngIf="isGuest"> You only need an account to send it, and your choices here are saved.</span>
@@ -336,7 +336,7 @@
           I already have an account
         </button>
       </div>
-      <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+      <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-600 transition">Not now</button>
     </div>
 
     <!-- BK-40: signed in, but no name/photo yet -- the trainer needs to know who's asking. -->
@@ -352,7 +352,7 @@
         class="self-start px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
         Complete your profile
       </button>
-      <button type="button" (click)="dismissProfileIncompletePrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+      <button type="button" (click)="dismissProfileIncompletePrompt()" class="self-start text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-600 transition">Not now</button>
     </div>
 
     <!-- BK-32: the one-tap recovery for "you already used your trial" -- same trainer/gym/discipline picks, just switched to a regular session, instead of a dead end. -->
