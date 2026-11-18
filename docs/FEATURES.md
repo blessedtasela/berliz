@@ -224,6 +224,15 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-45: accessibility fixes for sign-up, booking and the shop checkout form
+
+- **The shop checkout form's 8 shipping fields (and a handful of fields elsewhere in
+  booking/sign-up) are now properly labelled for screen readers** -- they had a visible
+  label sitting next to the field but not actually wired to it. **Low-contrast helper
+  text was darkened** across sign-up, booking and payment so it's actually readable.
+  **A trainer/center's own photo and a shop product's photo now have real alt text**
+  instead of being marked decorative. `berliz`.
+
 ### 2026-11-18 — GN-42: real compression for exercise demo images, lazy-loaded profile media
 
 - **Exercise demo images are now resized/compressed on upload** (capped to 1000px, re-encoded as
