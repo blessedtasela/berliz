@@ -47,7 +47,7 @@ A reference for every technology in this codebase and why it's here. Grouped by 
 |---|---|
 | **Angular Reactive Forms** (`@angular/forms`) | All form handling — validators, form groups, dynamic form state |
 | **ngx-mask** | Input masking (phone numbers, formatted fields) |
-| **intl-tel-input / libphonenumber-js / google-libphonenumber** | International phone number input UI and validation — three related libraries covering the input widget and the underlying parsing/validation logic |
+| **libphonenumber-js** | International phone number parsing/validation |
 | **country-state-city** | Country/state/city cascading dropdown data, used in location fields |
 | **postcode-validator** | Postal/ZIP code format validation per country |
 
@@ -56,10 +56,7 @@ A reference for every technology in this codebase and why it's here. Grouped by 
 | Technology | Purpose |
 |---|---|
 | **@ng-select/ng-select** | Searchable/multi-select dropdown component, used wherever a plain `<select>` isn't enough |
-| **@syncfusion/ej2-angular-inputs** | Additional input components from Syncfusion's suite |
-| **angular-feather** | Feather icon set as Angular components |
-| **maticon** | Material Design icon font |
-| **angular-popper** | Popper.js-based tooltips/popovers |
+| **angular-feather** | Feather icon set as Angular components (MIT; see `docs/LICENSES.md`) |
 | **xng-breadcrumb** | Route-driven breadcrumb navigation (see the `breadcrumb` data property set on most routes in `app-routing.module.ts`) |
 | **ngx-ui-loader** | Global loading spinner/overlay, triggered around async operations |
 | **hammerjs** | Touch gesture support (swipe/pan), used by some Material components |
