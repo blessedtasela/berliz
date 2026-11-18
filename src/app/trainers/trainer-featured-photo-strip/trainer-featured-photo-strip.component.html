@@ -22,7 +22,7 @@
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div *ngFor="let featured of photos" class="aspect-square rounded-xl overflow-hidden border border-zinc-800">
-            <img alt="" [src]="photoUrl(featured)" class="w-full h-full object-cover object-top"
+            <img alt="" [src]="photoUrl(featured)" loading="lazy" class="w-full h-full object-cover object-top"
                 data-fallback-src="assets/avatar.png" />
         </div>
     </div>
