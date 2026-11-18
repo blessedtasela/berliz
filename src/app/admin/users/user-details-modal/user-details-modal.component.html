@@ -30,6 +30,28 @@
         {{ userData.status === 'true' ? 'Active' : 'Inactive' }}
     </span>
 
+    <!-- PY-32: trial-abuse risk assessment, admin-visible only. Absent entirely for a user who never attempted a trial. -->
+    <div *ngIf="userData.trialRiskBand" class="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Trial risk</span>
+            <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="{
+                    'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900': userData.trialRiskBand === 'LOW',
+                    'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900': userData.trialRiskBand === 'MEDIUM',
+                    'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900': userData.trialRiskBand === 'HIGH'
+                  }">
+                {{ userData.trialRiskBand }} ({{ userData.trialRiskScore }})
+            </span>
+        </div>
+        <ul class="flex flex-col gap-0.5">
+            <li *ngFor="let reason of trialRiskReasonsList" class="text-[11px] text-gray-500 dark:text-gray-400">&bull; {{ reason }}</li>
+        </ul>
+        <button *ngIf="userData.trialRiskBand === 'HIGH' && isSuperAdmin" type="button" (click)="overrideTrialRisk()" [disabled]="overridingTrialRisk"
+            class="self-start mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400
+                   hover:bg-amber-50 dark:hover:bg-amber-950/30 active:scale-[0.98] transition disabled:opacity-50">
+            {{ overridingTrialRisk ? 'Approving…' : 'Approve despite HIGH risk' }}
+        </button>
+    </div>
+
     <!-- Details -->
     <div class="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-700">
         <div class="flex items-center justify-between px-4 py-2.5">

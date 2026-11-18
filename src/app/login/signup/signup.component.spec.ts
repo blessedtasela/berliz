@@ -9,6 +9,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { DeviceFingerprintService } from 'src/app/services/device-fingerprint.service';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -37,7 +38,10 @@ describe('SignupComponent', () => {
         { provide: SnackBarService, useValue: snackBarServiceMock },
         { provide: NgxUiLoaderService, useValue: ngxUiLoaderServiceMock },
         { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
+        // PY-32: submitForm() now awaits the device fingerprint before calling signup() -- a
+        // resolved value keeps these tests deterministic and fast instead of hitting real Web Crypto.
+        { provide: DeviceFingerprintService, useValue: { get: () => Promise.resolve('fp-test') } }
       ]
     });
 
@@ -92,7 +96,7 @@ describe('SignupComponent', () => {
     agreeToTerms: true
   };
 
-  it('should submit form successfully when valid', () => {
+  it('should submit form successfully when valid', async () => {
     userServiceMock.signup.and.returnValue(of({
       message: 'Signup successful',
       data: '',
@@ -102,6 +106,7 @@ describe('SignupComponent', () => {
     component.signupForm.setValue(validSignupFormValue);
 
     component.submitForm();
+    await fixture.whenStable();
     expect(ngxUiLoaderServiceMock.start).toHaveBeenCalled();
     expect(userServiceMock.signup).toHaveBeenCalled();
     // The account isn't active until the emailed code is entered, so this
@@ -114,11 +119,12 @@ describe('SignupComponent', () => {
     expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
   });
 
-  it('should handle signup error', () => {
+  it('should handle signup error', async () => {
     userServiceMock.signup.and.returnValue(throwError({ error: { message: 'Signup failed' } }));
     component.signupForm.setValue(validSignupFormValue);
 
     component.submitForm();
+    await fixture.whenStable();
     expect(component.submitError).toBe('Signup failed');
   });
 
@@ -143,7 +149,7 @@ describe('SignupComponent', () => {
       expect(component.isStepValid(1)).toBeTrue();
     });
 
-    it('still submits successfully with an empty photo and location', () => {
+    it('still submits successfully with an empty photo and location', async () => {
       userServiceMock.signup.and.returnValue(of({
         message: 'Signup successful', data: '', success: true, statusCode: 200
       }));
@@ -155,6 +161,7 @@ describe('SignupComponent', () => {
       });
 
       component.submitForm();
+      await fixture.whenStable();
       expect(userServiceMock.signup).toHaveBeenCalled();
       expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
     });
@@ -166,7 +173,7 @@ describe('SignupComponent', () => {
      * genuinely empty value is treated as "no file"), and every such sign-up failed with a raw
      * 500. The field must be omitted entirely, not sent as a string placeholder.
      */
-    it('omits profilePhoto from the request entirely when none was picked', () => {
+    it('omits profilePhoto from the request entirely when none was picked', async () => {
       userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
       component.selectedImage = null;
       component.signupForm.setValue({
@@ -176,18 +183,20 @@ describe('SignupComponent', () => {
       });
 
       component.submitForm();
+      await fixture.whenStable();
 
       const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
       expect(sentFormData.has('profilePhoto')).toBeFalse();
     });
 
-    it('sends profilePhoto as the real File when one was picked', () => {
+    it('sends profilePhoto as the real File when one was picked', async () => {
       userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
       const photo = new File([], 'photo.jpg', { type: 'image/jpeg' });
       component.selectedImage = photo;
       component.signupForm.setValue(validSignupFormValue);
 
       component.submitForm();
+      await fixture.whenStable();
 
       const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
       expect(sentFormData.get('profilePhoto')).toBe(photo);
@@ -203,14 +212,59 @@ describe('SignupComponent', () => {
       expect(component.isStepValid(2)).toBeTrue();
     });
 
-    it('never sends agreeToTerms to the backend -- it is a client-only gate', () => {
+    it('never sends agreeToTerms to the backend -- it is a client-only gate', async () => {
       userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
       component.signupForm.setValue(validSignupFormValue);
 
       component.submitForm();
+      await fixture.whenStable();
 
       const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
       expect(sentFormData.has('agreeToTerms')).toBeFalse();
+    });
+  });
+
+  describe('PY-32: device fingerprint', () => {
+    it('appends the device fingerprint to the request', async () => {
+      userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
+      component.signupForm.setValue(validSignupFormValue);
+
+      component.submitForm();
+      await fixture.whenStable();
+
+      const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
+      expect(sentFormData.get('deviceFingerprint')).toBe('fp-test');
+    });
+
+    it('still submits without one when fingerprinting fails', async () => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ReactiveFormsModule],
+        declarations: [SignupComponent],
+        schemas: [NO_ERRORS_SCHEMA],
+        providers: [
+          FormBuilder,
+          { provide: UserService, useValue: userServiceMock },
+          { provide: CountryService, useValue: countryServiceMock },
+          { provide: SnackBarService, useValue: snackBarServiceMock },
+          { provide: NgxUiLoaderService, useValue: ngxUiLoaderServiceMock },
+          { provide: Router, useValue: routerMock },
+          { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
+          { provide: DeviceFingerprintService, useValue: { get: () => Promise.resolve(null) } }
+        ]
+      });
+      fixture = TestBed.createComponent(SignupComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      userServiceMock.signup.and.returnValue(of({ message: 'Signup successful', data: '', success: true, statusCode: 200 }));
+      component.signupForm.setValue(validSignupFormValue);
+
+      component.submitForm();
+      await fixture.whenStable();
+
+      expect(userServiceMock.signup).toHaveBeenCalled();
+      const sentFormData = userServiceMock.signup.calls.mostRecent().args[0] as FormData;
+      expect(sentFormData.has('deviceFingerprint')).toBeFalse();
     });
   });
 });

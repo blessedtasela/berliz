@@ -22,6 +22,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WaitlistService } from 'src/app/services/waitlist.service';
 import { BookingService } from 'src/app/services/booking.service';
+import { DeviceFingerprintService } from 'src/app/services/device-fingerprint.service';
 import { GroupSessionService } from 'src/app/services/group-session.service';
 import { DEFAULT_GROUP_PRICE, GROUP_SIZE_OPTIONS } from 'src/app/models/group-session.model';
 import { TrialStatus } from 'src/app/models/booking.model';
@@ -265,6 +266,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     private waitlistService: WaitlistService,
     private bookingService: BookingService,
     private groupService: GroupSessionService,
+    private deviceFingerprint: DeviceFingerprintService,
   ) { }
 
   private get earliestBookableTime(): number {
@@ -829,6 +831,17 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     }
 
     this.submitting = true;
+
+    // PY-32: only a TRIAL needs the fingerprint -- fetching it is a microtask at worst (cached
+    // after the first call), never worth delaying every other booking's submit for.
+    if (payload.sessionType === 'TRIAL') {
+      this.deviceFingerprint.get().then(fingerprint => {
+        if (fingerprint) payload.deviceFingerprint = fingerprint;
+        this.store.dispatch(createBooking({ data: payload }));
+      });
+      return;
+    }
+
     this.store.dispatch(createBooking({ data: payload }));
   }
 }
