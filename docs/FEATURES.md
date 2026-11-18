@@ -224,6 +224,33 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-42: real compression for exercise demo images, lazy-loaded profile media
+
+- **Exercise demo images are now resized/compressed on upload** (capped to 1000px, re-encoded as
+  JPEG) instead of stored exactly as uploaded -- the one image in the app with no CMS/CDN
+  generating a smaller variant automatically. Profile/trainer/center photos already get this from
+  Strapi's media library; its responsive-upload setting is unverified in production and worth the
+  owner checking directly. `com.berliz`.
+- **Trainer/center profile photo albums, featured-photo strips, review before/after photos, and a
+  profile's post-timeline images now load lazily** as the visitor scrolls, instead of all at once
+  on page load; the actual hero/portrait photo stays eager since it's above the fold. The exercise
+  library already did this. `berliz`.
+
+### 2026-11-18 — GN-41: caching for the exercise library and trainer/center pricing reads
+
+- **The public exercise library and trainer/center pricing pages now read from a short-lived
+  cache** instead of hitting the database on every request, with every pricing/exercise edit
+  clearing it immediately -- checked end to end (edit, then read) rather than just by inspecting
+  the annotations. Public profiles and the trainer/center directory were deliberately left
+  uncached (they vary per viewer -- an admin, a profile's own owner, or a demo-mode visitor sees a
+  different result, which a naive cache would leak across viewers). `com.berliz`.
+
+### 2026-11-18 — GN-40: faster booking, earnings, directory and exercise-library queries
+
+- **Added the missing database indexes behind the booking/earnings/directory/exercise-library
+  pages**, and batched several per-row database lookups that were firing once per item in a list
+  instead of once for the whole list. No visible change, just faster underneath. `com.berliz`.
+
 ### 2026-11-17 — GN-65 (gender slice): the gender picker is now a dropdown, matching the design-system rule
 
 - **Gender now renders as a dropdown everywhere it's picked** (signup, the signup modal, the
