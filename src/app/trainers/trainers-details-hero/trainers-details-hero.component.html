@@ -34,7 +34,7 @@
             <div class="shrink-0 mx-auto sm:mx-0">
                 <div class="w-44 h-44 sm:w-56 sm:h-56 rounded-3xl overflow-hidden ring-1 ring-red-600/30
                             border border-zinc-800 bg-zinc-900 shadow-[0_12px_48px_rgba(220,38,38,0.18)]">
-                    <img [src]="photoUrl" [alt]="trainer?.name" class="w-full h-full object-cover object-top"
+                    <img [src]="photoUrl" [alt]="trainer?.name" loading="eager" class="w-full h-full object-cover object-top"
                         (error)="onImageError($event)" />
                 </div>
             </div>
