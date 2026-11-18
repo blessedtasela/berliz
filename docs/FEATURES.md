@@ -224,6 +224,21 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-37: newsletter subscribers can now unsubscribe themselves
+
+- **Every newsletter email now has a working "Unsubscribe" link** that takes effect
+  immediately, no login required -- previously the only way off the list was asking an admin.
+  Bulk newsletter sends also no longer put every subscriber's email address in the CC field
+  of everyone else's copy. `com.berliz`.
+
+### 2026-11-18 — BK-42: a confirmed booking no longer auto-cancels itself minutes later
+
+- **Fixed a critical bug where a provider confirming a booking request -- specifically one
+  accepted after its own scheduled time had already passed -- could see it flip to Cancelled
+  on its own within minutes**, with no payment ever actually overdue. Also: a provider or
+  admin cancelling a booking themselves now always records why, same as every other
+  system-initiated cancellation. `com.berliz`.
+
 ### 2026-11-18 — GN-47: you can now leave a center's membership yourself
 
 - **"My Memberships" now has a Leave action.** Previously the only way off a center's
