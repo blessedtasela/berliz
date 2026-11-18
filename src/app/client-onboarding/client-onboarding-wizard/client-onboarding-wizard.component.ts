@@ -153,8 +153,8 @@ export class ClientOnboardingWizardComponent implements OnInit {
     delete this.errors['injuries'];
   }
 
-  setSessionMinutes(minutes: number): void {
-    this.draft.sessionMinutes = this.draft.sessionMinutes === minutes ? null : minutes;
+  setSessionMinutes(minutes: number | null): void {
+    this.draft.sessionMinutes = minutes === null || this.draft.sessionMinutes === minutes ? null : minutes;
   }
 
   // ── centers ──────────────────────────────────────────────────────────────

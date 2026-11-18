@@ -656,6 +656,22 @@ The owner's own directive ("inventory every selection control in the app... fix 
 
 **Not done, and explicitly flagged rather than claimed:** the rest of the inventory. Every other selection control in the app (role pickers, status filters, sort-order toggles, any admin/provider form with a fixed option set) still needs the same check -- this entry covers gender only. A real pass needs its own session: grep for `*ngFor.*radio` and `*ngFor.*checkbox` across every `.component.html`, count each one's options, and convert every one at or above 4.
 
+### GN-65 continued: the rest of the inventory, second slice (Nov 18, 2026)
+
+Ran the grep the prior entry called for -- every `type="radio"` and every `*ngFor` over an `Options`-style array across `.component.html`, tallied each one's option count against the 4+ rule.
+
+**Genuine violations found and fixed** (`berliz`, this commit): all single-choice pick lists at or above 4 options --
+- `booking-plan-page.component.html`: "For how long?" (`periodOptions`, 4: 2/4/8/12 weeks) and "How long is each session?" (`durationOptions`, 5: 30/45/60/90/120 min), both button rows.
+- `client-onboarding-wizard.component.html`: "Where do you train?" (`locationTypes`, 5), "Diet" (`dietPatterns`, 5), and "Preferred session length" (`sessionMinutes`, 4) -- all button rows.
+
+All five converted to native `<select>` elements, same pattern as the gender fix. Two needed care beyond a straight swap: `dietPattern` and `sessionMinutes` previously let a second click on the SAME button toggle the value back to unanswered (both are optional fields) -- a `<select>` has no equivalent gesture (re-selecting the current option fires no change event). `dietPattern` already has an explicit "No restrictions" option, so the only loss is reverting to literally unanswered after having picked something, which needed deliberately choosing a different option; `sessionMinutes` got an explicit "Not sure yet" (`null`) option instead so that path stays reachable. `setSessionMinutes()`'s signature widened from `number` to `number | null` to accept it, with a regression test added for the `null` path.
+
+**Checked and correctly NOT converted, under the ticket's own "content directories are exempt" carve-out:** `roleOptions` (6 options, `members-directory` and `dashboard-members` -- a member-list role filter, not a form field) and `activityOptions` (6 options, `dashboard-timeline` -- a feed-filter tab bar). `channelOptions`/`zoneOptions`/`searchOptions` and every radio group sampled (testimonial target, task priority, subscription/client "mode") are all 3 options or fewer, under the threshold.
+
+**Still not done:** sort-order toggles in `search-panel.component.html` weren't individually tallied (the options come from each caller via `@Input()`, so the count varies per usage site -- a real check means auditing every caller, not the shared component once). A handful of multi-select chip pickers (`GOALS`, `EQUIPMENT`, `SUPPLEMENTS`, `DAYS`, `TIMES` in the onboarding wizard, several at 5+ options) were deliberately left alone -- they're "choose any number" controls, not "choose one," and a `<select multiple>` is worse UX for that pattern than the rule's own "convert to dropdown" intent assumes; treating multi-select as out of the rule's scope is a judgment call, not an oversight, and is flagged here rather than silently skipped.
+
+Full frontend suite (2364 tests) green, including a new `setSessionMinutes(null)` regression test.
+
 ### GN-55: double-submit protection on booking/pack/plan-request/subscription submits -- verified, one narrow gap found and deliberately not force-fixed (Nov 17, 2026)
 
 Sampled every purchase/request-adjacent submit the ticket names: `booking-page.component.ts#submit()`, `level-up-page.component.ts#buy()`/`#buyMonthly()`, `group-packs-list.component.ts#join()`/`#pay()`/`#start()`, `my-subscriptions-plans.component.ts`'s checkout. Every one already disables its button correctly: a synchronous `if (this.busy) return; this.busy = true;` guard, checked and set in the same tick before any async call starts, so a second tap genuinely cannot fire a second request (confirmed this is NOT a race -- JS has no interleaving between the check and the flag). `app.component.ts`'s global `installDoubleSubmitGuard` additionally covers every real `<form>` submit in the app, though none of these purchase buttons are actual forms, so that guard doesn't apply to them specifically -- their own per-component busy flags are what's actually doing the job, and they do it correctly.

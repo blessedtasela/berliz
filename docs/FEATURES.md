@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-65: five more pick lists converted to dropdowns
+
+- **Session length/period on the recurring plan page, and location/diet/session-length on the
+  client onboarding wizard** now render as dropdowns instead of button rows, matching the
+  app-wide rule that any single-choice control with 4+ options is a `<select>`, not a pick list.
+  `berliz`.
+
 ### 2026-11-18 — GN-37: newsletter subscribers can now unsubscribe themselves
 
 - **Every newsletter email now has a working "Unsubscribe" link** that takes effect

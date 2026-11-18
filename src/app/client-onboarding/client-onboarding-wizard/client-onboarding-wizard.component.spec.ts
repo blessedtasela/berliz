@@ -136,6 +136,14 @@ describe('ClientOnboardingWizardComponent', () => {
     expect(component.step).toBe(7);
   });
 
+  it('setSessionMinutes(null) clears the preference -- the dropdown\'s "Not sure yet" option (GN-65)', () => {
+    create({ started: true, currentStep: 6 });
+    component.setSessionMinutes(45);
+    expect(component.draft.sessionMinutes).toBe(45);
+    component.setSessionMinutes(null);
+    expect(component.draft.sessionMinutes).toBeNull();
+  });
+
   it('finishes on the last step and shows the done panel', () => {
     create({ started: true, currentStep: 7, complete: true });
     component.step = 7;

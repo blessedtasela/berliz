@@ -61,11 +61,12 @@
       <ng-container *ngIf="step === 1">
         <fieldset class="flex flex-col gap-2">
           <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Where do you train? <span class="text-red-600">*</span></legend>
-          <div class="flex flex-wrap gap-2">
-            <button *ngFor="let o of locationTypes" type="button" (click)="pick('locationType', o.value)" [attr.aria-pressed]="draft.locationType === o.value"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
-              [ngClass]="draft.locationType === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
-          </div>
+          <!-- GN-65: 4+ options render as a dropdown, not a pick list. -->
+          <select aria-label="Where do you train" [ngModel]="draft.locationType" (ngModelChange)="pick('locationType', $event)"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+            <option value="" disabled hidden>Select...</option>
+            <option *ngFor="let o of locationTypes" [value]="o.value">{{ o.label }}</option>
+          </select>
           <p *ngIf="errors['locationType']" class="text-[11px] text-red-600" role="alert">{{ errors['locationType'] }}</p>
 
           <div *ngIf="draft.locationType === 'center'" class="flex flex-col gap-2 mt-1">
@@ -233,11 +234,12 @@
 
         <fieldset class="flex flex-col gap-2">
           <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Diet</legend>
-          <div class="flex flex-wrap gap-2">
-            <button *ngFor="let o of dietPatterns" type="button" (click)="pick('dietPattern', o.value)" [attr.aria-pressed]="draft.dietPattern === o.value"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
-              [ngClass]="draft.dietPattern === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
-          </div>
+          <!-- GN-65: 4+ options render as a dropdown, not a pick list. -->
+          <select aria-label="Diet" [ngModel]="draft.dietPattern" (ngModelChange)="pick('dietPattern', $event)"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+            <option value="" disabled hidden>Select...</option>
+            <option *ngFor="let o of dietPatterns" [value]="o.value">{{ o.label }}</option>
+          </select>
           <input type="text" [(ngModel)]="draft.dietNotes" maxlength="300" aria-label="Diet notes" placeholder="Notes about how you eat"
             class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
           <input type="text" [(ngModel)]="draft.allergies" maxlength="300" aria-label="Allergies" placeholder="Allergies"
@@ -277,11 +279,12 @@
 
         <fieldset class="flex flex-col gap-2">
           <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Preferred session length <span class="font-normal text-gray-400">(optional)</span></legend>
-          <div class="flex flex-wrap gap-2">
-            <button *ngFor="let m of sessionMinutes" type="button" (click)="setSessionMinutes(m)" [attr.aria-pressed]="draft.sessionMinutes === m"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
-              [ngClass]="draft.sessionMinutes === m ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ m }} min</button>
-          </div>
+          <!-- GN-65: 4+ options render as a dropdown, not a pick list. -->
+          <select aria-label="Preferred session length" [ngModel]="draft.sessionMinutes" (ngModelChange)="setSessionMinutes($event)"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+            <option [ngValue]="null">Not sure yet</option>
+            <option *ngFor="let m of sessionMinutes" [ngValue]="m">{{ m }} min</option>
+          </select>
         </fieldset>
 
         <fieldset class="flex flex-col gap-2">
