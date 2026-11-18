@@ -8,6 +8,7 @@ import { UserService } from 'src/app/services/user.service';
 import { genericError, passwordMatchValidator } from 'src/validators/form-validators.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import jwt_decode from 'jwt-decode';
 
 
 @Component({
@@ -27,6 +28,10 @@ export class UserDetailsModalComponent {
   passwordForceChnageForm!: FormGroup;
   invalidForm: boolean = false;
 
+  /** PY-32: only a super admin may override a HIGH trial-risk band (the server enforces it; this just stops the UI offering what would be refused). */
+  isSuperAdmin = false;
+  overridingTrialRisk = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<UserDetailsModalComponent>,
@@ -37,6 +42,30 @@ export class UserDetailsModalComponent {
     private userService: UserService,) {
     this.userData = this.data.userData;
     this.profilePhoto = this.data.photo;
+    try {
+      const token = localStorage.getItem('token');
+      this.isSuperAdmin = !!token && (jwt_decode(token) as any)?.superAdmin === true;
+    } catch { this.isSuperAdmin = false; }
+  }
+
+  /** One line per signal that fired, for display under the risk badge. */
+  get trialRiskReasonsList(): string[] {
+    return (this.userData?.trialRiskReasons ?? '').split('\n').filter(r => !!r);
+  }
+
+  overrideTrialRisk(): void {
+    if (this.overridingTrialRisk) return;
+    this.overridingTrialRisk = true;
+    this.userService.overrideTrialRisk(this.userData.id).subscribe({
+      next: (res: any) => {
+        this.overridingTrialRisk = false;
+        this.snackBarService.openSnackBar(res?.data || res?.message || 'Override granted.', '');
+      },
+      error: (error: any) => {
+        this.overridingTrialRisk = false;
+        this.snackBarService.openSnackBar(error?.error?.message || genericError, '');
+      }
+    });
   }
 
   ngOnInit(): void {

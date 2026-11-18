@@ -6,6 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { DeviceFingerprintService } from 'src/app/services/device-fingerprint.service';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError, minimumAgeValidator } from 'src/validators/form-validators.module';
 import { localDateString } from 'src/app/utils/local-date';
@@ -37,7 +38,8 @@ export class SignupModalComponent {
     private router: Router,
     public dialogRef: MatDialogRef<SignupModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private snackBarService: SnackBarService) { }
+    private snackBarService: SnackBarService,
+    private deviceFingerprint: DeviceFingerprintService) { }
 
   ngOnInit(): void {
     this.formIndex = this.getIndex();
@@ -186,27 +188,31 @@ export class SignupModalComponent {
       this.signupForm.markAllAsTouched();
       this.submitError = 'Some sign-up details are missing or invalid. Go back through each step and fix the highlighted fields.';
     } else {
-      this.userService.signup(requestData)
-        .subscribe((response: any) => {
-          this.signupForm.reset();
-          this.userService.setSignupFormIndex(0);
-          this.invalidForm = false;
-          this.dialogRef.close('User account added successfully');
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-          this.onSignupEmit.emit();
-        }
-          , (error: any) => {
+      // PY-32: best-effort -- a fingerprinting failure (very old browser, non-secure context) must never block signup.
+      this.deviceFingerprint.get().then(fingerprint => {
+        if (fingerprint) requestData.append('deviceFingerprint', fingerprint);
+        this.userService.signup(requestData)
+          .subscribe((response: any) => {
+            this.signupForm.reset();
+            this.userService.setSignupFormIndex(0);
+            this.invalidForm = false;
+            this.dialogRef.close('User account added successfully');
+            this.responseMessage = response?.message;
+            this.snackBarService.openSnackBar(this.responseMessage, "");
             this.ngxService.stop();
-            console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.submitError = this.responseMessage;
-          });
+            this.onSignupEmit.emit();
+          }
+            , (error: any) => {
+              this.ngxService.stop();
+              console.error("error");
+              if (error.error?.message) {
+                this.responseMessage = error.error?.message;
+              } else {
+                this.responseMessage = genericError;
+              }
+              this.submitError = this.responseMessage;
+            });
+      });
     }
     this.ngxService.stop();
   }

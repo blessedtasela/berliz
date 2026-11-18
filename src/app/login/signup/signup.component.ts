@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { DeviceFingerprintService } from 'src/app/services/device-fingerprint.service';
 import { LocationFormComponent } from 'src/app/shared/location-form/location-form.component';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { localDateString } from 'src/app/utils/local-date';
@@ -45,7 +46,8 @@ export class SignupComponent {
     private router: Router,
     private route: ActivatedRoute,
     private ngxService: NgxUiLoaderService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    private deviceFingerprint: DeviceFingerprintService
   ) {
     this.referredBy = this.route.snapshot.queryParamMap.get('ref');
   }
@@ -215,21 +217,25 @@ export class SignupComponent {
     }
 
     const email = this.f('email').value;
-    this.userService.signup(data).subscribe(
-      (resp: any) => {
-        this.snackBarService.openSnackBar(resp.message || 'Check your email for an activation code.', '');
-        // Straight to activation with the email pre-filled, instead of a bare
-        // /login the user has no way to act on yet (the account isn't active
-        // until they enter the code Berliz just emailed them).
-        this.router.navigate(['/login/activate-account'], { queryParams: { email } });
-        this.ngxService.stop();
-      },
-      err => {
-        this.responseMessage = err.error?.message || genericError;
-        this.submitError = this.responseMessage;
-        this.ngxService.stop();
-      }
-    );
+    // PY-32: best-effort -- a fingerprinting failure (very old browser, non-secure context) must never block signup.
+    this.deviceFingerprint.get().then(fingerprint => {
+      if (fingerprint) data.append('deviceFingerprint', fingerprint);
+      this.userService.signup(data).subscribe(
+        (resp: any) => {
+          this.snackBarService.openSnackBar(resp.message || 'Check your email for an activation code.', '');
+          // Straight to activation with the email pre-filled, instead of a bare
+          // /login the user has no way to act on yet (the account isn't active
+          // until they enter the code Berliz just emailed them).
+          this.router.navigate(['/login/activate-account'], { queryParams: { email } });
+          this.ngxService.stop();
+        },
+        err => {
+          this.responseMessage = err.error?.message || genericError;
+          this.submitError = this.responseMessage;
+          this.ngxService.stop();
+        }
+      );
+    });
   }
 
 

@@ -54,6 +54,13 @@ export interface Users {
     lastUpdate: string;
 
     message?: string;
+
+    /** PY-32, admin-only: this account's most recent trial risk assessment. Undefined for a user who never attempted a trial. */
+    trialRiskScore?: number;
+    /** "LOW" | "MEDIUM" | "HIGH". Undefined when trialRiskScore is undefined. */
+    trialRiskBand?: 'LOW' | 'MEDIUM' | 'HIGH';
+    /** One line per signal that fired on the most recent assessment, newline-separated. */
+    trialRiskReasons?: string;
 }
 
 export type ProfileVisibility = 'public' | 'private';

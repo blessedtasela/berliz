@@ -213,6 +213,14 @@ export class UserService {
     );
   }
 
+  /** PY-32: super admin only -- grants this user a one-time approval to be given a trial despite a HIGH risk band. */
+  overrideTrialRisk(id: number): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + `/user/overrideTrialRisk/${id}`,
+      null
+    );
+  }
+
   updateUserRole(data: any): Observable<ApiResponse<string>> {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/updateRole",

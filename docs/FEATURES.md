@@ -224,6 +224,16 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — PY-32: trial-abuse risk scoring
+
+- **A new free/discounted trial is now risk-scored** instead of only being limited to one per
+  account: the same device, the same payment card, a burst of new accounts from one device/IP,
+  and a disposable-looking email all weigh in, with the payment card match being the strongest
+  signal. Low risk books as before; medium risk shortens the usual pay-later window to a near-
+  immediate one; high risk is refused outright, with a one-time super-admin override available
+  from the admin Users page, which also now shows the signals and band for any user who's
+  attempted a trial. `com.berliz`, `berliz`.
+
 ### 2026-11-18 — GN-63: the PAR-Q status chip no longer claims "no PAR-Q" while it's still checking
 
 - **The booking card's PAR-Q/intake chip and action buttons now show a "Checking…" pending state**

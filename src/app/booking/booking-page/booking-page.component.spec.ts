@@ -16,7 +16,7 @@ describe('BookingPageComponent share', () => {
 
   beforeEach(() => {
     snackBar = { openSnackBar: jasmine.createSpy('openSnackBar') };
-    // The share logic only needs these three fields, so skip the 13-service constructor.
+    // The share logic only needs these three fields, so skip the 14-service constructor.
     page = Object.create(BookingPageComponent.prototype);
     page.kind = 'trainer';
     page.providerName = 'Jo Smith';
@@ -448,7 +448,7 @@ describe('BookingPageComponent summary and day switching', () => {
   let dispatch: jasmine.Spy;
 
   beforeEach(() => {
-    // Only the fields these members read: skip the 13-service constructor.
+    // Only the fields these members read: skip the 14-service constructor.
     page = Object.create(BookingPageComponent.prototype);
     dispatch = jasmine.createSpy('dispatch');
     (page as any).store = { dispatch };
