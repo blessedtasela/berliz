@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 
@@ -13,6 +14,7 @@ describe('MyCenterMembershipsComponent', () => {
   let fixture: ComponentFixture<MyCenterMembershipsComponent>;
   let centerService: jasmine.SpyObj<CenterService>;
   let snackbar: jasmine.SpyObj<SnackBarService>;
+  let dialog: jasmine.SpyObj<MatDialog>;
 
   const membership = (over: Partial<CenterMember> = {}): CenterMember => ({
     id: 1,
@@ -28,9 +30,10 @@ describe('MyCenterMembershipsComponent', () => {
   });
 
   function setup(response$: Observable<ApiResponse<CenterMember[]>>) {
-    centerService = jasmine.createSpyObj('CenterService', ['getMyCenterMemberships']);
+    centerService = jasmine.createSpyObj('CenterService', ['getMyCenterMemberships', 'removeMember']);
     centerService.getMyCenterMemberships.and.returnValue(response$);
     snackbar = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    dialog = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
       imports: [MyCenterMembershipsComponent],
@@ -38,6 +41,7 @@ describe('MyCenterMembershipsComponent', () => {
         provideRouter([]),
         { provide: CenterService, useValue: centerService },
         { provide: SnackBarService, useValue: snackbar },
+        { provide: MatDialog, useValue: dialog },
       ],
     });
 
@@ -79,5 +83,44 @@ describe('MyCenterMembershipsComponent', () => {
   it('centerSlug turns a center name into the URL slug used for its profile route', () => {
     setup(of({ message: '', success: true, statusCode: 200, data: [] }));
     expect(component.centerSlug('Downtown Gym')).toBe('downtown-gym');
+  });
+
+  // ── leave (GN-47: a member can leave their own center membership) ──
+
+  it('leaving removes the membership from the list after confirming', () => {
+    const row = membership();
+    setup(of({ message: '', success: true, statusCode: 200, data: [row] }));
+    dialog.open.and.returnValue({ afterClosed: () => of(true) } as any);
+    centerService.removeMember.and.returnValue(of({ message: '', success: true, statusCode: 200, data: '' }));
+
+    component.leave(row);
+
+    expect(centerService.removeMember).toHaveBeenCalledWith(row.id);
+    expect(component.memberships.length).toBe(0);
+    expect(snackbar.openSnackBar).toHaveBeenCalledWith("You've left Downtown Gym.", 'success');
+  });
+
+  it('declining the confirm dialog leaves the membership in place', () => {
+    const row = membership();
+    setup(of({ message: '', success: true, statusCode: 200, data: [row] }));
+    dialog.open.and.returnValue({ afterClosed: () => of(false) } as any);
+
+    component.leave(row);
+
+    expect(centerService.removeMember).not.toHaveBeenCalled();
+    expect(component.memberships.length).toBe(1);
+  });
+
+  it('a failed leave shows an error and keeps the membership in the list', () => {
+    const row = membership();
+    setup(of({ message: '', success: true, statusCode: 200, data: [row] }));
+    dialog.open.and.returnValue({ afterClosed: () => of(true) } as any);
+    centerService.removeMember.and.returnValue(throwError(() => ({ error: { message: 'Could not leave' } })));
+
+    component.leave(row);
+
+    expect(snackbar.openSnackBar).toHaveBeenCalledWith('Could not leave', 'error');
+    expect(component.memberships.length).toBe(1);
+    expect(component.leavingId).toBeNull();
   });
 });
