@@ -224,6 +224,14 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-47: you can now leave a center's membership yourself
+
+- **"My Memberships" now has a Leave action.** Previously the only way off a center's
+  member roster was contacting the center or support -- there was no self-service
+  cancel at all, unlike every other subscription/booking type in the app. Also:
+  testimonials can no longer be submitted from a demo account, so a demo testimonial
+  can never show up looking like a real customer's. `com.berliz` + `berliz`.
+
 ### 2026-11-18 — GN-45: accessibility fixes for sign-up, booking and the shop checkout form
 
 - **The shop checkout form's 8 shipping fields (and a handful of fields elsewhere in
