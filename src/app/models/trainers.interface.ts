@@ -18,6 +18,12 @@ export interface Trainers {
   hourlyRate?: number | null;
   /** The trainer's own price for a trial (first) session; null = the platform default. */
   trialPrice?: number | null;
+  /** Whether this trainer offers a free first trial; null reads as on (the default). */
+  freeTrialEnabled?: boolean | null;
+  /** Whether a client's first regular session right after their free trial gets a discount; null reads as on (the default). */
+  welcomeBonusEnabled?: boolean | null;
+  /** Percent off that welcome-bonus session; null reads as 50 (the default). */
+  welcomeBonusPercent?: number | null;
   /** The trainer's price per person in a group session; null = the platform's CA$75. */
   groupPrice?: number | null;
   /** BK-37: what this trainer charges for a session at a gym they haven't listed; null = the platform default (CA$25). */
