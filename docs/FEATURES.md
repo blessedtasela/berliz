@@ -224,6 +224,12 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — SG-08: closed a critical login open-redirect that leaked session tokens
+
+- **Fixed a security vulnerability**: a crafted login link (`?mobileRedirect=...`) could hand a
+  signed-in visitor's access and refresh tokens straight to an attacker-controlled site the
+  moment they logged in. Only the app's own mobile callback link is accepted now. `berliz`.
+
 ### 2026-11-18 — SG-11: resend activation email actually works, plus an admin resend control
 
 - **Resending an activation email now works** -- it was silently sending the request with no email

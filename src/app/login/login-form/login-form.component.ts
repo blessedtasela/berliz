@@ -45,8 +45,27 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
    * own callback URI (e.g. `exp://…` / `berliz://…`), read from
    * `?mobileRedirect=`. Present regardless of which method the user
    * completes login with — see completeAuth().
+   *
+   * SG-08: validated against {@link isAllowedMobileRedirect} the moment it's read, below --
+   * completeAuth() puts a fresh access+refresh token pair directly onto this URL and
+   * navigates to it, so an unvalidated value here is a same-page token-exfiltration open
+   * redirect (`?mobileRedirect=https://attacker.example` hands the victim's session to
+   * the attacker the instant they log in). An invalid value is treated as absent, not
+   * rejected outright -- login still succeeds as an ordinary web session.
    */
   private mobileRedirect: string | null = null;
+
+  /** AuthContext.tsx's `loginWithWeb()` only ever sends `Linking.createURL('auth-callback')` --
+   *  `berliz://…` for a standalone/production build, `exp://…` or `exp+berliz://…` under
+   *  Expo Go in development. Nothing else is ever a legitimate value here. */
+  private isAllowedMobileRedirect(value: string): boolean {
+    try {
+      const protocol = new URL(value).protocol; // e.g. "berliz:", "exp:", "exp+berliz:"
+      return protocol === 'berliz:' || protocol.startsWith('exp');
+    } catch {
+      return false; // not even a parseable absolute URL
+    }
+  }
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -107,7 +126,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
     this.webAuthnService.isPlatformAuthenticatorAvailable().then(available => this.passkeyAvailable = available);
 
-    this.mobileRedirect = this.route.snapshot.queryParamMap.get('mobileRedirect');
+    const rawMobileRedirect = this.route.snapshot.queryParamMap.get('mobileRedirect');
+    this.mobileRedirect = rawMobileRedirect && this.isAllowedMobileRedirect(rawMobileRedirect) ? rawMobileRedirect : null;
 
     // Skip the "already logged in here → bounce to returnUrl" shortcut when
     // this is the mobile hand-off flow (see completeAuth) — a stray web

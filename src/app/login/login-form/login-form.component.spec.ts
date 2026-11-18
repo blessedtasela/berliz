@@ -22,6 +22,7 @@ describe('LoginFormComponent', () => {
   let ngxService: jasmine.SpyObj<NgxUiLoaderService>;
   let router: Router;
   let returnUrl: string | null;
+  let mobileRedirect: string | null;
 
   const successResponse = (accessToken = 'access-jwt', refreshToken = 'refresh-jwt') => ({
     message: 'Login successful',
@@ -52,6 +53,7 @@ describe('LoginFormComponent', () => {
     const webAuthnServiceSpy = jasmine.createSpyObj('WebAuthnService', ['isPlatformAuthenticatorAvailable', 'loginWithPasskey']);
     webAuthnServiceSpy.isPlatformAuthenticatorAvailable.and.returnValue(Promise.resolve(false));
     returnUrl = null;
+    mobileRedirect = null;
 
     TestBed.configureTestingModule({
       declarations: [LoginFormComponent],
@@ -65,7 +67,16 @@ describe('LoginFormComponent', () => {
         { provide: WebAuthnService, useValue: webAuthnServiceSpy },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { get queryParamMap() { return convertToParamMap(returnUrl ? { returnUrl } : {}); } } }
+          useValue: {
+            snapshot: {
+              get queryParamMap() {
+                return convertToParamMap({
+                  ...(returnUrl ? { returnUrl } : {}),
+                  ...(mobileRedirect ? { mobileRedirect } : {}),
+                });
+              }
+            }
+          }
         },
       ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -248,6 +259,52 @@ describe('LoginFormComponent', () => {
 
       expect(router.navigateByUrl).not.toHaveBeenCalled();
       expect(component.submitError).toBe('Incorrect email or password');
+    });
+  });
+
+  // SG-08: completeAuth() puts a fresh access+refresh token pair straight onto
+  // `mobileRedirect` and navigates there -- an unvalidated value is a token-exfiltration
+  // open redirect (`?mobileRedirect=https://attacker.example` hands the victim's session
+  // to the attacker the moment they log in). Only the app's own callback scheme
+  // (`berliz://…` in production, `exp://…`/`exp+berliz://…` under Expo Go) is legitimate;
+  // AuthContext.tsx's loginWithWeb() (mobile repo) never sends anything else.
+  describe('mobileRedirect validation (open-redirect / token-exfiltration guard)', () => {
+    const isAllowed = (value: string) => (component as any).isAllowedMobileRedirect(value);
+
+    it('accepts the app\'s real callback schemes', () => {
+      expect(isAllowed('berliz://auth-callback')).toBeTrue();
+      expect(isAllowed('exp://192.168.1.5:8081/--/auth-callback')).toBeTrue();
+      expect(isAllowed('exp+berliz://expo-development-client/--/auth-callback')).toBeTrue();
+    });
+
+    it('rejects an attacker-supplied http(s)/protocol-relative/unparseable value', () => {
+      expect(isAllowed('https://attacker.example/collect')).toBeFalse();
+      expect(isAllowed('http://attacker.example/collect')).toBeFalse();
+      expect(isAllowed('//attacker.example/collect')).toBeFalse();
+      expect(isAllowed('javascript:alert(1)')).toBeFalse();
+      expect(isAllowed('not-a-url')).toBeFalse();
+    });
+
+    it('a malicious mobileRedirect is discarded, not acted on -- the ordinary web session path still runs', () => {
+      mobileRedirect = 'https://attacker.example/collect';
+      localStorage.setItem('token', 'existing-jwt');
+      userService.checkToken.and.returnValue(of({ message: '', success: true, statusCode: 200, data: 'true' }));
+
+      fixture.detectChanges(); // ngOnInit
+
+      // If the malicious value had been accepted, ngOnInit would have returned early
+      // (the "skip the already-logged-in shortcut" branch) and never reached this call.
+      expect(userService.checkToken).toHaveBeenCalled();
+    });
+
+    it('a real app callback URL is honored -- the web auto-redirect shortcut is correctly skipped for it', () => {
+      mobileRedirect = 'berliz://auth-callback';
+      localStorage.setItem('token', 'existing-jwt');
+      userService.checkToken.and.returnValue(of({ message: '', success: true, statusCode: 200, data: 'true' }));
+
+      fixture.detectChanges(); // ngOnInit
+
+      expect(userService.checkToken).not.toHaveBeenCalled();
     });
   });
 
