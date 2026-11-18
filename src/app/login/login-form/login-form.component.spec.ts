@@ -39,9 +39,10 @@ describe('LoginFormComponent', () => {
 
   beforeEach(() => {
     userService = jasmine.createSpyObj('UserService', [
-      'checkToken', 'loginWithGoogle', 'loginWithFacebook', 'startRefreshTokenTimer', 'login',
+      'checkToken', 'loginWithGoogle', 'loginWithFacebook', 'startRefreshTokenTimer', 'login', 'sendActivationToken',
     ]);
     userService.checkToken.and.returnValue(of({ message: '', success: true, statusCode: 200, data: 'true' }));
+    userService.sendActivationToken.and.returnValue(of({ message: 'Check your email.', success: true, statusCode: 200, data: '' }));
 
     socialAuthService = jasmine.createSpyObj('SocialAuthService', ['renderGoogleButton', 'loginWithFacebook', 'preloadFacebookSdk']);
     socialAuthService.renderGoogleButton.and.returnValue(Promise.resolve());
@@ -263,6 +264,26 @@ describe('LoginFormComponent', () => {
       fixture.detectChanges();
       expect(component.needsActivation).toBeFalse();
       expect(fixture.nativeElement.querySelector("[data-testid=enter-activation-code]")).toBeNull();
+    });
+  });
+
+  // SG-11: the "Didn't receive your activation email?" form's ngSubmit passes the ngModel ref's
+  // OWN `.value` (already a plain string) -- sendActivationMail used to unwrap it a second time as
+  // if it were an HTMLInputElement, always landing on `undefined` and sending the resend request
+  // with no email, which 404s (the route needs an email path segment).
+  describe('sendActivationMail (resend activation email)', () => {
+    it('sends the real email string straight through to the backend', () => {
+      // The ViewChild it resets on success only exists after a change-detection pass.
+      fixture.detectChanges();
+      component.sendActivationMail('taselablessed+12@gmail.com');
+      expect(userService.sendActivationToken).toHaveBeenCalledWith('taselablessed+12@gmail.com');
+      expect(component.activationError).toBeNull();
+    });
+
+    it('rejects a blank email locally instead of sending a request with none', () => {
+      component.sendActivationMail('');
+      expect(userService.sendActivationToken).not.toHaveBeenCalled();
+      expect(component.activationError).toContain('Enter the email address');
     });
   });
 });

@@ -162,11 +162,13 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendActivationMail(data: HTMLInputElement) {
-    const email = data.value;
-    const validEmail = [email, Validators.compose([Validators.email, emailExtensionValidator(['com', 'org'])])];
+  // SG-11: the template passes `activationEmail.value` from an `ngModel` ref (#activationEmail="ngModel"),
+  // which is already the plain email string -- NOT an HTMLInputElement. The old `data.value` here was
+  // unwrapping a string a second time, always landing on `undefined` and silently sending
+  // POST /user/sendActivationToken/ with no email at all (a 404, since the route needs a path segment).
+  sendActivationMail(email: string) {
     this.activationError = null;
-    if (!validEmail || email == '') {
+    if (!email || email.trim() === '') {
       this.activationError = 'Enter the email address you signed up with so we can resend the activation email.';
       return;
     }

@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — SG-11: resend activation email actually works, plus an admin resend control
+
+- **Resending an activation email now works** -- it was silently sending the request with no email
+  address attached (a frontend bug, not a missing backend route), which 404'd every time. Admins
+  can now also resend a not-yet-activated user's activation email directly from the Users table.
+  `berliz`, `com.berliz`.
+
 ### 2026-11-18 — PY-32: trial-abuse risk scoring
 
 - **A new free/discounted trial is now risk-scored** instead of only being limited to one per

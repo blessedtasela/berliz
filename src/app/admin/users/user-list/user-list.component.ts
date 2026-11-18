@@ -288,6 +288,27 @@ export class UserListComponent implements OnChanges {
     });
   }
 
+  /** SG-11: lets an admin resend the activation code directly, instead of the user being stuck
+   *  with no way to get a new one if their own "resend" attempt or the original email failed. */
+  resendActivation(id: number) {
+    const user = this.usersData.find(user => user.id === id);
+    if (!user?.email) return;
+
+    this.ngxService.start();
+    this.userService.sendActivationToken(user.email)
+      .subscribe({
+        next: (response: any) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(response?.message || 'Activation email sent.', '');
+        },
+        error: (error: any) => {
+          this.ngxService.stop();
+          const message = error.error?.message || genericError;
+          this.snackbarService.openSnackBar(message, 'error');
+        },
+      });
+  }
+
   openUserDetails(id: number) {
     const user = this.usersData.find(user => user.id === id);
     const dialogRef = this.dialog.open(UserDetailsModalComponent, {

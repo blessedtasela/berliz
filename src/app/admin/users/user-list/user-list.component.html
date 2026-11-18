@@ -51,6 +51,11 @@
                     (click)="openUpdateUser(user.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <!-- SG-11: only for a never-activated account; resends the activation code, does not flip status. -->
+                <button *ngIf="user.status === 'false'" type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                    (click)="resendActivation(user.id)" title="Resend activation email" aria-label="Resend activation email">
+                    <i-feather name="send" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateUserStatus(user.id)"
                     [title]="user.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="user.status === 'false' ? 'Activate' : 'Deactivate'">
@@ -143,6 +148,11 @@
                                 (click)="openUpdateUser(user.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <!-- SG-11: only for a never-activated account; resends the activation code, does not flip status. -->
+                            <button *ngIf="user.status === 'false'" type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                                (click)="resendActivation(user.id)" title="Resend activation email" aria-label="Resend activation email">
+                                <i-feather name="send" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
                             <button type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
                                 [ngClass]="user.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
