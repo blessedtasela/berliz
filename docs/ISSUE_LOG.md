@@ -741,3 +741,15 @@ Three of the ticket's four sub-items audited (the fourth, "no dark patterns" in 
 New tests: `CenterServiceImplementUnitTest` (self-leave succeeds; center owner can still remove someone else; an unrelated caller is rejected), `TestimonialServiceImplementUnitTest` (new file -- demo author rejected, real author unaffected), and 3 new frontend tests for the Leave flow (confirm removes it, decline keeps it, a failed call shows an error and keeps it).
 
 Full backend suite (1498 tests) and full frontend suite (2363 tests) both green on their feature branches and again after merging into `master`, in separate worktrees, before pushing.
+
+### GN-48: content licensing audit -- inventory pass (`berliz` `7d68dab13`, Nov 18, 2026)
+
+Doc-only this pass, per the owner's own scoping -- inventory now, replacement later as a separate decision. Full findings in `docs/LICENSES.md`; summary:
+
+- **Clear:** fonts (Inter, SIL OFL-1.1, self-hosted via `@fontsource-variable/inter` -- also re-confirms GN-35's font/tracker self-hosting is clean, no third-party font or script CDN loads found anywhere in `index.html` or any stylesheet) and the icon library (`angular-feather`, MIT, used in 250+ templates).
+- **Real gaps, no license on file anywhere in the repo:** ~35 raster icon-style images under `src/assets/icons/` (not from any library), the stock-pattern landing/hero photography under `src/assets/landing/` (confirmed one near-certainly-unattributed stock photo, `grayscale-photography-of-vehicle.jpg` -- a Pexels/Unsplash auto-generated filename pattern, sitting in the `trainers` folder completely unused in the app), and three bundled video clips (`fire-loop.mp4`, `demo_ok.mp4`, and an orphaned `burpee demo.mp4` that isn't referenced anywhere).
+- **Noted but out of scope:** testimonial photos, WhatsApp-export-named trainer/user media, and Berliz's own brand/logo files (first-party or user-submitted, not a licensing question); exercise/trainer/center videos are Strapi-hosted user uploads, confirmed via the backend's own code comments.
+- **"PF-44"** (the ticket's own source for "licensed demo clips") doesn't exist anywhere in either repo as a traceable tag -- flagged for whoever scoped it to say which clip(s) it actually means.
+- Fixed in passing: `docs/TECH_STACK.md` listed four npm packages (`maticon`, `@syncfusion/ej2-angular-inputs`, `angular-popper`, `intl-tel-input`/`google-libphonenumber`) that don't exist in `package.json` at all -- corrected so the new inventory doesn't sit next to a stale dependency list.
+
+**Not done:** replacing any flagged asset -- that's a content/design call (what replaces it, what it costs) for the owner, not something to guess at.
