@@ -136,12 +136,20 @@
                 <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                 Settle payment
             </button>
-            <button *ngIf="canStartIntake" type="button" (click)="startIntake()" data-testid="intake-fill-or-view"
+            <!-- GN-63: hasIntake is `undefined` while the parent's lookup is still in flight -- show that as
+                 pending, not as "Fill Together"/"Send PAR-Q" (which assert there's definitely no PAR-Q yet
+                 and would otherwise flash wrong, then swap, the moment the real answer arrives). -->
+            <button *ngIf="canStartIntake && hasIntake === undefined" type="button" disabled data-testid="intake-fill-or-view"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed flex items-center gap-1">
+                <i-feather name="loader" class="animate-spin" style="width:11px;height:11px;"></i-feather>
+                Checking…
+            </button>
+            <button *ngIf="canStartIntake && hasIntake !== undefined" type="button" (click)="startIntake()" data-testid="intake-fill-or-view"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather [name]="hasIntake ? 'eye' : 'file-text'" style="width:11px;height:11px;"></i-feather>
                 {{ hasIntake ? 'View PAR-Q' : 'Fill Together' }}
             </button>
-            <button *ngIf="canStartIntake && !hasIntake" type="button" (click)="sendIntake()"
+            <button *ngIf="canStartIntake && hasIntake === false" type="button" (click)="sendIntake()"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex items-center gap-1">
                 <i-feather name="send" style="width:11px;height:11px;"></i-feather>
                 Send PAR-Q

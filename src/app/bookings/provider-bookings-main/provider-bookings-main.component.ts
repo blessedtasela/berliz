@@ -73,6 +73,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
    * at creation, not signing, so this flag used to be true the moment the form was sent.
    */
   signedIntakeByClient: Record<number, boolean> = {};
+  /** GN-63: true once `loadIntakeFlags()`'s own lookup has resolved (success or failure) for the
+   *  CURRENT bookings list. False while it's in flight, so the card can show a pending state
+   *  instead of defaulting to "no PAR-Q" and then swapping the moment the real answer lands. */
+  intakeFlagsLoaded = false;
   loading = false;
   /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
   loadError: string | null = null;
@@ -115,6 +119,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
    * card can link straight to the existing one instead.
    */
   private loadIntakeFlags(): void {
+    this.intakeFlagsLoaded = false;
     this.clientIntakeService.getMyIntakes().pipe(take(1)).subscribe({
       next: res => {
         const byClient: Record<number, number> = {};
@@ -125,8 +130,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
         }
         this.intakeIdByClient = byClient;
         this.signedIntakeByClient = signedByClient;
+        this.intakeFlagsLoaded = true;
       },
-      error: () => { this.intakeIdByClient = {}; this.signedIntakeByClient = {}; },
+      error: () => { this.intakeIdByClient = {}; this.signedIntakeByClient = {}; this.intakeFlagsLoaded = true; },
     });
   }
 

@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — GN-63: the PAR-Q status chip no longer claims "no PAR-Q" while it's still checking
+
+- **The booking card's PAR-Q/intake chip and action buttons now show a "Checking…" pending state**
+  instead of briefly claiming no PAR-Q exists and then swapping once the real answer loads --
+  previously visible as "Fill Together" flashing before "View PAR-Q" for a client who already had
+  one signed. `berliz`.
+
 ### 2026-11-18 — GN-65: five more pick lists converted to dropdowns
 
 - **Session length/period on the recurring plan page, and location/diet/session-length on the

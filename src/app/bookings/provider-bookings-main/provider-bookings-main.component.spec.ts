@@ -148,6 +148,25 @@ describe('ProviderBookingsMainComponent', () => {
       httpMock.verify();
     });
 
+    // GN-63: `intakeFlagsLoaded` is what lets the booking card tell "not loaded yet" apart from
+    // "loaded, and there's genuinely no PAR-Q" -- without it the card has no way to avoid
+    // defaulting to the latter the instant it renders, which is what caused the Fill-Together-
+    // then-View-PAR-Q flash this ticket reports.
+    it('starts each intake lookup as not-yet-loaded and flips to loaded once the response lands', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectProviderBookings, [confirmedBooking]);
+      store.refreshState();
+      fixture.detectChanges();
+      expect(component.intakeFlagsLoaded).toBe(false);
+
+      const httpMock = TestBed.inject(HttpTestingController);
+      httpMock.match(r => r.url.includes('/client-onboarding/')).forEach(req => req.flush({ data: {} }));
+      httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes')).flush({ data: [] });
+
+      expect(component.intakeFlagsLoaded).toBe(true);
+      httpMock.verify();
+    });
+
     it('opens the existing intake instead of starting a blank one', () => {
       const httpMock = initWithBooking();
       httpMock.expectOne(r => r.url.endsWith('/client-intake/getMyIntakes')).flush({ data: [{ id: 42, clientId: 5 }] });

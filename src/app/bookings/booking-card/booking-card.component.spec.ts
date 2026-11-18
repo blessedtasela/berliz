@@ -576,6 +576,9 @@ describe('BookingCardComponent', () => {
       component.mode = 'provider';
       component.booking = { ...component.booking, status } as Booking;
       component.onboardingPercent = percent;
+      // This block exercises the onboarding-percent chip specifically, which only renders once
+      // hasIntake itself is resolved (see the dedicated "Checking…" tests above) -- GN-63.
+      component.hasIntake = false;
       fixture.detectChanges();
       return fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement | null;
     }
@@ -611,6 +614,21 @@ describe('BookingCardComponent', () => {
     // BK-24 (Nov 5 escalation): the questionnaire tracker and the signed intake are two separate
     // records -- a client could have a completed, signed intake while this tracker still read 0%,
     // so the chip told the trainer the opposite of the truth. The intake now always wins.
+    // GN-63: while the parent's own PAR-Q lookup hasn't resolved, the chip must say so rather than
+    // falling through to the onboarding-percent branch, which would show "incomplete" for a client
+    // who in fact already has a signed PAR-Q on file -- the very bug this chip exists to prevent.
+    it('shows a pending "Checking…" chip -- never the onboarding-percent chip -- while hasIntake is unresolved', () => {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'pending' } as Booking;
+      component.onboardingPercent = 0;
+      component.hasIntake = undefined;
+      fixture.detectChanges();
+
+      const chip = fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement;
+      expect(chip.textContent).toContain('Checking');
+      expect(chip.textContent).not.toContain('incomplete');
+    });
+
     it('shows "PAR-Q signed" -- never "Onboarding incomplete" -- when a signed PAR-Q is on file', () => {
       component.mode = 'provider';
       component.booking = { ...component.booking, status: 'pending' } as Booking;
@@ -643,6 +661,20 @@ describe('BookingCardComponent', () => {
     beforeEach(() => {
       component.mode = 'provider';
       component.booking = { ...component.booking, status: 'confirmed' } as Booking;
+    });
+
+    // GN-63: `hasIntake === undefined` is "not loaded yet", not "no". The old default of `false`
+    // meant this button always claimed there was no PAR-Q the instant the card rendered, then
+    // silently swapped to "View PAR-Q" a moment later for a client who actually had one signed.
+    it('shows a disabled pending state instead of "Fill Together" while the parent is still checking', () => {
+      component.hasIntake = undefined;
+      fixture.detectChanges();
+
+      const fillButton = fixture.nativeElement.querySelector('[data-testid="intake-fill-or-view"]') as HTMLButtonElement;
+      expect(fillButton.textContent).toContain('Checking');
+      expect(fillButton.disabled).toBe(true);
+      expect(fixture.nativeElement.textContent).not.toContain('Fill Together');
+      expect(fixture.nativeElement.textContent).not.toContain('Send PAR-Q');
     });
 
     it('offers "Fill Together" and "Send PAR-Q" when no signed PAR-Q exists yet', () => {

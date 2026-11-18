@@ -36,8 +36,11 @@ export class BookingCardComponent {
   @Input() booking!: Booking;
   /** The client's onboarding completion (0-100) for the provider view; undefined while unknown, so nothing is shown. */
   @Input() onboardingPercent: number | null | undefined;
-  /** BK-47: whether this client's PAR-Q has actually been signed (not just sent) -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send PAR-Q" (nothing left to ask for). */
-  @Input() hasIntake = false;
+  /** BK-47: whether this client's PAR-Q has actually been signed (not just sent) -- changes "Fill Together" to reopen it instead of starting a blank one, and hides "Send PAR-Q" (nothing left to ask for).
+   *  GN-63: `undefined` while the parent's own lookup hasn't resolved yet -- NOT the same as `false`.
+   *  Defaulting this to `false` used to assert "no PAR-Q exists" the instant the card rendered, so a client
+   *  who actually had one signed saw "Fill Together" flash before flipping to "View PAR-Q" a moment later. */
+  @Input() hasIntake: boolean | undefined = undefined;
   /** PF-43: does the client still have an unreviewed completed session with this trainer --
    *  undefined while unknown (chip hidden), never a guess. The parent fetches this per trainer. */
   @Input() reviewSlotAvailable: boolean | null | undefined;
@@ -165,6 +168,12 @@ export class BookingCardComponent {
   get onboardingChip(): { label: string; classes: string } | null {
     if (this.mode !== 'provider') return null;
     if (this.booking.status !== 'pending' && this.booking.status !== 'confirmed') return null;
+    // GN-63: the signed intake always wins over the onboarding tracker (see above), so its own
+    // loading state must be shown as pending -- never silently treated as "no, there's no intake"
+    // while the real answer is still in flight, which would flash the wrong chip underneath this one.
+    if (this.hasIntake === undefined) {
+      return { label: 'Checking…', classes: 'bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700 animate-pulse' };
+    }
     if (this.hasIntake) {
       return { label: 'PAR-Q signed', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' };
     }
@@ -175,6 +184,7 @@ export class BookingCardComponent {
   }
 
   get onboardingChipTitle(): string {
+    if (this.hasIntake === undefined) return 'Checking whether a PAR-Q is on file…';
     return this.hasIntake
       ? 'Signed PAR-Q on file. Tap to read it.'
       : `${this.onboardingPercent}% of the required onboarding answers. Tap to read them.`;
