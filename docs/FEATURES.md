@@ -224,6 +224,12 @@ instead).
 
 Newest first.
 
+### 2026-11-18 — The free trial is now visible at a glance, not just in a banner below
+
+- **The Trial session button itself now shows the price struck through with a "FREE" badge**,
+  instead of a plain price that only turned out to be free once you scrolled past it to a banner
+  below -- most noticeable on mobile, where the session-type options stack vertically. `berliz`.
+
 ### 2026-11-18 — Welcome-bonus session, and both offers are now per-trainer toggles
 
 - **Trainers can now switch the free trial and the welcome-bonus session on or off for themselves**
