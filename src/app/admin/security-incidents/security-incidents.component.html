@@ -1,0 +1,90 @@
+<div class="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-4">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="text-base font-bold text-gray-900 dark:text-gray-100">Security incidents</h1>
+    <div class="flex gap-1.5">
+      <button type="button" *ngFor="let s of ['OPEN', 'ACTIONED', 'DISMISSED', '']" (click)="setFilter(s)"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+        [ngClass]="statusFilter === s ? 'bg-red-600 border-red-600 text-white' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'">
+        {{ s || 'All' }}
+      </button>
+    </div>
+  </div>
+
+  <app-load-error *ngIf="!loading && loadError" title="Couldn't load incidents" (retry)="load()"></app-load-error>
+
+  <div *ngIf="loading" class="flex items-center justify-center py-16 text-gray-400 dark:text-gray-500 text-sm">Loading…</div>
+
+  <div *ngIf="!loading && !loadError && incidents.length === 0" class="text-center py-16 text-sm text-gray-400 dark:text-gray-500">
+    No {{ statusFilter ? statusFilter.toLowerCase() : '' }} incidents.
+  </div>
+
+  <div *ngIf="!loading && incidents.length > 0" class="flex flex-col gap-2" data-testid="incident-list">
+    <button type="button" *ngFor="let i of incidents" (click)="open(i)" data-testid="incident-row"
+      class="text-left rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3 hover:border-gray-300 dark:hover:border-gray-700 transition">
+      <div class="flex flex-col gap-0.5 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ i.eventType }}</span>
+          <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+            [ngClass]="i.status === 'OPEN' ? 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400' : i.status === 'ACTIONED' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'">
+            {{ i.status }}
+          </span>
+        </div>
+        <span class="text-[11px] text-gray-500 dark:text-gray-400 truncate">{{ i.subjectType }}: {{ i.subjectId }}</span>
+      </div>
+      <div class="flex flex-col items-end gap-0.5 shrink-0">
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ i.eventCount }} event{{ i.eventCount === 1 ? '' : 's' }}</span>
+        <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ i.lastEventAt | date:'short' }}</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Detail / ledger -->
+  <div *ngIf="selected" class="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50" (click)="close()">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-5 flex flex-col gap-4" (click)="$event.stopPropagation()" data-testid="incident-detail">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ selected.eventType }}</h2>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400">{{ selected.subjectType }}: {{ selected.subjectId }}</p>
+        </div>
+        <button type="button" (click)="close()" class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+          <i-feather name="x" style="width:16px;height:16px;"></i-feather>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Evidence ({{ selected.eventCount }} event{{ selected.eventCount === 1 ? '' : 's' }})</span>
+        <div *ngIf="ledgerLoading" class="text-xs text-gray-400">Loading…</div>
+        <div *ngFor="let e of ledgerEvents" class="text-[11px] text-gray-700 dark:text-gray-300 border-l-2 border-gray-200 dark:border-gray-700 pl-2 py-0.5">
+          <span class="text-gray-400 dark:text-gray-500">{{ e.createdAt | date:'short' }}</span> — {{ e.detail }}
+        </div>
+      </div>
+
+      <div *ngIf="selected.ledger" class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Ledger</span>
+        <pre class="text-[11px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 rounded-lg p-2">{{ selected.ledger }}</pre>
+      </div>
+
+      <div *ngIf="selected.status === 'OPEN'" class="flex flex-col gap-2 border-t border-gray-100 dark:border-gray-800 pt-3" data-testid="resolve-form">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Resolve</span>
+        <div class="flex gap-2">
+          <label class="flex items-center gap-1.5 text-xs">
+            <input type="radio" name="resolveStatus" [value]="'ACTIONED'" [(ngModel)]="resolveStatus" /> Actioned (I did something about it elsewhere)
+          </label>
+        </div>
+        <div class="flex gap-2">
+          <label class="flex items-center gap-1.5 text-xs">
+            <input type="radio" name="resolveStatus" [value]="'DISMISSED'" [(ngModel)]="resolveStatus" /> Dismissed (false positive / not a concern)
+          </label>
+        </div>
+        <textarea [(ngModel)]="resolveNote" rows="3" placeholder="What did you check, and why? (required)"
+          data-testid="resolve-note"
+          class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-gray-100"></textarea>
+        <p *ngIf="resolveError" class="text-[11px] text-red-600">{{ resolveError }}</p>
+        <button type="button" (click)="submitResolve()" [disabled]="resolving" data-testid="resolve-submit"
+          class="px-3 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold disabled:opacity-50">
+          {{ resolving ? 'Saving…' : 'Save verdict' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

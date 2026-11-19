@@ -610,6 +610,7 @@ const dashboardRoutes: Routes = [
           { path: '', component: HubMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: null, expectedRole: expectedRoleAll } },
 
           { path: 'users', loadChildren: () => import('../admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+          { path: 'security-incidents', loadComponent: () => import('../admin/security-incidents/security-incidents.component').then(m => m.SecurityIncidentsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Security Incidents', expectedRole: ['admin'] } },
           { path: 'newsletters', loadChildren: () => import('../admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
           { path: 'partners', loadChildren: () => import('../admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
           { path: 'contact-us', loadChildren: () => import('../admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
@@ -675,6 +676,7 @@ const dashboardRoutes: Routes = [
 
       // ── ADMIN (direct dashboard children, lazy-loaded) ────────────
       { path: 'users', loadChildren: () => import('../admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+      { path: 'security-incidents', loadComponent: () => import('../admin/security-incidents/security-incidents.component').then(m => m.SecurityIncidentsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Security Incidents', expectedRole: ['admin'] } },
       { path: 'newsletters', loadChildren: () => import('../admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
       { path: 'partners', loadChildren: () => import('../admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
       { path: 'contact-us', loadChildren: () => import('../admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
