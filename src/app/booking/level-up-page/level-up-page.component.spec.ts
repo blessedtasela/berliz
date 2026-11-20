@@ -215,6 +215,34 @@ describe('LevelUpPageComponent', () => {
     });
   });
 
+  /**
+   * BK-52 regression: buyMonthly()'s guest branch already called promptToSignIn() correctly --
+   * the actual bug was the template nesting the auth-prompt block inside *ngIf="selectedPlan",
+   * which buyMonthly() never sets, so the prompt silently never rendered for this flow. This
+   * spec file tests the component class only (no TestBed/fixture), so it cannot assert the
+   * template renders the prompt; it covers the logic contract the template now relies on.
+   */
+  describe('buying monthly coaching, as a guest', () => {
+    beforeEach(() => {
+      page.user = null;
+      page.planMode = 'online';
+      page.planMonths = 3;
+      page.planTwoPrograms = false;
+      page.buyingMonthly = false;
+      page.trainerPricing = { priceOnline: 100, priceHybrid: 0, pricePersonal: 0, discount3Months: 10, discount6Months: 0, discount9Months: 0, discount12Months: 0, discount2Programs: 0 };
+    });
+
+    it('asks a guest to sign in instead of buying, and remembers where to come back to', () => {
+      const saveDraft = spyOn(page, 'saveDraft');
+
+      page.buyMonthly();
+
+      expect(page.showAuthPrompt).toBeTrue();
+      expect(page.buyingMonthly).toBeFalse();
+      expect(saveDraft).toHaveBeenCalled();
+    });
+  });
+
   describe('"I have a unique code"', () => {
     let purchasePackage: jasmine.Spy;
     let createCheckoutSession: jasmine.Spy;

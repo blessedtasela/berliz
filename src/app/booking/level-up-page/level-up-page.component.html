@@ -228,26 +228,6 @@
         </p>
         <p class="text-[11px] text-gray-600 dark:text-gray-400">You'll find it under My Subscriptions, separate from your bookings.</p>
 
-        <!-- Guest: choose how to continue (shown when they press the button) -->
-        <div *ngIf="showAuthPrompt && isGuest" role="region" aria-label="Log in or create an account to continue"
-          class="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 flex flex-col gap-3">
-          <div>
-            <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Last step: sign in to continue</p>
-            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Your pick is saved. You'll come straight back here afterwards.</p>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <button type="button" (click)="goToSignUp()"
-              class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
-              Create a free account
-            </button>
-            <button type="button" (click)="goToLogin()"
-              class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-900 transition">
-              I already have an account
-            </button>
-          </div>
-          <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-600 transition">Not now</button>
-        </div>
-
         <!-- "I have a unique code": an admin-approved code stands in for the payment -->
         <div *ngIf="!isGuest" class="rounded-xl border border-gray-200 dark:border-gray-800 p-3 flex flex-col gap-2" data-testid="code-block">
           <button type="button" (click)="showCodeBox = !showCodeBox" data-testid="have-code"
@@ -279,6 +259,29 @@
           {{ buyLabel }}
         </button>
       </ng-template>
+    </div>
+
+    <!-- BK-52: Guest, choose how to continue. A sibling of the "selectedPlan" block above, not
+         nested inside it -- promptToSignIn() is also reached from the Monthly-coaching card's
+         "Continue" button, which never sets selectedPlan, so nesting this there made it
+         unreachable (and silently so) for that flow. -->
+    <div *ngIf="showAuthPrompt && isGuest" role="region" aria-label="Log in or create an account to continue"
+      class="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 flex flex-col gap-3">
+      <div>
+        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Last step: sign in to continue</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Your pick is saved. You'll come straight back here afterwards.</p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <button type="button" (click)="goToSignUp()"
+          class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+          Create a free account
+        </button>
+        <button type="button" (click)="goToLogin()"
+          class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-900 transition">
+          I already have an account
+        </button>
+      </div>
+      <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-600 transition">Not now</button>
     </div>
 
     <!-- The no-commitment option lives on the booking page -->
