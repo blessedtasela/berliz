@@ -213,6 +213,9 @@ const dashboardRoutes: Routes = [
           expectedRole: expectedRoleAll
         }
       },
+      // QA tried the shorter, more guessable /dashboard/notifications repeatedly (Nov 17-20) and
+      // got a 404 every time -- no route at all existed for it.
+      { path: 'notifications', redirectTo: 'my-notifications' },
 
       // Tasks — has its own internal toggle already, kept separate from To-do list.
       {
