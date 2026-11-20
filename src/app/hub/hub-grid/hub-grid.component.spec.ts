@@ -28,4 +28,18 @@ describe('HubGridComponent', () => {
     expect(payoutsItem?.link).toBe('/dashboard/billing');
     expect(payoutsItem?.value).toBe(7);
   });
+
+  /**
+   * PY-28/29/30: before this count existed, the two bypass-code systems had no Hub tile at all --
+   * a client's direct code request could sit open indefinitely with nothing surfacing it.
+   */
+  it('PY-28/29/30: routes the payment-codes count to the Payment codes page', () => {
+    component.items = { 'payment-codes': 2 };
+    component.ngOnChanges({ items: {} as any });
+    const content = component.groups.find(g => g.id === 'content');
+    const item = content?.items.find(i => i.key === 'payment-codes');
+    expect(item).toBeTruthy();
+    expect(item?.link).toBe('/dashboard/payment-codes');
+    expect(item?.value).toBe(2);
+  });
 });

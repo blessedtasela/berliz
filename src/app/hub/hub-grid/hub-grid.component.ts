@@ -38,7 +38,7 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'exercise-suggestions', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts'];
+    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts', 'payment-codes'];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
@@ -179,6 +179,9 @@ export class HubGridComponent implements OnChanges {
     // no card at all pointing at it before this, which is why the Recalculate control it already
     // has was unreachable from the UI.
     'payouts': '/dashboard/billing',
+    // PY-28/29/30: there was no Hub tile for either bypass-code system at all before this count
+    // existed -- a client's direct request could sit open indefinitely with nothing surfacing it.
+    'payment-codes': '/dashboard/payment-codes',
   };
 
   resolveRoute(key: string): string {

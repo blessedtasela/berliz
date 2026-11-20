@@ -1,11 +1,12 @@
 import { of, throwError } from 'rxjs';
-import { PaymentCodeRequest } from 'src/app/models/payment-code.model';
+import { PaymentCodeRequest, PlanCodeRequest } from 'src/app/models/payment-code.model';
 import { PaymentCodesComponent } from './payment-codes.component';
 
 describe('PaymentCodesComponent', () => {
 
   let page: any;
   let codes: Record<string, jasmine.Spy>;
+  let bypassCodeService: Record<string, jasmine.Spy>;
   let snackBar: { openSnackBar: jasmine.Spy };
   let dialog: { open: jasmine.Spy };
 
@@ -14,6 +15,11 @@ describe('PaymentCodesComponent', () => {
     clientId: 1, clientName: 'Sam Client', clientEmail: 'sam@example.com', providerUserId: 2, providerName: 'Coach Jane',
     requestedByName: 'Jane Coach', requestedByRole: 'PROVIDER', reason: 'Pays cash', usesRequested: 1, decidedByName: null,
     decidedAt: null, decisionNote: null, forwardedAt: null, date: '2026-11-01', codeId: null, ...over,
+  });
+
+  const planRequest = (over: Partial<PlanCodeRequest> = {}): PlanCodeRequest => ({
+    id: 21, status: 'OPEN', planId: 4, planName: 'Free', clientId: 12, clientName: 'Taselablessed +12', clientEmail: 'taselablessed+12@gmail.com',
+    note: 'Code requested for Free', decidedByName: null, decidedAt: null, decisionNote: null, date: '2026-11-17', lastUpdate: '2026-11-17', ...over,
   });
 
   beforeEach(() => {
@@ -31,15 +37,26 @@ describe('PaymentCodesComponent', () => {
       adminRequests: jasmine.createSpy('adminRequests').and.returnValue(of({ data: [] })),
       adminCodes: jasmine.createSpy('adminCodes').and.returnValue(of({ data: [] })),
     };
+    bypassCodeService = {
+      getAllCodeRequests: jasmine.createSpy('getAllCodeRequests').and.returnValue(of({ data: [] })),
+      getAllBypassCodes: jasmine.createSpy('getAllBypassCodes').and.returnValue(of({ data: [] })),
+      addBypassCode: jasmine.createSpy('addBypassCode').and.returnValue(of({ data: { id: 1, code: 'BZ-TEST-1234' } })),
+      closeCodeRequest: jasmine.createSpy('closeCodeRequest').and.returnValue(of({ data: planRequest({ status: 'CLOSED' }) })),
+      updateStatus: jasmine.createSpy('updateStatus').and.returnValue(of({ data: { id: 1, status: 'false' } })),
+    };
     dialog = { open: jasmine.createSpy('open') };
     page = Object.create(PaymentCodesComponent.prototype);
     page.codes = codes;
+    page.bypassCodeService = bypassCodeService;
     page.snackBar = snackBar;
     page.dialog = dialog;
     page.user = { id: 2, role: 'trainer' };
     page.isSuperAdmin = false;
     page.myCodes = []; page.myRequests = []; page.adminRequests = []; page.adminCodes = [];
+    page.planRequests = []; page.bypassCodes = [];
     page.decision = {};
+    page.planDecision = {};
+    page.issuingPlanRequestId = null;
     page.form = { targetType: 'BOOKING', bookingId: 50, packageId: null, subscriptionId: null, clientId: null, uses: 1, reason: 'Pays cash' };
 
     // PY-30: the picker's own state, since this spec builds `page` directly off the prototype rather than
@@ -252,6 +269,53 @@ describe('PaymentCodesComponent', () => {
       page.decision[11] = { uses: 1, validDays: 14, note: '', discountType: 'FULL_BYPASS', discountValue: null };
       page.approve(request());
       expect(snackBar.openSnackBar).toHaveBeenCalledWith('That request has already been handled.', 'error');
+    });
+  });
+
+  /**
+   * PY-28/29/30: a client's direct "I'd like a code for this Plan" ask (PlanCodeRequest/BypassCode)
+   * had a fully working backend but no admin UI ever read it -- the admin notification told admins
+   * to "Open bypass codes", but nothing on this page queried that table. This tab is the fix.
+   */
+  describe('Plan-tier bypass codes (PY-28/29/30)', () => {
+    it('splits plan code requests into open and already-decided', () => {
+      page.planRequests = [planRequest({ id: 1, status: 'OPEN' }), planRequest({ id: 2, status: 'CLOSED' })];
+      expect(page.openPlanRequests.map((r: PlanCodeRequest) => r.id)).toEqual([1]);
+      expect(page.closedPlanRequests.map((r: PlanCodeRequest) => r.id)).toEqual([2]);
+    });
+
+    it('issuing a code creates it for the request\'s plan, then closes the request with the code in the note', () => {
+      page.planDecision[21] = { durationMonths: 1, maxRedemptions: 1, note: '' };
+      page.issuePlanCode(planRequest());
+
+      expect(bypassCodeService['addBypassCode']).toHaveBeenCalledWith(
+        jasmine.objectContaining({ planId: 4, durationMonths: 1, maxRedemptions: 1 }));
+      expect(bypassCodeService['closeCodeRequest']).toHaveBeenCalledWith(21, 'Code sent: BZ-TEST-1234');
+      expect(snackBar.openSnackBar).toHaveBeenCalledWith('Code BZ-TEST-1234 created and the client was told', '');
+      expect(page.issuingPlanRequestId).toBeNull();
+    });
+
+    it('declining a plan request closes it with the admin\'s note, without creating a code', () => {
+      page.planDecision[21] = { durationMonths: 1, maxRedemptions: 1, note: 'Not eligible' };
+      page.declinePlanRequest(planRequest());
+
+      expect(bypassCodeService['addBypassCode']).not.toHaveBeenCalled();
+      expect(bypassCodeService['closeCodeRequest']).toHaveBeenCalledWith(21, 'Not eligible');
+    });
+
+    it('toggles a Plan code active/inactive', () => {
+      page.busyId = null;
+      page.toggleBypassCodeStatus({ id: 1, status: 'true' });
+      expect(bypassCodeService['updateStatus']).toHaveBeenCalledWith(1);
+    });
+
+    it('tells the admin when issuing a code fails, without closing the request', () => {
+      bypassCodeService['addBypassCode'].and.returnValue(throwError(() => ({ error: { message: 'That plan no longer exists.' } })));
+      page.planDecision[21] = { durationMonths: 1, maxRedemptions: 1, note: '' };
+      page.issuePlanCode(planRequest());
+
+      expect(bypassCodeService['closeCodeRequest']).not.toHaveBeenCalled();
+      expect(snackBar.openSnackBar).toHaveBeenCalledWith('That plan no longer exists.', 'error');
     });
   });
 

@@ -23,6 +23,7 @@ import {
   takeUntil
 } from 'rxjs';
 import { PostService } from 'src/app/services/post.service';
+import { BypassCodeService } from 'src/app/services/bypass-code.service';
 
 // ── PUBLIC ENTITIES ───────────────────────────────────────────────────────────
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
@@ -111,6 +112,10 @@ interface SearchSource {
    * because nobody happens to be named "Trainer".
    */
   browseAllLink?: any[];
+  /** Extra category names that should also pin the browse-all item -- e.g. an admin searching the
+   *  word "bypass" for the source actually labeled "Bypass codes" works via the label itself, but
+   *  someone searching "payment code" (the other name this same feature is known by) needs an alias. */
+  categoryAliases?: string[];
 }
 
 const has = (value: any, query: string): boolean =>
@@ -506,13 +511,33 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: m.bodyPart,
         link: ['/dashboard/hub/muscle-groups', m.id]
       })
+    },
+    // PY-28/29/30: the admin notification telling a reviewer to "Open bypass codes" pointed at a
+    // page global search could never find -- this source exists mainly so typing "bypass" (the
+    // exact word used) finds the Payment codes page at all, with its own issued codes searchable too.
+    {
+      key: 'bypassCodes',
+      label: 'Bypass codes',
+      icon: 'key',
+      adminOnly: true,
+      fetch$: () => this.bypassCodeService.getAllBypassCodes(),
+      match: (c, q) => has(c?.code, q) || has(c?.planName, q) || has(c?.createdByAdminEmail, q),
+      toItem: c => ({
+        id: c.id,
+        label: c.code,
+        sublabel: `${c.planName} · ${c.status === 'true' ? 'Active' : 'Inactive'}`,
+        link: ['/dashboard/payment-codes']
+      }),
+      browseAllLink: ['/dashboard/payment-codes'],
+      categoryAliases: ['Payment codes']
     }
   ];
 
   constructor(
     private store: Store,
     private elementRef: ElementRef,
-    private postService: PostService
+    private postService: PostService,
+    private bypassCodeService: BypassCodeService
   ) { }
 
   ngOnInit(): void {
@@ -703,7 +728,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     const sources = this.activeSources();
 
     const streams: Observable<GlobalSearchGroup>[] = sources.map(source => {
-      const categoryMatched = !!source.browseAllLink && matchesCategory(source.label, query);
+      const categoryMatched = !!source.browseAllLink &&
+        (matchesCategory(source.label, query) || (source.categoryAliases ?? []).some(alias => matchesCategory(alias, query)));
 
       return this.dataFor(source).pipe(
         map((data: any) => {

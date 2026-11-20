@@ -24,6 +24,10 @@
       class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'new' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
       Ask for a code
     </button>
+    <button *ngIf="isSuperAdmin" type="button" (click)="tab = 'planCodes'" data-test="tab-plan-codes"
+      class="px-3 py-1.5 rounded-xl text-sm border" [ngClass]="tab === 'planCodes' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700'">
+      Plan codes <span *ngIf="openPlanRequests.length" class="ml-1 font-semibold">({{ openPlanRequests.length }})</span>
+    </button>
   </div>
 
   <div *ngIf="loading" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm animate-pulse">Loading…</div>
@@ -238,6 +242,82 @@
         class="px-4 py-2 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-sm font-medium disabled:opacity-50">
         {{ sending ? 'Sending…' : 'Send to the administration' }}
       </button>
+    </div>
+  </section>
+
+  <!-- ===================== SUPER ADMIN: PLAN-TIER BYPASS CODES ===================== -->
+  <!-- PY-28/29/30: a client's direct "I'd like a code for this Plan" ask has existed on the backend
+       (PlanCodeRequest/BypassCode) since before this page did, with its own admin notification --
+       but no admin UI ever read it. This tab is that missing UI. -->
+  <section *ngIf="tab === 'planCodes' && isSuperAdmin" class="flex flex-col gap-4">
+    <div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Requests to review</h2>
+      <p class="text-xs text-gray-600 dark:text-gray-400">A client asked directly for a comped Plan subscription, with no booking or trainer involved.</p>
+    </div>
+    <div *ngIf="!loading && openPlanRequests.length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400">
+      Nothing is waiting for you.
+    </div>
+    <div *ngFor="let r of openPlanRequests" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3" data-test="plan-request-card">
+      <div class="flex justify-between gap-2 flex-wrap">
+        <div>
+          <div class="font-medium text-gray-900 dark:text-gray-100">{{ r.clientName }} would like a code for {{ r.planName }}</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Request #{{ r.id }} · {{ r.date | date:'medium' }} · {{ r.clientEmail }}</div>
+        </div>
+      </div>
+      <p *ngIf="r.note" class="text-sm text-gray-800 dark:text-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 p-2">"{{ r.note }}"</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <label class="text-xs text-gray-600 dark:text-gray-400">Duration (months)
+          <input type="number" min="1" max="24" [(ngModel)]="planDecision[r.id].durationMonths" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+        <label class="text-xs text-gray-600 dark:text-gray-400">Max redemptions (blank = unlimited)
+          <input type="number" min="1" [(ngModel)]="planDecision[r.id].maxRedemptions" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+        <label class="text-xs text-gray-600 dark:text-gray-400">Note (sent to the client either way)
+          <input type="text" [(ngModel)]="planDecision[r.id].note" class="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+        </label>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" (click)="issuePlanCode(r)" [disabled]="issuingPlanRequestId === r.id" data-test="issue-plan-code"
+          class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">Issue a code and send it</button>
+        <button type="button" (click)="declinePlanRequest(r)" [disabled]="issuingPlanRequestId === r.id" data-test="decline-plan-request"
+          class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-50">Decline</button>
+      </div>
+    </div>
+
+    <h3 *ngIf="closedPlanRequests.length" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-2">Already decided</h3>
+    <div *ngFor="let r of closedPlanRequests" class="rounded-xl border border-gray-200 dark:border-gray-800 p-3 text-sm flex justify-between gap-2 flex-wrap">
+      <span>#{{ r.id }} · {{ r.clientName }} → {{ r.planName }}</span>
+      <span class="text-xs text-gray-600 dark:text-gray-400"><ng-container *ngIf="r.decidedByName">{{ r.decidedByName }} · </ng-container>{{ r.decisionNote || 'Closed' }}</span>
+    </div>
+
+    <div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-2">Every Plan code issued</h2>
+    </div>
+    <div *ngIf="!loading && bypassCodes.length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400">
+      No Plan codes yet.
+    </div>
+    <div *ngFor="let c of bypassCodes" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2" data-test="plan-code-card">
+      <div class="flex justify-between gap-2 flex-wrap items-center">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-lg tracking-wider text-gray-900 dark:text-gray-100">{{ c.code }}</span>
+          <button type="button" (click)="copy(c.code)" class="text-xs px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700">Copy</button>
+        </div>
+        <span class="text-xs px-2 py-1 rounded-full" [ngClass]="c.status === 'true' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'">
+          {{ c.status === 'true' ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">{{ c.planName }} · created by {{ c.createdByAdminEmail }}</div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        {{ c.redemptionCount }} of {{ c.maxRedemptions ?? '∞' }} used · {{ c.durationMonths }} month{{ c.durationMonths === 1 ? '' : 's' }}
+        <span *ngIf="c.expiresAt"> · expires {{ c.expiresAt | date:'mediumDate' }}</span>
+      </div>
+      <p *ngIf="c.note" class="text-xs text-gray-500 dark:text-gray-400">{{ c.note }}</p>
+      <div>
+        <button type="button" (click)="toggleBypassCodeStatus(c)" [disabled]="busyId === c.id" data-test="toggle-plan-code"
+          class="text-xs px-3 py-1.5 rounded-lg border" [ngClass]="c.status === 'true' ? 'border-red-300 text-red-700 dark:text-red-300' : 'border-emerald-300 text-emerald-700 dark:text-emerald-300'">
+          {{ c.status === 'true' ? 'Deactivate' : 'Reactivate' }}
+        </button>
+      </div>
     </div>
   </section>
 </div>

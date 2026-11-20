@@ -6,24 +6,32 @@ import { Store } from '@ngrx/store';
 import jwt_decode from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
 
-import { PaymentCode, PaymentCodeDiscountType, PaymentCodeRequest, PaymentCodeTargetType } from 'src/app/models/payment-code.model';
+import { PaymentCode, PaymentCodeDiscountType, PaymentCodeRequest, PaymentCodeTargetType, PlanCodeRequest } from 'src/app/models/payment-code.model';
 import { Users } from 'src/app/models/users.interface';
 import { Booking, MyClientSummary } from 'src/app/models/booking.model';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { PaymentCodeService } from 'src/app/services/payment-code.service';
+import { BypassCodeService, BypassCode } from 'src/app/services/bypass-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { selectUser } from 'src/app/state/user/user.selector';
 
-type Tab = 'review' | 'requests' | 'codes' | 'new';
+type Tab = 'review' | 'requests' | 'codes' | 'new' | 'planCodes';
 
 /**
- * Payment codes — one page, three roles.
+ * Payment codes — one page, three roles, TWO separate code systems sharing it (PY-28/29/30, Nov
+ * 20 2026): a booking/package/subscription bypass (this page's original purpose, below) AND a
+ * Plan-tier bypass code (comped subscription, no booking/trainer involved -- "planCodes" tab).
+ * They were built as genuinely separate backend systems (PaymentCodeRequest vs PlanCodeRequest/
+ * BypassCode) with no admin UI ever built for the second one, even though its own notification
+ * ("...Open bypass codes to send them one, or decline") told admins to come here for it. Kept as
+ * one page rather than two, since that's exactly where admins are already told to look.
  * - Everyone: the codes issued to them (copy the code, see uses left and expiry) and the requests that concern them.
  * - Trainer / center: ask the administration for a code for a client, and forward or decline a code a client asked for.
- * - Super admin: review pending requests (approve with uses / validity, or reject) and every code ever issued (revoke).
+ * - Super admin: review pending requests (approve with uses / validity, or reject), every code ever issued (revoke),
+ *   and (planCodes tab) issue or decline a client's direct ask for a Plan-tier code.
  */
 @Component({
   selector: 'app-payment-codes',
@@ -43,6 +51,13 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
   myRequests: PaymentCodeRequest[] = [];
   adminRequests: PaymentCodeRequest[] = [];
   adminCodes: PaymentCode[] = [];
+
+  /** Plan-tier bypass codes (super admin only) -- a separate system from the booking/package codes above. */
+  planRequests: PlanCodeRequest[] = [];
+  bypassCodes: BypassCode[] = [];
+  /** Per-request inputs while issuing a Plan code: how many months, how many redemptions (blank = unlimited), and a note. */
+  planDecision: Record<number, { durationMonths: number; maxRedemptions: number | null; note: string }> = {};
+  issuingPlanRequestId: number | null = null;
 
   /**
    * Per-request inputs while reviewing: how many uses, how many days, the note, and what the code
@@ -79,6 +94,7 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
 
   constructor(
     private codes: PaymentCodeService,
+    private bypassCodeService: BypassCodeService,
     private store: Store,
     private snackBar: SnackBarService,
     private dialog: MatDialog,
@@ -124,7 +140,59 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
         }, error: () => this.adminRequests = []
       });
       this.codes.adminCodes().subscribe({ next: r => this.adminCodes = r.data ?? [], error: () => this.adminCodes = [] });
+      this.bypassCodeService.getAllCodeRequests().subscribe({
+        next: r => {
+          this.planRequests = r.data ?? [];
+          for (const req of this.planRequests) {
+            if (!this.planDecision[req.id]) this.planDecision[req.id] = { durationMonths: 1, maxRedemptions: 1, note: '' };
+          }
+        }, error: () => this.planRequests = []
+      });
+      this.bypassCodeService.getAllBypassCodes().subscribe({ next: r => this.bypassCodes = r.data ?? [], error: () => this.bypassCodes = [] });
     }
+  }
+
+  get openPlanRequests(): PlanCodeRequest[] {
+    return this.planRequests.filter(r => r.status === 'OPEN');
+  }
+
+  get closedPlanRequests(): PlanCodeRequest[] {
+    return this.planRequests.filter(r => r.status !== 'OPEN');
+  }
+
+  /** Issues a Plan-tier code for this request's plan, then closes the request with the code in the decision note -- the
+   *  backend keeps these as two separate calls (no automatic link between a request and a code), so this ties them together. */
+  issuePlanCode(r: PlanCodeRequest): void {
+    const d = this.planDecision[r.id];
+    this.issuingPlanRequestId = r.id;
+    this.bypassCodeService.addBypassCode({
+      planId: r.planId, durationMonths: d.durationMonths, maxRedemptions: d.maxRedemptions, note: d.note || null,
+    }).subscribe({
+      next: created => {
+        const code = created.data?.code;
+        this.bypassCodeService.closeCodeRequest(r.id, code ? `Code sent: ${code}` : d.note).subscribe({
+          next: () => {
+            this.issuingPlanRequestId = null;
+            this.snackBar.openSnackBar(code ? `Code ${code} created and the client was told` : 'Request closed', '');
+            this.reload();
+          },
+          error: err => { this.issuingPlanRequestId = null; this.snackBar.openSnackBar(err?.error?.message || 'Code was created, but closing the request failed -- try again.', 'error'); }
+        });
+      },
+      error: err => { this.issuingPlanRequestId = null; this.snackBar.openSnackBar(err?.error?.message || 'Could not create the code.', 'error'); }
+    });
+  }
+
+  declinePlanRequest(r: PlanCodeRequest): void {
+    this.issuingPlanRequestId = r.id;
+    this.bypassCodeService.closeCodeRequest(r.id, this.planDecision[r.id]?.note || 'Declined').subscribe({
+      next: () => { this.issuingPlanRequestId = null; this.snackBar.openSnackBar('Request declined', ''); this.reload(); },
+      error: err => { this.issuingPlanRequestId = null; this.snackBar.openSnackBar(err?.error?.message || 'Could not decline the request.', 'error'); }
+    });
+  }
+
+  toggleBypassCodeStatus(c: BypassCode): void {
+    this.run(c.id, this.bypassCodeService.updateStatus(c.id), c.status === 'true' ? 'Code deactivated' : 'Code reactivated');
   }
 
   get pendingForAdmin(): PaymentCodeRequest[] {
