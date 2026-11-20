@@ -196,11 +196,18 @@
      ══════════════════════════════════════════════════════════ -->
 <div *ngIf="dataReady; else loading">
 
+    <!-- Same promo badges a client sees on the public profile -- lets the trainer check their own active offers are showing correctly. -->
+    <app-promo-badge-list class="block scroll-mt-20" ownerType="trainer" [ownerId]="trainer?.id ?? null"></app-promo-badge-list>
+
     <app-my-trainer-introduction id="introduction" class="block scroll-mt-20" [trainerIntroduction]="trainerIntroduction">
     </app-my-trainer-introduction>
 
     <app-my-trainer-pricing id="pricing" class="block scroll-mt-20" [trainerPricing]="trainerPricing">
     </app-my-trainer-pricing>
+
+    <!-- The same plans/packages pricing a client sees on the public profile, so the trainer can check how their own offers actually look. -->
+    <app-provider-packages class="block scroll-mt-20" eyebrow="How clients see your plans" [trainerId]="trainer?.id">
+    </app-provider-packages>
 
     <app-my-trainer-benefits id="benefits" class="block scroll-mt-20" [trainerBenefit]="trainerBenefit">
     </app-my-trainer-benefits>
@@ -220,6 +227,15 @@
 
     <app-my-trainer-subscriptions [trainerSubscription]="trainerSubscription" [trainer]="trainer">
     </app-my-trainer-subscriptions>
+
+    <!-- The exact booking-terms card a client sees before they book -- rate, cancellation policy, how paying works --
+         so the trainer can check it reads correctly. Same providerLabel the public profile uses (third person,
+         "this trainer"), deliberately: this is a preview of the client's actual copy, not a reworded one.
+         The policy text itself is edited on the Partnership details page. -->
+    <app-provider-terms class="block scroll-mt-20" providerLabel="this trainer" [policy]="trainer?.bookingPolicy"
+        [hourlyRate]="trainer?.hourlyRate" [freeCancelHours]="trainer?.freeCancelHours"
+        [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent">
+    </app-provider-terms>
 
     <app-my-availability-editor></app-my-availability-editor>
 
