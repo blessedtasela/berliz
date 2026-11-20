@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -77,15 +77,6 @@ export class CountryService {
     this.countriesCache = null;
     this.statesCache.clear();
     this.citiesCache.clear();
-  }
-
-  getCountriesData() {
-    return this.http.get<any[]>('https://restcountries.com/v3.1/all?fields=name').pipe(
-      catchError(() => {
-        // fallback to empty so the form still loads
-        return of([]);
-      })
-    );
   }
 
 }

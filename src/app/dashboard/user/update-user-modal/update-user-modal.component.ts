@@ -84,15 +84,15 @@ export class UpdateUserModalComponent {
   }
 
   getCountriesData() {
-    // get the data from countryService
-    this.countryService.getCountriesData().subscribe((response: any) => {
-      // Process the response data
-      this.countries = response.map((country: any) => {
-        return {
-          name: country.name.common,
-          states: country?.subdivisions ? Object.keys(country.subdivisions) : []
-        };
-      });
+    // GN-74: getCountriesData() called a direct browser call to restcountries.com, which
+    // ClientMetaInterceptor's custom headers turn into a cross-origin request that API's CORS
+    // policy rejects -- silently resolving to [] every time (restcountries.com does not allow
+    // it). Switched to the app's own /apis/getCountries, like every working country dropdown.
+    this.countryService.getCountries().subscribe((response: any[]) => {
+      this.countries = response
+        .map((country: any) => ({ name: country.name }))
+        .filter((country: { name: string }) => !!country.name)
+        .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
     });
   }
 

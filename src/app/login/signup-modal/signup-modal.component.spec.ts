@@ -17,8 +17,8 @@ describe('SignupModalComponent', () => {
 
   beforeEach(() => {
     const userServiceSpy = jasmine.createSpyObj('UserService', ['signup', 'setSignupFormIndex']);
-    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountriesData']);
-    countryServiceSpy.getCountriesData.and.returnValue(of([]));
+    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountries']);
+    countryServiceSpy.getCountries.and.returnValue(of([]));
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);

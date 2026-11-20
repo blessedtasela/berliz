@@ -16,8 +16,8 @@ describe('AdminUpdateUserModalComponent', () => {
 
   beforeEach(() => {
     const userServiceSpy = jasmine.createSpyObj('UserService', ['updateSuperUser', 'setSignupFormIndex']);
-    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountriesData']);
-    countryServiceSpy.getCountriesData.and.returnValue(of([]));
+    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountries']);
+    countryServiceSpy.getCountries.and.returnValue(of([]));
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
     const snackbarServiceSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);

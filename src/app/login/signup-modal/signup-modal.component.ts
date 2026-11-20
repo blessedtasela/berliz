@@ -136,15 +136,17 @@ export class SignupModalComponent {
   }
 
   getCountriesData() {
-    // get the data from countryService
-    this.countryService.getCountriesData().subscribe((response: any) => {
-      // Process the response data
-      this.countries = response.map((country: any) => {
-        return {
-          name: country.name.common,
-          states: country?.subdivisions ? Object.keys(country.subdivisions) : []
-        };
-      });
+    // GN-74: this used to call CountryService.getCountriesData(), a direct browser call to
+    // restcountries.com -- ClientMetaInterceptor stamps every outgoing request (including
+    // third-party ones) with custom headers, which turns that into a cross-origin request
+    // restcountries.com's CORS policy doesn't allow, so it silently failed to [] every time.
+    // The app's own /apis/getCountries (same one the working signup page's location-form uses)
+    // has no such cross-origin exposure.
+    this.countryService.getCountries().subscribe((response: any[]) => {
+      this.countries = response
+        .map((country: any) => ({ name: country.name }))
+        .filter((country: { name: string }) => !!country.name)
+        .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
     });
   }
 
