@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { Actions } from '@ngrx/effects';
 import { NotificationSection, Notifications } from 'src/app/models/Notifications.interface';
 import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -11,7 +12,9 @@ import { NotificationDetailsComponent } from 'src/app/shared/notification-detail
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { navigateToNotificationEntity, notificationHasDeepLink } from 'src/app/utils/notification-entity-link.util';
 import { Store } from '@ngrx/store';
-import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { selectMyNotifications, selectNotificationLoading } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications, loadMyNotificationsFailure, loadMyNotificationsSuccess } from 'src/app/state/notification/notification.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 
 /** Rough character count at which notification-item's 3-line clamp (text-xs) actually starts cutting text off. Not pixel-exact, but nothing here needs it to be -- just "did they already see the whole thing". */
 const TRIM_THRESHOLD_CHARS = 150;
@@ -49,10 +52,16 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 50;
 
+  /** Why the notifications couldn't be loaded -- so a failed load never reads as "no notifications". */
+  loadError: string | null = null;
+  /** True until the first load settles (success or failure) -- gates the metrics/list so they can't show "0" during a fetch. */
+  loading = true;
+
   private subs: Subscription[] = [];
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private notificationService: NotificationService,
     private snackbar: SnackBarService,
     private dialog: MatDialog,
@@ -62,6 +71,14 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // GN-73: this page used to go straight from "Total 0 / No notifications" to the real counts --
+    // it never tracked loading itself, free-riding entirely on some OTHER component (top-bar's bell,
+    // the sidebar) having already dispatched loadMyNotifications() first. Dispatching it here too,
+    // like the reference page (my-notifications-page.component.ts) already does, makes this page
+    // correct on its own regardless of what else happened to run first.
+    this.subs.push(watchLoadError(this.actions$, loadMyNotificationsFailure, [loadMyNotifications, loadMyNotificationsSuccess], null, m => this.loadError = m));
+    this.subs.push(this.store.select(selectNotificationLoading).subscribe(l => this.loading = l));
+
     const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.allNotifications = data;
 
@@ -70,6 +87,12 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
       this.updatePage();
     });
     this.subs.push(sub);
+
+    this.store.dispatch(loadMyNotifications());
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadMyNotifications());
   }
 
 

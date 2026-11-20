@@ -6,15 +6,24 @@
         [(searchQuery)]="searchQuery" [placeholder]="placeholder">
     </app-search-panel>
 
-    <!-- Metrics -->
-    <app-my-notification-metrics [notifications]="allNotifications"></app-my-notification-metrics>
+    <app-load-error *ngIf="!loading && loadError && allNotifications.length === 0" title="Couldn't load your notifications" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 
-    <!-- List -->
-    <notification-list [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
-        [total]="notificationsLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"
-        (toggleSelectAll)="onToggleSelectAll()" (bulkAction)="onBulkAction($event)" (open)="openDetails($event)"
-        (toggle)="onToggleItem($event)" [searchQuery]="searchQuery" (markRead)="onMarkRead($event)"
-        (markUnread)="onMarkUnread($event)" (deleteItem)="onDelete($event)" [selectionMode]="selectionMode">
-    </notification-list>
+    <!-- GN-73: this page used to go straight from "Total 0 / No notifications" to the real counts. -->
+    <div *ngIf="loading && allNotifications.length === 0" class="flex items-center justify-center py-10" data-testid="notifications-loading">
+      <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:24px;height:24px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="allNotifications.length > 0 || (!loading && !loadError)">
+        <!-- Metrics -->
+        <app-my-notification-metrics [notifications]="allNotifications"></app-my-notification-metrics>
+
+        <!-- List -->
+        <notification-list [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
+            [total]="notificationsLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"
+            (toggleSelectAll)="onToggleSelectAll()" (bulkAction)="onBulkAction($event)" (open)="openDetails($event)"
+            (toggle)="onToggleItem($event)" [searchQuery]="searchQuery" (markRead)="onMarkRead($event)"
+            (markUnread)="onMarkUnread($event)" (deleteItem)="onDelete($event)" [selectionMode]="selectionMode">
+        </notification-list>
+    </ng-container>
 
 </div>
