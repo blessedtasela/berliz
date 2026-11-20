@@ -30,8 +30,15 @@
     <!-- BK-34 ext. 4 — personalized plan requests this person has sent (accept a counter, walk away, or pay). Shows nothing when they have none. -->
     <app-my-personalized-requests></app-my-personalized-requests>
 
-    <app-load-error *ngIf="loadError && bookings.length === 0" title="Couldn't load your bookings"
+    <!-- GN-73: a concurrent, unrelated booking action's error could survive in the shared NgRx
+         error slot even while THIS page's own load is still in flight (or just succeeded) -- the
+         missing !loading guard let that stale error flash over a load that was fine. -->
+    <app-load-error *ngIf="!loading && loadError && bookings.length === 0" title="Couldn't load your bookings"
         [message]="loadError" (retry)="loadBookings()"></app-load-error>
+
+    <div *ngIf="loading && bookings.length === 0" class="flex items-center justify-center py-10" data-testid="bookings-loading">
+      <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:24px;height:24px;"></i-feather>
+    </div>
 
     <app-bookings-empty *ngIf="bookings.length === 0 && !loadError && !loading" message="You haven't booked any sessions yet." [showFindProviderCta]="true"></app-bookings-empty>
 

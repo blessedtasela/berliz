@@ -68,6 +68,8 @@ describe('MyBookingsMainComponent', () => {
       store.overrideSelector(selectBookingError, 'Server exploded');
       store.refreshState();
       fixture.detectChanges();
+      component.loading = false; // the (mocked) store never finishes the load the component starts
+      fixture.detectChanges();
 
       expect(el().textContent).toContain("Couldn't load your bookings");
       expect(el().textContent).toContain('Server exploded');
@@ -78,6 +80,8 @@ describe('MyBookingsMainComponent', () => {
       const store = TestBed.inject(MockStore);
       store.overrideSelector(selectBookingError, 'Server exploded');
       store.refreshState();
+      fixture.detectChanges();
+      component.loading = false; // the (mocked) store never finishes the load the component starts
       fixture.detectChanges();
       const dispatch = spyOn(store, 'dispatch');
 
@@ -100,6 +104,24 @@ describe('MyBookingsMainComponent', () => {
       store.refreshState();
       fixture.detectChanges();
       expect(el().querySelector('app-bookings-empty')).toBeNull();
+    });
+
+    /**
+     * GN-73: loading and error are shared across several unrelated booking actions in the store
+     * (loadMyBookings/loadMyProviderBookings/createBooking/etc all write the same slot), so a
+     * DIFFERENT action's leftover error could still be sitting in the store while THIS page's own
+     * load is back in flight -- without the !loading guard, that stale error flashed over a load
+     * that was perfectly fine.
+     */
+    it('shows a spinner instead of a stale error while a fresh load is in flight', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectBookingError, 'Server exploded');
+      store.overrideSelector(selectBookingLoading, true);
+      store.refreshState();
+      fixture.detectChanges();
+
+      expect(el().querySelector('app-load-error')).toBeNull();
+      expect(el().querySelector('[data-testid="bookings-loading"]')).toBeTruthy();
     });
   });
 

@@ -8,6 +8,10 @@
 <app-admin-search [selector]="selectUsers" [fields]="userSearchFields"
   placeholder="Search users..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="!loading && loadError && usersData.length === 0" title="Couldn't load users" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<!-- GN-73: this page used to go straight from blank to "49 cards" with no loading indicator at all. -->
+<div *ngIf="loading && usersData.length === 0" class="flex items-center justify-center py-10" data-testid="users-loading">
+  <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:24px;height:24px;"></i-feather>
+</div>
 <ng-container *ngIf="usersData.length > 0 || (!loading && !loadError)">
 <app-user-header [usersData]="usersData" [totalUsers]="totalUsers" [usersLength]="usersLength"></app-user-header>
 <app-user-list [usersData]="usersData" [deepLinkUserId]="deepLinkUserId"></app-user-list>

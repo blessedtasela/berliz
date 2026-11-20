@@ -72,4 +72,32 @@ describe('UsersComponent', () => {
       expect(/<app-[a-z-]+-header\b/.test(el().innerHTML)).toBeTrue();
     });
   });
+
+  /** GN-73: this page used to go straight from blank to "49 cards" with no loading indicator at all. */
+  describe('while the list is still loading (GN-73)', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    it('shows a spinner, not the table or the empty/error state', () => {
+      TestBed.inject(MockStore).overrideSelector(selectUserLoading, true);
+      TestBed.inject(MockStore).refreshState();
+      fixture.detectChanges();
+
+      expect(el().querySelector('[data-testid="users-loading"]')).toBeTruthy();
+      expect(el().querySelector('app-user-header')).toBeNull();
+      expect(el().querySelector('app-load-error')).toBeNull();
+    });
+
+    it('hides the spinner once loading resolves', () => {
+      TestBed.inject(MockStore).overrideSelector(selectUserLoading, true);
+      TestBed.inject(MockStore).refreshState();
+      fixture.detectChanges();
+
+      actions$.next(loadUsersSuccess({ response: [] } as any));
+      TestBed.inject(MockStore).overrideSelector(selectUserLoading, false);
+      TestBed.inject(MockStore).refreshState();
+      fixture.detectChanges();
+
+      expect(el().querySelector('[data-testid="users-loading"]')).toBeNull();
+    });
+  });
 });
