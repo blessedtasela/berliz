@@ -182,6 +182,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
 | Partner one-pager, brand assets | ✅ | |
 | Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular's `application` builder `prerender` option, which replaced the retired `@nguniversal/builders`; `index.html` is the prerendered landing page and the SPA fallback is `index.csr.html`) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
+| Security incident monitoring | ✅ | `/dashboard/security-incidents`, admin-only. Raw security signals (currently: failed-login lockouts, automatic-payout failures) group into one incident per (event type, subject) within a 24h window instead of a flood of raw alerts; each incident shows its evidence and a ledger. Resolving an incident (Actioned/Dismissed) always requires a written note — nothing here ever blocks, suspends or holds anything automatically; an admin who takes real action does so elsewhere and records it here. Not yet linked from the Hub grid or sidebar. Backend: `GET /security/incidents`, `GET /security/incidents/{id}/events`, `PUT /security/incidents/{id}/resolve` |
 
 ## 10. Growth & marketing
 
@@ -223,6 +224,13 @@ instead).
 ## Changelog
 
 Newest first.
+
+### 2026-11-20 — Security events now group into reviewable incidents with a ledger
+
+- **A new admin-only Security Incidents page** groups raw security signals (failed-login
+  lockouts, automatic-payout failures so far) into one incident per issue instead of a flood of
+  individual alerts, each with its own evidence trail. Resolving one always requires a written
+  note; nothing is ever blocked, suspended, or held automatically. `berliz`, `com.berliz`.
 
 ### 2026-11-20 — Trainers can now preview their own promos, plans and booking terms
 
