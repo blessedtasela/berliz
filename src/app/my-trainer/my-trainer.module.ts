@@ -34,6 +34,9 @@ import { MyBookingsModule } from '../bookings/bookings.module';
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PromoBadgeListComponent } from 'src/app/promotions/promo-badge-list/promo-badge-list.component';
+import { ProviderPackagesComponent } from 'src/app/shared/provider-profile/provider-packages.component';
+import { ProviderTermsComponent } from 'src/app/shared/provider-profile/provider-terms.component';
 @NgModule({
   declarations: [
     MyTrainerMainComponent,
@@ -70,6 +73,9 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     MyEquipmentPageComponent,
     SharedModule,
     MyBookingsModule,
+    PromoBadgeListComponent,
+    ProviderPackagesComponent,
+    ProviderTermsComponent,
   ]
 })
 export class MyTrainerModule { }

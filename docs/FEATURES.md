@@ -224,6 +224,13 @@ instead).
 
 Newest first.
 
+### 2026-11-20 — Trainers can now preview their own promos, plans and booking terms
+
+- **The trainer's own "Trainer Details" dashboard page now shows the same promo badges, plans/pricing
+  cards and booking-terms card a client sees on their public profile** -- all three existed and were
+  already used correctly on the public page, just never wired into the trainer's own view, so there
+  was no way to check how any of the three actually looked before now. `berliz`.
+
 ### 2026-11-18 — The free trial is now visible at a glance, not just in a banner below
 
 - **The Trial session button itself now shows the price struck through with a "FREE" badge**,
