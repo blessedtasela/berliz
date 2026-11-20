@@ -13,7 +13,7 @@ describe('HeroSectionComponent', () => {
 
   beforeEach(() => {
     const dashboardServiceSpy = jasmine.createSpyObj('DashboardService', ['getBerlizDetails']);
-    dashboardServiceSpy.getBerlizDetails.and.returnValue(of({ centers: 0, partners: 0, users: 0 }));
+    dashboardServiceSpy.getBerlizDetails.and.returnValue(of({ centers: 0, partners: 0, users: 0, members: 0 }));
     authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
     authServiceSpy.isAuthenticated.and.returnValue(false);
 
@@ -50,6 +50,20 @@ describe('HeroSectionComponent', () => {
     const ctaText = fixture.nativeElement.textContent;
     expect(ctaText).not.toContain('Join for Free');
     expect(ctaText).toContain('Go to Dashboard');
+  });
+
+  /**
+   * GN-62: this tile used to read `response.users` (every account, 49) and label it "Members" --
+   * a real Member is a User<->Center relationship (2), a different, smaller number, now its own
+   * field on the response.
+   */
+  it('"Members" reads the real member count, not the total user count (GN-62)', () => {
+    const dashboardService = TestBed.inject(DashboardService) as jasmine.SpyObj<DashboardService>;
+    (dashboardService.getBerlizDetails as jasmine.Spy).and.returnValue(of({ centers: 2, partners: 11, users: 49, members: 2 }));
+
+    component.getBerlizDetails();
+
+    expect(component.memberValue).toBe(2);
   });
 
   // Regression: the 9 MB background loop used to download for every visitor the moment the landing page opened.

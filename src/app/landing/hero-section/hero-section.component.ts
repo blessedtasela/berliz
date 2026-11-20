@@ -118,7 +118,9 @@ export class HeroSectionComponent implements OnInit, AfterViewInit {
       .subscribe((response: any) => {
         this.centerValue = response.centers;
         this.partnerValue = response.partners;
-        this.memberValue = response.users;
+        // GN-62: `users` is every account; a Member is a User<->Center relationship, a much
+        // smaller, different number -- `members` is its own field on this response now.
+        this.memberValue = response.members;
 
         const partners = this.stats.find(stat => stat.id === 1);
         if (partners) {
