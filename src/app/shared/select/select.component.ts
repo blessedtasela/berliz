@@ -12,10 +12,20 @@ export interface SelectOption {
  * The app's one searchable dropdown for forms. A plain `<select>` can't be
  * searched, and on a long list (every user, every city) that makes a form
  * unusable; this wraps ng-select with the shared `.berliz-select` look and
- * three behaviours the bare control got wrong:
+ * four behaviours the bare control got wrong:
  *
  *  - the open list is attached to `<body>`, so a modal's overflow or the field
  *    below can never clip or hide it;
+ *  - BK-54: `[popover]="true"` additionally promotes the open list into the
+ *    browser's native top layer (the Popover API), so it can never end up
+ *    visually BEHIND an Angular Material dialog's own overlay either -- a
+ *    plain z-index, however high, is still just one stacking context among
+ *    several a dialog's own overlay/backdrop machinery creates, and can lose
+ *    that comparison in ways that are easy to get wrong across every usage of
+ *    this component; the top layer isn't part of that comparison at all, it
+ *    always renders above it by browser specification. ng-select feature-
+ *    detects `showPopover()` itself, so an unsupported browser silently keeps
+ *    today's appendTo-only behaviour -- this can only help, never regress;
  *  - it always shows a caret and a type-to-search box (the old location pickers
  *    hid the caret, so it looked like a plain, unsearchable select);
  *  - a saved value that isn't in the loaded list (a city typed by hand, a user
@@ -39,7 +49,7 @@ export interface SelectOption {
       [searchable]="true" [closeOnSelect]="!multiple" [clearSearchOnAdd]="true"
       [addTag]="allowCustom ? addCustom : false" [addTagText]="customLabel"
       [notFoundText]="allowCustom ? 'Type to add your own' : notFoundText"
-      [loading]="loading" [appendTo]="appendTo" [virtualScroll]="options.length > 150"
+      [loading]="loading" [appendTo]="appendTo" [popover]="true" [virtualScroll]="options.length > 150"
       [inputAttrs]="{ 'aria-label': ariaLabel || placeholder }"
       [disabled]="disabled"
       [ngModel]="model" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{ standalone: true }"

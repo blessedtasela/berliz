@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 import { SelectComponent } from './select.component';
 
@@ -101,5 +103,17 @@ describe('SelectComponent', () => {
     create(h => h.allowCustom = true);
 
     expect(select.addCustom('Squamish')).toEqual({ value: 'Squamish', label: 'Squamish' });
+  });
+
+  // BK-54: the open list used to render invisibly (reachable only by keyboard) when this component
+  // was opened from inside an Angular Material dialog -- a plain z-index, however high, is still
+  // just one stacking context among several a dialog's own overlay/backdrop machinery creates, and
+  // can lose that comparison. `[popover]="true"` promotes the open list into the browser's native
+  // top layer instead, which always renders above a dialog regardless of z-index.
+  it('promotes the open list into the browser\'s native top layer, so a dialog can never render on top of it', () => {
+    create();
+
+    const ngSelect = fixture.debugElement.query(By.directive(NgSelectComponent)).componentInstance as NgSelectComponent;
+    expect(ngSelect.popover()).toBeTrue();
   });
 });

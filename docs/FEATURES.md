@@ -225,6 +225,14 @@ instead).
 
 Newest first.
 
+### 2026-11-20 — Admin dropdowns inside a dialog can no longer render invisibly
+
+- **Every searchable dropdown in the app (user pickers, category pickers, etc.) now renders above
+  any dialog it's opened from**, using the browser's native top-layer rendering instead of relying
+  on z-index alone -- fixes the admin "Add a member" user picker, which loaded its options
+  correctly but never painted them on screen for a mouse user (keyboard selection still worked).
+  `berliz`.
+
 ### 2026-11-20 — Security events now group into reviewable incidents with a ledger
 
 - **A new admin-only Security Incidents page** groups raw security signals (failed-login
