@@ -2,11 +2,16 @@
 
   <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
     <h2 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Users</h2>
-    <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ users.length }} total</span>
+    <span *ngIf="!loading || users.length > 0" class="text-[11px] text-gray-400 dark:text-gray-500">{{ users.length }} total</span>
+  </div>
+
+  <!-- Loading -- GN-72: never claim "No users yet" before loadAllUsers() has actually resolved. -->
+  <div *ngIf="loading && users.length === 0" class="flex items-center justify-center py-10" data-testid="top-users-loading">
+    <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:24px;height:24px;"></i-feather>
   </div>
 
   <!-- Empty -->
-  <div *ngIf="users.length === 0" class="flex flex-col items-center py-10 gap-2 text-center">
+  <div *ngIf="!loading && users.length === 0" class="flex flex-col items-center py-10 gap-2 text-center">
     <i-feather name="users" class="text-gray-300 dark:text-gray-600" style="width:28px;height:28px;"></i-feather>
     <p class="text-xs text-gray-400 dark:text-gray-500 italic">No users yet</p>
   </div>
