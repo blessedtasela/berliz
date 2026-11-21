@@ -47,6 +47,14 @@ describe('UserListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  // GN-71: the "Email - username" column header promised both, but the row only ever rendered email.
+  it('shows the username under the email, when the account has one', () => {
+    component.usersData = [{ id: 7, email: 'rishab@example.com', username: 'rish_r', status: 'true' } as any];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('@rish_r');
+  });
+
   // SG-11: lets an admin resend the activation code directly from the Users row.
   describe('resendActivation', () => {
     beforeEach(() => {

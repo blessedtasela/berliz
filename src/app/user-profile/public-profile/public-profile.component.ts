@@ -198,6 +198,13 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return this.profile.displayName || `${this.profile.firstname ?? ''} ${this.profile.lastname ?? ''}`.trim();
   }
 
+  /** GN-71: the heading's own fallback when a name is missing -- `@handle` is always a real,
+   *  identifying fallback (every account has a username, auto-generated and backfilled; see
+   *  User.java's own doc comment), unlike the generic "Berliz member" placeholder it replaces. */
+  get headingFallback(): string {
+    return this.profile?.username ? '@' + this.profile.username : 'Berliz member';
+  }
+
   private readonly _uri = memoizePhotoUri();
 
   get photoSrc(): string {

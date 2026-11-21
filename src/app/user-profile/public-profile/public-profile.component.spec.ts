@@ -52,6 +52,16 @@ describe('PublicProfileComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  /** GN-71: `@handle` is a real, always-present fallback (every account has a username), unlike the dead-end "Berliz member" placeholder it replaces. */
+  it('falls back to @username, not a generic placeholder, when there is no name', () => {
+    fixture.detectChanges();
+    (component as any).profile = { username: 'rish_r', firstname: '', lastname: '' };
+    expect(component.headingFallback).toBe('@rish_r');
+
+    (component as any).profile = { firstname: '', lastname: '' };
+    expect(component.headingFallback).toBe('Berliz member');
+  });
 });
 
 describe('PublicProfileComponent routing by numeric id vs username', () => {

@@ -81,7 +81,9 @@
 
             <div class="flex flex-col gap-2 min-w-0">
 
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{{ fullName || 'Berliz member' }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{{ fullName || headingFallback }}</h1>
+                <!-- GN-71: a handle was never shown here at all, regardless of whether a name was present. -->
+                <p *ngIf="fullName && profile.username" class="text-xs text-gray-400 dark:text-gray-500 -mt-1">&#64;{{ profile.username }}</p>
 
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
 

@@ -43,7 +43,9 @@
                         {{ user.role }}
                     </span>
                 </div>
-                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ user.email }}</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+                    {{ user.email }}<span *ngIf="user.username"> &middot; &#64;{{ user.username }}</span>
+                </p>
             </div>
 
             <div class="flex items-center gap-0.5 shrink-0">
@@ -123,7 +125,10 @@
                     </td>
                     <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.firstname }}</td>
                     <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.lastname }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ user.email }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                        {{ user.email }}
+                        <span *ngIf="user.username" class="block text-xs text-gray-400 dark:text-gray-500">&#64;{{ user.username }}</span>
+                    </td>
                     <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.id }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-1">
