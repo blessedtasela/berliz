@@ -20,6 +20,9 @@ export class InlineAlertComponent {
   @Input() message: string | null | undefined = null;
   @Input() kind: InlineAlertKind = 'error';
   @Input() dismissible = true;
+  /** GN-76 (Nov 21, 2026): renders the brand-dark palette -- for a host screen that's unconditionally
+   *  dark (not the user's light/dark toggle). Same `[dark]`-input pattern as SelectComponent. */
+  @Input() dark = false;
   @Output() dismissed = new EventEmitter<void>();
 
   get role(): 'alert' | 'status' {
@@ -27,6 +30,14 @@ export class InlineAlertComponent {
   }
 
   get classes(): string {
+    if (this.dark) {
+      switch (this.kind) {
+        case 'warning': return 'bg-amber-950/30 border-amber-900 text-amber-300';
+        case 'info': return 'bg-sky-950/30 border-sky-900 text-sky-300';
+        case 'success': return 'bg-emerald-950/30 border-emerald-900 text-emerald-300';
+        default: return 'bg-brand-red/10 border-brand-red text-brand-red';
+      }
+    }
     switch (this.kind) {
       case 'warning':
         return 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-200';

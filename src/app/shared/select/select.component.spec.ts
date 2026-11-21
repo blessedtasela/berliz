@@ -9,7 +9,7 @@ import { SelectComponent } from './select.component';
 @Component({
   standalone: false,
   template: `<app-select [formControl]="control" [items]="items" [bindLabel]="bindLabel" [bindValue]="bindValue"
-    [labelFn]="labelFn" [multiple]="multiple" [allowCustom]="allowCustom"></app-select>`,
+    [labelFn]="labelFn" [multiple]="multiple" [allowCustom]="allowCustom" [dark]="dark"></app-select>`,
 })
 class HostComponent {
   control = new FormControl<any>(null);
@@ -19,6 +19,7 @@ class HostComponent {
   labelFn?: (item: any) => string;
   multiple = false;
   allowCustom = false;
+  dark = false;
 }
 
 describe('SelectComponent', () => {
@@ -115,5 +116,15 @@ describe('SelectComponent', () => {
 
     const ngSelect = fixture.debugElement.query(By.directive(NgSelectComponent)).componentInstance as NgSelectComponent;
     expect(ngSelect.popover()).toBeTrue();
+  });
+
+  // GN-76 (Nov 21, 2026): a screen that's unconditionally dark (not gated by the user's light/dark
+  // toggle) needs the brand-dark skin regardless of that toggle's state.
+  it('renders the brand-dark skin instead of the toggle-aware one when [dark]="true"', () => {
+    create(h => h.dark = true);
+
+    const ngSelectEl = fixture.debugElement.query(By.directive(NgSelectComponent)).nativeElement as HTMLElement;
+    expect(ngSelectEl.classList).toContain('brand-select');
+    expect(ngSelectEl.classList).not.toContain('berliz-select');
   });
 });

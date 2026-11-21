@@ -261,6 +261,197 @@ html.dark .berliz-select .ng-arrow-wrapper .ng-arrow {
   border-top-color: #6b7280;
 }
 
+/* ─── GN-76 (Nov 21, 2026): `.brand-select` -- the same dropdown, unconditionally dark ───
+   Used via <app-select [dark]="true">, for a screen that's always dark regardless of the
+   user's light/dark toggle (see SelectComponent's `dark` input and the "GN-76" block below).
+   Mirrors `.berliz-select`'s structure exactly, just with the brand-* palette baked in directly
+   instead of gated behind `html.dark`. */
+.brand-select .ng-select-container {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #2E2E2E;
+  background-color: #1A1A1A;
+  font-size: 0.875rem;
+  color: #FFFFFF;
+  box-shadow: none;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.brand-select--compact .ng-select-container {
+  min-height: 2.25rem;
+  font-size: 0.75rem;
+}
+
+.brand-select:not(.ng-select-disabled):not(.ng-select-focused) .ng-select-container:hover {
+  border-color: #4a4a4a;
+}
+
+.brand-select.ng-select-focused .ng-select-container {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #E62E2E;
+}
+
+.brand-select.ng-select-disabled .ng-select-container {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.brand-select--error .ng-select-container {
+  border-color: #E62E2E;
+}
+
+.brand-select .ng-value-container {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem 0 0.25rem 0.875rem;
+}
+
+.brand-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.875rem;
+  padding-right: 3.25rem;
+}
+
+.brand-select .ng-placeholder {
+  color: #9A9A9A;
+}
+
+.brand-select .ng-value-container .ng-input > input {
+  font-size: inherit;
+  color: #FFFFFF;
+  cursor: text;
+  caret-color: #E62E2E;
+}
+
+.brand-select.ng-select-single .ng-value-container .ng-value {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #FFFFFF;
+}
+
+.brand-select.ng-select-multiple .ng-value-container .ng-value {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  border-radius: 9999px;
+  background-color: rgba(230, 46, 46, 0.15);
+  color: #E62E2E;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.brand-select.ng-select-multiple .ng-value-container .ng-value .ng-value-label {
+  padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+}
+
+.brand-select.ng-select-multiple .ng-value-container .ng-value .ng-value-icon {
+  padding: 0.125rem 0.5rem 0.125rem 0.25rem;
+  border-radius: 0 9999px 9999px 0;
+}
+
+.brand-select.ng-select-multiple .ng-value-container .ng-value .ng-value-icon:hover {
+  background-color: rgba(230, 46, 46, 0.3);
+}
+
+.brand-select.ng-select-multiple .ng-value-container .ng-input {
+  padding: 0.125rem 0;
+}
+
+.brand-select .ng-arrow-wrapper {
+  width: 2rem;
+  padding-right: 0.5rem;
+}
+
+.brand-select .ng-arrow-wrapper .ng-arrow {
+  border-style: solid;
+  border-color: #9A9A9A transparent transparent;
+  border-width: 5px 4.5px 0;
+  transition: transform 0.15s ease;
+}
+
+.brand-select.ng-select-opened .ng-arrow-wrapper .ng-arrow {
+  transform: rotate(180deg);
+}
+
+.brand-select .ng-clear-wrapper {
+  color: #9A9A9A;
+  padding-right: 0.25rem;
+}
+
+.brand-select .ng-clear-wrapper:hover {
+  color: #E62E2E;
+}
+
+.brand-select .ng-spinner-zone {
+  padding: 0.25rem 0.25rem 0 0;
+}
+
+.brand-select .ng-dropdown-panel,
+.ng-dropdown-panel.brand-select {
+  z-index: 2000;
+  border-radius: 0.75rem;
+  border: 1px solid #2E2E2E;
+  background-color: #1A1A1A;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin-top: 4px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.ng-dropdown-panel.brand-select.ng-select-top {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.brand-select .ng-dropdown-panel .ng-dropdown-panel-items,
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items {
+  max-height: 16rem;
+  padding: 0.25rem;
+}
+
+.brand-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option,
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items .ng-option {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.5rem;
+  color: #FFFFFF;
+}
+
+.brand-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked,
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: #242424;
+}
+
+.brand-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.brand-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked,
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+  background-color: rgba(230, 46, 46, 0.15);
+  color: #E62E2E;
+  font-weight: 700;
+}
+
+.ng-dropdown-panel.brand-select .ng-dropdown-panel-items .ng-option.ng-option-disabled {
+  color: #9A9A9A;
+  cursor: default;
+}
+
+.ng-dropdown-panel.brand-select .ng-option .highlighted {
+  text-decoration: none;
+  font-weight: 700;
+  color: #E62E2E;
+}
+
 html.dark .berliz-select .ng-value-container .ng-input > input {
   color: #f3f4f6; /* gray-100 */
 }
@@ -893,4 +1084,128 @@ html.dark .animate-pulse[class*="bg-zinc-"] {
 /* zinc-600 text on the zinc-900/950 public pages is 2.6:1 (found by the populated-data audit). */
 .text-zinc-600 {
   color: #8b8b94;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GN-76 (Nov 21, 2026) — the black/white/red brand redesign.
+   Reference: https://muse.ai/s/berliz-demo-qxd6wxc4xbqh48 (Feed/Trainers/
+   Workouts/Bookings/Stats). One place for the look, so no screen invents
+   its own red or its own grey. Deliberately NOT gated behind `.dark` --
+   the ticket is explicit every redesigned screen is dark unconditionally,
+   not a user-toggleable theme (see tailwind.config.js's `brand-*` colors).
+   Use the `brand-*` utility colors directly for anything these component
+   classes don't cover (e.g. `text-brand-red`, `bg-brand-card`).
+   ═══════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Page wrapper: near-black background, white body text, generous bottom
+     padding for the mobile tab bar some brand-shell pages sit above. */
+  .brand-shell {
+    @apply min-h-screen bg-brand-bg text-brand-text font-sans;
+  }
+
+  /* Small, widely-tracked all-caps grey label above a heading or a stat
+     ("WORKOUTS", "SESSIONS DONE", "DISCIPLINES"). */
+  .brand-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-brand-muted;
+  }
+
+  /* Big, heavy, all-caps page heading ("TODAY'S WORK.", "YOUR NUMBERS.").
+     The demo's trailing period is red -- add it as a literal character
+     wrapped in `.brand-heading-dot` rather than a ::after, so screen
+     readers get the sentence as written and a template can omit it. */
+  .brand-heading {
+    @apply text-3xl sm:text-4xl font-extrabold uppercase leading-[1.05] tracking-tight text-brand-text;
+  }
+  .brand-heading-dot {
+    @apply text-brand-red;
+  }
+  /* One or two key words picked out in red inside an otherwise-white heading or sentence. */
+  .brand-accent-word {
+    @apply text-brand-red;
+  }
+
+  /* Dark rounded card -- the base unit of every screen. One card, one idea. */
+  .brand-card {
+    @apply rounded-2xl bg-brand-card border border-brand-border;
+  }
+
+  /* The red hero/highlight card (e.g. "NEXT SESSION"): filled red, white text,
+     a black pill button inside it for the one action it offers. */
+  .brand-card--highlight {
+    @apply rounded-2xl bg-brand-red text-white;
+  }
+
+  /* A selectable option that IS selected (a booking's chosen session/time,
+     an onboarding answer that's picked): red outline, soft red glow, a
+     faint red-tinted fill -- never a full solid red card, that's reserved
+     for `.brand-card--highlight`'s one-per-screen hero use. */
+  .brand-card--selected {
+    @apply rounded-2xl border-2 border-brand-red bg-brand-red/10 shadow-[0_0_20px_rgba(230,46,46,0.35)];
+  }
+
+  /* Rounded pill -- filter chips, date/time choices, status badges. */
+  .brand-pill {
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide
+      bg-brand-card border border-brand-border text-brand-muted transition;
+  }
+  .brand-pill--selected {
+    @apply bg-brand-red border-brand-red text-white;
+  }
+  /* A pill that's disabled/unavailable (a fully-booked time slot): dimmer still, no pointer. */
+  .brand-pill--disabled {
+    @apply opacity-40 cursor-not-allowed;
+  }
+
+  /* The one main button a screen gets: large, rounded, red, bold white label. */
+  .brand-btn-primary {
+    @apply w-full px-6 py-4 rounded-2xl bg-brand-red text-white text-sm font-extrabold uppercase tracking-wide text-center
+      transition active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100;
+  }
+  /* A secondary/lower-emphasis button on a dark card -- black fill, white text, used inside a red hero card. */
+  .brand-btn-secondary {
+    @apply px-5 py-3 rounded-2xl bg-black text-white text-xs font-extrabold uppercase tracking-wide text-center transition active:scale-[0.98];
+  }
+
+  /* A large bold number that matters (a price, a count, a percentage). Red for the
+     numbers the ticket calls out as key (prices, big stats); plain white for a
+     simpler/secondary count sitting right next to one (see the Stats screen, where
+     "Sessions done"/"Hours trained" are red but "Day streak"/"This month" are white). */
+  .brand-stat-red {
+    @apply text-4xl font-extrabold text-brand-red leading-none;
+  }
+  .brand-stat-white {
+    @apply text-4xl font-extrabold text-brand-text leading-none;
+  }
+
+  /* A label/value row inside a card, divided from the next one -- "DISCIPLINES  Boxing · Strength". */
+  .brand-row {
+    @apply flex items-center justify-between gap-3 py-3 border-b border-brand-border last:border-b-0;
+  }
+  .brand-row-label {
+    @apply text-[11px] font-bold uppercase tracking-wide text-brand-muted;
+  }
+  .brand-row-value {
+    @apply text-sm font-bold text-brand-text text-right;
+  }
+
+  /* Progress bar: red fill on a dark track. */
+  .brand-progress-track {
+    @apply w-full h-2 rounded-full bg-brand-border overflow-hidden;
+  }
+  .brand-progress-fill {
+    @apply h-full rounded-full bg-brand-red;
+  }
+
+  /* A numbered step indicator (booking's "1 · SESSION", "2 · DAY AND TIME"). */
+  .brand-step-number {
+    @apply w-7 h-7 shrink-0 rounded-full bg-brand-red text-white text-xs font-extrabold flex items-center justify-center;
+  }
+
+  /* A text input on a dark screen (login/signup/onboarding free-text fields): dark charcoal fill,
+     thin grey outline, white text -- the ticket's own "dark rounded input fields with thin grey
+     outlines" for section 8. */
+  .brand-input {
+    @apply w-full px-3.5 py-2.5 rounded-xl border border-brand-border bg-brand-card text-sm text-brand-text placeholder-brand-muted
+      focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition;
+  }
 }

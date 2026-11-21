@@ -42,8 +42,10 @@ export interface SelectOption {
   template: `
     <!-- ng-select copies its own ngClass INPUT (not the static class) onto the body-attached panel, so the
          base class has to be in this object for the open list to be styled at all. -->
-    <ng-select class="berliz-select"
-      [ngClass]="{ 'berliz-select': true, 'berliz-select--error': invalid, 'berliz-select--compact': compact }"
+    <ng-select [class]="dark ? 'brand-select' : 'berliz-select'"
+      [ngClass]="dark
+        ? { 'brand-select': true, 'brand-select--error': invalid, 'berliz-select--compact': compact }
+        : { 'berliz-select': true, 'berliz-select--error': invalid, 'berliz-select--compact': compact }"
       [items]="options" bindLabel="label" bindValue="value"
       [multiple]="multiple" [placeholder]="placeholder" [clearable]="clearable"
       [searchable]="true" [closeOnSelect]="!multiple" [clearSearchOnAdd]="true"
@@ -80,6 +82,10 @@ export class SelectComponent implements ControlValueAccessor, OnChanges {
   @Input() compact = false;
   /** Where the open list is attached. `body` keeps it out of modals' clipping. */
   @Input() appendTo = 'body';
+  /** GN-76 (Nov 21, 2026): renders the brand-dark skin (`.brand-select`, see styles.css) instead of
+   *  `.berliz-select` -- for a screen that's unconditionally dark (not gated by the user's light/dark
+   *  toggle), same `[dark]`-input pattern already used elsewhere (post-comments, reaction-button). */
+  @Input() dark = false;
 
   options: SelectOption[] = [];
   model: any = null;

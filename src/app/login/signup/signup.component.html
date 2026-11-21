@@ -1,15 +1,16 @@
 <!-- ═══════════════════════════════════════════════
      SIGNUP — 3-step registration
+     GN-76 (Nov 21, 2026): black/white/red brand redesign.
 ════════════════════════════════════════════════ -->
 <section
-  class="relative min-h-screen bg-zinc-950 flex items-center justify-center px-4 py-12 overflow-hidden font-sans">
+  class="relative min-h-screen bg-brand-bg flex items-center justify-center px-4 py-12 overflow-hidden font-sans">
 
   <!-- Red glow -->
-  <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-brand-red/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-brand-red/10 blur-3xl pointer-events-none"></div>
 
   <div class="relative grid md:grid-cols-2 w-full max-w-5xl rounded-2xl overflow-hidden
-              border border-zinc-800 shadow-[0_8px_40px_rgba(0,0,0,0.6)] bg-white dark:bg-gray-900">
+              border border-brand-border shadow-[0_8px_40px_rgba(0,0,0,0.6)] bg-brand-bg">
 
     <!-- Hero Section -->
     <div class="hidden md:block">
@@ -21,29 +22,29 @@
 
       <!-- Header -->
       <header class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">Create your account</h2>
-        <p class="text-xs font-semibold text-red-600">
+        <h2 class="brand-heading text-2xl">Create your account<span class="brand-heading-dot">.</span></h2>
+        <p class="text-xs font-bold text-brand-red">
           Free to join — no credit card required.
         </p>
-        <p class="text-xs text-gray-600 dark:text-gray-400">
+        <p class="text-xs text-brand-muted normal-case">
           Prefer to be quick?
-          <a [routerLink]="['/quick-sign-up']" class="font-semibold text-red-600 hover:text-red-700 transition">
+          <a [routerLink]="['/quick-sign-up']" class="font-bold text-brand-red hover:text-white transition">
             Use the shorter sign-up (email and password only)
           </a>
         </p>
 
         <!-- Step indicator -->
         <div class="flex items-center gap-2 mt-1">
-          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+          <span class="brand-label">
             Step {{ formIndex + 1 }} of 3
           </span>
           <div class="flex items-center gap-1.5">
             <span class="h-1.5 rounded-full transition-all duration-300"
-              [ngClass]="formIndex >= 0 ? 'w-6 bg-red-600' : 'w-1.5 bg-gray-200 dark:bg-gray-700'"></span>
+              [ngClass]="formIndex >= 0 ? 'w-6 bg-brand-red' : 'w-1.5 bg-brand-border'"></span>
             <span class="h-1.5 rounded-full transition-all duration-300"
-              [ngClass]="formIndex >= 1 ? 'w-6 bg-red-600' : 'w-6 bg-gray-200 dark:bg-gray-700'"></span>
+              [ngClass]="formIndex >= 1 ? 'w-6 bg-brand-red' : 'w-6 bg-brand-border'"></span>
             <span class="h-1.5 rounded-full transition-all duration-300"
-              [ngClass]="formIndex >= 2 ? 'w-6 bg-red-600' : 'w-6 bg-gray-200 dark:bg-gray-700'"></span>
+              [ngClass]="formIndex >= 2 ? 'w-6 bg-brand-red' : 'w-6 bg-brand-border'"></span>
           </div>
         </div>
       </header>
@@ -53,7 +54,7 @@
         <!-- ── STEP 1: Name, DOB, Gender, Photo ──────────────────── -->
         <div *ngIf="formIndex === 0" class="flex flex-col gap-4">
 
-          <p *ngIf="invalidForm && !isStepValid(0)" class="px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-[11px]
+          <p *ngIf="invalidForm && !isStepValid(0)" class="px-3 py-2 rounded-xl bg-brand-red/10 border border-brand-red text-brand-red text-[11px]
                     flex items-center gap-1.5">
             <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
             Please complete all fields in this section
@@ -63,13 +64,11 @@
 
             <!-- First name -->
             <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">First name</label>
-              <input aria-label="First name" formControlName="firstname" id="firstname" placeholder="Jane" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="f('firstname').invalid && f('firstname').dirty
-                            ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
+              <label class="brand-label">First name</label>
+              <input aria-label="First name" formControlName="firstname" id="firstname" placeholder="Jane" class="brand-input"
+                [ngClass]="f('firstname').invalid && f('firstname').dirty ? 'border-brand-red' : ''" />
               <p *ngIf="f('firstname').invalid && f('firstname').dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-brand-red text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 First name is required
               </p>
@@ -77,13 +76,11 @@
 
             <!-- Last name -->
             <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Last name</label>
-              <input aria-label="Last name" formControlName="lastname" id="lastname" placeholder="Doe" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="f('lastname').invalid && f('lastname').dirty
-                            ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
+              <label class="brand-label">Last name</label>
+              <input aria-label="Last name" formControlName="lastname" id="lastname" placeholder="Doe" class="brand-input"
+                [ngClass]="f('lastname').invalid && f('lastname').dirty ? 'border-brand-red' : ''" />
               <p *ngIf="f('lastname').invalid && f('lastname').dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-brand-red text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Last name is required
               </p>
@@ -92,11 +89,10 @@
 
           <!-- DOB -->
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Date of birth</label>
-            <input aria-label="Date of birth" formControlName="dob" id="dob" type="date" [attr.max]="maxDob" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
-                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="f('dob').invalid && f('dob').dirty
-                          ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
-            <p *ngIf="f('dob').invalid && f('dob').dirty" class="text-red-500 text-[11px] flex items-center gap-1">
+            <label class="brand-label">Date of birth</label>
+            <input aria-label="Date of birth" formControlName="dob" id="dob" type="date" [attr.max]="maxDob" class="brand-input [color-scheme:dark]"
+              [ngClass]="f('dob').invalid && f('dob').dirty ? 'border-brand-red' : ''" />
+            <p *ngIf="f('dob').invalid && f('dob').dirty" class="text-brand-red text-[11px] flex items-center gap-1">
               <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
               <ng-container *ngIf="f('dob').hasError('underAge'); else missingDob">
                 You must be at least {{ f('dob').getError('underAge').requiredAge }} years old to sign up
@@ -107,18 +103,16 @@
 
           <!-- Gender -- GN-65: 4+ options render as a dropdown, not a pick list. -->
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Gender</label>
+            <label class="brand-label">Gender</label>
 
-            <select aria-label="Gender" formControlName="gender" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
-                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-              [ngClass]="f('gender').invalid && f('gender').dirty
-                          ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
+            <select aria-label="Gender" formControlName="gender" class="brand-input"
+              [ngClass]="f('gender').invalid && f('gender').dirty ? 'border-brand-red' : ''">
               <option value="" disabled hidden>Select gender</option>
               <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
             </select>
 
             <p *ngIf="f('gender').invalid && f('gender').dirty"
-              class="text-red-500 text-[11px] flex items-center gap-1">
+              class="text-brand-red text-[11px] flex items-center gap-1">
               <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
               Please select a gender
             </p>
@@ -126,22 +120,22 @@
 
           <!-- Profile Photo -->
           <div class="flex flex-col items-center gap-2">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Profile photo <span class="normal-case font-medium text-gray-600 dark:text-gray-400">(optional)</span></label>
+            <label class="brand-label">Profile photo <span class="normal-case font-medium text-brand-muted">(optional)</span></label>
 
-            <div class="relative w-28 h-28 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800
+            <div class="relative w-28 h-28 rounded-2xl border-2 border-dashed border-brand-border bg-brand-card
                         flex items-center justify-center cursor-pointer overflow-hidden
-                        hover:border-red-500 transition">
+                        hover:border-brand-red transition">
               <input type="file" accept="image/*" (change)="onImgSelected($event)" aria-label="Profile photo (optional)"
                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
               <img *ngIf="imagePreview; else cameraIcon" [src]="imagePreview" alt="Profile preview"
                 class="object-cover object-top w-full h-full" />
               <ng-template #cameraIcon>
-                <i-feather name="camera" class="text-gray-400 dark:text-gray-500" style="width:22px;height:22px;"></i-feather>
+                <i-feather name="camera" class="text-brand-muted" style="width:22px;height:22px;"></i-feather>
               </ng-template>
             </div>
 
             <button *ngIf="imagePreview" type="button" (click)="removeImage()"
-              class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition">
+              class="text-[11px] font-bold text-brand-red hover:text-white transition">
               Remove
             </button>
 
@@ -156,17 +150,17 @@
 
         <!-- ── STEP 2: Location ──────────────────────────────────── -->
         <div *ngIf="formIndex === 1" class="flex flex-col gap-4">
-          <p class="text-[11px] text-gray-600 dark:text-gray-400 flex items-center gap-1.5 -mt-1">
+          <p class="text-[11px] text-brand-muted normal-case flex items-center gap-1.5 -mt-1">
             <i-feather name="info" style="width:11px;height:11px;"></i-feather>
             Optional — helps us find trainers and centers near you. You can add this later from your profile.
           </p>
-          <app-location-form [form]="locationForm" #locationFormComponent></app-location-form>
+          <app-location-form [form]="locationForm" [dark]="true" #locationFormComponent></app-location-form>
         </div>
 
         <!-- ── STEP 3: Email + Password ──────────────────────────── -->
         <div *ngIf="formIndex === 2" class="flex flex-col gap-4">
 
-          <p *ngIf="invalidForm && !isStepValid(2)" class="px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-[11px]
+          <p *ngIf="invalidForm && !isStepValid(2)" class="px-3 py-2 rounded-xl bg-brand-red/10 border border-brand-red text-brand-red text-[11px]
                     flex items-center gap-1.5">
             <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
             Please complete all fields in this section
@@ -174,11 +168,10 @@
 
           <!-- Email -->
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Email</label>
-            <input aria-label="Email" autocomplete="email" formControlName="email" type="email" placeholder="you@example.com" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="f('email').invalid && f('email').dirty
-                          ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
-            <p *ngIf="f('email').invalid && f('email').dirty" class="text-red-500 text-[11px] flex items-center gap-1">
+            <label class="brand-label">Email</label>
+            <input aria-label="Email" autocomplete="email" formControlName="email" type="email" placeholder="you@example.com" class="brand-input"
+              [ngClass]="f('email').invalid && f('email').dirty ? 'border-brand-red' : ''" />
+            <p *ngIf="f('email').invalid && f('email').dirty" class="text-brand-red text-[11px] flex items-center gap-1">
               <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
               A valid email is required
             </p>
@@ -186,12 +179,11 @@
 
           <!-- Password -->
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Password</label>
-            <input aria-label="Password" autocomplete="current-password" formControlName="password" type="password" placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="f('password').invalid && f('password').dirty
-                          ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
+            <label class="brand-label">Password</label>
+            <input aria-label="Password" autocomplete="current-password" formControlName="password" type="password" placeholder="••••••••" class="brand-input"
+              [ngClass]="f('password').invalid && f('password').dirty ? 'border-brand-red' : ''" />
             <p *ngIf="f('password').invalid && f('password').dirty"
-              class="text-red-500 text-[11px] flex items-center gap-1">
+              class="text-brand-red text-[11px] flex items-center gap-1">
               <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
               Password must be at least 8 characters
             </p>
@@ -199,46 +191,44 @@
 
           <!-- Confirm Password -->
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Confirm password</label>
-            <input aria-label="Confirm password" autocomplete="new-password" formControlName="confirmPassword" type="password" placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-              [ngClass]="signupForm.hasError('passwordMismatch') && f('confirmPassword').dirty
-                          ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
+            <label class="brand-label">Confirm password</label>
+            <input aria-label="Confirm password" autocomplete="new-password" formControlName="confirmPassword" type="password" placeholder="••••••••" class="brand-input"
+              [ngClass]="signupForm.hasError('passwordMismatch') && f('confirmPassword').dirty ? 'border-brand-red' : ''" />
             <p *ngIf="signupForm.hasError('passwordMismatch') && f('confirmPassword').dirty"
-              class="text-red-500 text-[11px] flex items-center gap-1">
+              class="text-brand-red text-[11px] flex items-center gap-1">
               <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
               Passwords do not match
             </p>
           </div>
 
           <!-- Terms / Privacy -->
-          <label class="flex items-start gap-2 text-[11px] text-gray-600 dark:text-gray-400 cursor-pointer">
+          <label class="flex items-start gap-2 text-[11px] text-brand-muted normal-case cursor-pointer">
             <input type="checkbox" formControlName="agreeToTerms" aria-label="Agree to the Terms and Privacy Policy"
-              class="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500 shrink-0" />
+              class="mt-0.5 h-3.5 w-3.5 rounded border-brand-border bg-brand-card text-brand-red focus:ring-brand-red shrink-0" />
             <span>
-              I agree to Berliz's <a routerLink="/terms" target="_blank" class="font-semibold text-red-600 hover:underline">Terms</a>
-              and <a routerLink="/privacy" target="_blank" class="font-semibold text-red-600 hover:underline">Privacy Policy</a>.
+              I agree to Berliz's <a routerLink="/terms" target="_blank" class="font-bold text-brand-red hover:underline">Terms</a>
+              and <a routerLink="/privacy" target="_blank" class="font-bold text-brand-red hover:underline">Privacy Policy</a>.
             </span>
           </label>
-          <p *ngIf="f('agreeToTerms').invalid && f('agreeToTerms').touched" class="text-red-500 text-[11px] flex items-center gap-1">
+          <p *ngIf="f('agreeToTerms').invalid && f('agreeToTerms').touched" class="text-brand-red text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             You must agree to the Terms and Privacy Policy to create an account
           </p>
         </div>
 
-        <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
+        <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" [dark]="true" (dismissed)="submitError = null"></app-inline-alert>
 
         <!-- ── Navigation ────────────────────────────────────────── -->
         <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
-          <button type="button" (click)="prevStep()" [disabled]="formIndex === 0" class="px-4 sm:px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-xs font-semibold
-                   hover:border-red-500 hover:text-gray-900 dark:hover:text-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed
+          <button type="button" (click)="prevStep()" [disabled]="formIndex === 0" class="px-4 sm:px-5 py-2.5 rounded-xl border border-brand-border text-brand-muted text-xs font-bold uppercase tracking-wide
+                   hover:border-brand-red hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed
                    flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
             <i-feather name="chevron-left" class="shrink-0" style="width:13px;height:13px;"></i-feather>
             Back
           </button>
 
-          <button type="submit" [disabled]="!isStepValid(formIndex)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
-                   hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed
+          <button type="submit" [disabled]="!isStepValid(formIndex)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-brand-red text-white text-xs font-extrabold uppercase tracking-wide
+                   active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed
                    flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
             {{ formIndex < 2 ? 'Next' : 'Create account' }}
             <i-feather [name]="formIndex < 2 ? 'chevron-right' : 'check'" class="shrink-0" style="width:13px;height:13px;"></i-feather>
@@ -247,10 +237,10 @@
       </form>
 
       <!-- Footer note -->
-      <div class="pt-4 border-t border-gray-200 dark:border-gray-800 text-center">
-        <p class="text-xs text-gray-600 dark:text-gray-400">
+      <div class="pt-4 border-t border-brand-border text-center">
+        <p class="text-xs text-brand-muted normal-case">
           Already have an account?
-          <a [routerLink]="['/login']" class="font-semibold text-red-600 hover:text-red-700 transition">Log in</a>
+          <a [routerLink]="['/login']" class="font-bold text-brand-red hover:text-white transition">Log in</a>
         </p>
       </div>
 

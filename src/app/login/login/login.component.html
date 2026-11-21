@@ -1,16 +1,18 @@
 <!-- ═══════════════════════════════════════════════
      LOGIN — split hero / form shell
+     GN-76 (Nov 21, 2026): black/white/red brand redesign. See src/styles.css's
+     "GN-76" block and the reference demo linked there.
 ════════════════════════════════════════════════ -->
-<div class="bg-black font-sans">
+<div class="bg-brand-bg font-sans">
 
-  <div class="relative min-h-screen bg-zinc-950 flex items-center justify-center px-4 py-12 overflow-hidden">
+  <div class="relative min-h-screen bg-brand-bg flex items-center justify-center px-4 py-12 overflow-hidden">
 
     <!-- Red glow -->
-    <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-brand-red/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-brand-red/10 blur-3xl pointer-events-none"></div>
 
     <div class="relative grid md:grid-cols-2 w-full max-w-5xl rounded-2xl overflow-hidden
-                border border-zinc-800 shadow-[0_8px_40px_rgba(0,0,0,0.6)] bg-white dark:bg-gray-900">
+                border border-brand-border shadow-[0_8px_40px_rgba(0,0,0,0.6)] bg-brand-bg">
 
       <!-- Hero Section -->
       <div class="hidden md:block">

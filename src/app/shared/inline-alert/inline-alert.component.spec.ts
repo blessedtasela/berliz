@@ -53,4 +53,15 @@ describe('InlineAlertComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('button')).toBeNull();
   });
+
+  // GN-76 (Nov 21, 2026): a screen that's unconditionally dark (login/signup) needs the brand
+  // palette regardless of the user's light/dark toggle, not the light-mode pink/red box.
+  it('uses the brand-red palette, not the light-mode one, when [dark]="true"', () => {
+    component.message = 'Could not save';
+    component.kind = 'error';
+    component.dark = true;
+    fixture.detectChanges();
+    expect(component.classes).toContain('bg-brand-red/10');
+    expect(component.classes).not.toContain('bg-red-50');
+  });
 });

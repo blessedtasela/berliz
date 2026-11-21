@@ -1,38 +1,41 @@
-<form [formGroup]="form" class="space-y-4 text-gray-900 dark:text-gray-100">
+<form [formGroup]="form" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'" class="space-y-4">
 
   <!-- Country -->
   <app-select formControlName="country" [items]="countries" bindValue="code" [labelFn]="countryLabel"
-              placeholder="Select country" ariaLabel="Country" [clearable]="false"
+              placeholder="Select country" ariaLabel="Country" [clearable]="false" [dark]="dark"
               [invalid]="!!(form.get('country')?.invalid && form.get('country')?.touched)"></app-select>
 
   <!-- State -->
   <app-select formControlName="state" [items]="states" placeholder="Select state / province" ariaLabel="State or province"
-              [clearable]="false" [allowCustom]="true" (click)="onStateClick()"
+              [clearable]="false" [allowCustom]="true" (click)="onStateClick()" [dark]="dark"
               [invalid]="!!(form.get('state')?.invalid && form.get('state')?.touched)"></app-select>
 
   <!-- City -->
   <app-select formControlName="city" [items]="cities" placeholder="Select city" ariaLabel="City"
-              [clearable]="false" [allowCustom]="true" (click)="onCityClick()"
+              [clearable]="false" [allowCustom]="true" (click)="onCityClick()" [dark]="dark"
               [invalid]="!!(form.get('city')?.invalid && form.get('city')?.touched)"></app-select>
 
   <!-- Address -->
   <input formControlName="address" type="text" placeholder="123 Main St, Suite 400" aria-label="Address"
-         class="berliz-input"
-         [ngClass]="{'border-red-500': !isAddressValid() && form.get('address')?.value}" />
+         [ngClass]="dark ? 'brand-input' : 'berliz-input'"
+         [class.border-red-500]="!dark && !isAddressValid() && form.get('address')?.value"
+         [class.border-brand-red]="dark && !isAddressValid() && form.get('address')?.value" />
 
   <!-- Postal Code -->
   <input formControlName="postalCode" type="text" placeholder="90210 / K1A 0B1" aria-label="Postal code"
-         class="berliz-input"
-         [ngClass]="{'border-red-500': !isPostalCodeValid() && form.get('postalCode')?.value}" />
+         [ngClass]="dark ? 'brand-input' : 'berliz-input'"
+         [class.border-red-500]="!dark && !isPostalCodeValid() && form.get('postalCode')?.value"
+         [class.border-brand-red]="dark && !isPostalCodeValid() && form.get('postalCode')?.value" />
 
   <!-- Country Code -->
   <app-select formControlName="countryCode" [items]="countries" bindValue="dialCode" [labelFn]="dialCodeLabel"
-              placeholder="Country code" ariaLabel="Phone country code" [clearable]="false"
+              placeholder="Country code" ariaLabel="Phone country code" [clearable]="false" [dark]="dark"
               [invalid]="!!(form.get('countryCode')?.invalid && form.get('countryCode')?.touched)"></app-select>
 
   <!-- Phone -->
   <input formControlName="phone" type="text" placeholder="{{examplePhone}}" aria-label="Phone number"
-         class="berliz-input"
-         [ngClass]="{'border-red-500': !isPhoneValid() && form.get('phone')?.value}" />
+         [ngClass]="dark ? 'brand-input' : 'berliz-input'"
+         [class.border-red-500]="!dark && !isPhoneValid() && form.get('phone')?.value"
+         [class.border-brand-red]="dark && !isPhoneValid() && form.get('phone')?.value" />
 
 </form>

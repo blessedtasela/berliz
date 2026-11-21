@@ -23,6 +23,9 @@ import { Country } from 'src/app/models/Location.interface';
 export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input() form!: FormGroup;
+  /** GN-76 (Nov 21, 2026): renders the brand-dark skin on every field -- for a host screen that's
+   *  unconditionally dark (not the user's light/dark toggle). See SelectComponent's own `dark` input. */
+  @Input() dark = false;
 
   countries: Country[] = [];
   states: string[] = [];
