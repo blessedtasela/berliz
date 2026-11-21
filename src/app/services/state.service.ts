@@ -42,24 +42,9 @@ export class StateService {
         button: "Join us today",
         buttonUrl: "/sign-up"
       }, 
-      {
-        id: 4,
-        title: "Martial Arts Schools",
-        subTitle: "Discipline Meets Legacy",
-        description: "Berliz connects you to martial arts academies. From Muay Thai to Karate, train where skill meets spirit.",
-        imageUrl: "../../../assets/landing/hero-martial-school.jpg",
-        button: "Find a school",
-        buttonUrl: "/centers"
-      },
-       {
-        id: 5,
-        title: "Marketplace",
-        subTitle: "Gear Up. Level Up.",
-        description: "Explore premium fitness gear, supplements, and apparel curated for every discipline. The Berliz marketplace fuels your grind with quality and style.",
-        imageUrl: "../../../assets/landing/hero-marketplace.jpg",
-        button: "Shop Now",
-        buttonUrl: "/shop"
-      },
+      // GN-75 (Nov 21, 2026): MVP simplification hid /centers and /shop -- the "Martial Arts
+      // Schools" (id 4) and "Marketplace" (id 5) promo cards that linked to them were removed
+      // here, not deleted; restore them alongside those routes.
       {
         id: 6,
         title: "Virtual Coaching",
@@ -69,16 +54,7 @@ export class StateService {
         button: "Get started",
         buttonUrl: "/trainers"
       },
-      {
-        id: 7,
-        title: "Fitness Centers Near You",
-        subTitle: "Train Local, Go Global",
-        description: "Browse verified gyms and training hubs in your area. Berliz bridges the gap between passion and location.",
-        imageUrl: "../../../assets/landing/hero-gym-centers.jpg",
-        button: "Explore now",
-        buttonUrl: "/centers"
-      },
-     
+      // GN-75 (Nov 21, 2026): "Fitness Centers Near You" (id 7, -> /centers) removed here too, same reason as above.
       {
         id: 8,
         title: "Dieting",

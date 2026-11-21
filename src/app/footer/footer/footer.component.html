@@ -20,10 +20,7 @@
                     <a [routerLink]="['/home']" class="hover:text-red-600 transition-all duration-300">
                         Home</a>
                 </li>
-                <li>
-                    <a [routerLink]="['/centers']" class="hover:text-red-600 transition-all duration-300">Gym
-                        Centers</a>
-                </li>
+                <!-- GN-75 (Nov 21, 2026): MVP simplification hid /centers. <li><a [routerLink]="['/centers']">Gym Centers</a></li> -->
                 <li>
                     <a [routerLink]="['/trainers']" class="hover:text-red-600 transition-all duration-300">Trainers</a>
                 </li>
@@ -52,8 +49,6 @@
                         class="hover:text-red-600 transition-all duration-300">Testimonials</a></li>
                 <li><a [routerLink]="['/dashboard']"
                         class="hover:text-red-600 transition-all duration-300">Dashboard</a></li>
-                <li><a [routerLink]="['/disciplines/equipment']"
-                        class="hover:text-red-600 transition-all duration-300">Equipments</a></li>
                 <li>
                     <a [routerLink]="['/disciplines/exercises']"
                         class="hover:text-red-600 transition-all duration-300">Exercises</a>

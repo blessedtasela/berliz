@@ -38,7 +38,16 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'exercise-suggestions', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts', 'payment-codes'];
+    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts'];
+
+  /**
+   * GN-75 (Nov 21, 2026): MVP simplification -- hidden, not removed. These backend counts stay
+   * (the ticket is explicit: hide the link, kill the route, keep the code and data), but no tile
+   * for them should render anywhere, in any bucket -- leaving a key out of PEOPLE/CONTENT/PERSONAL_KEYS
+   * would otherwise still surface it under "Other" (see the catch-all below), which is exactly the
+   * kind of stray link this ticket says must not exist. Bring a key back by moving it out of here.
+   */
+  private readonly HIDDEN_KEYS = ['payment-codes'];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
@@ -73,6 +82,7 @@ export class HubGridComponent implements OnChanges {
     };
 
     Object.keys(items || {})
+      .filter(key => !this.HIDDEN_KEYS.includes(this.formatUrl(key)))
       .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
       .forEach(key => {
         const slug = this.formatUrl(key);
@@ -150,9 +160,9 @@ export class HubGridComponent implements OnChanges {
    * should actually land. Everything else falls back to `/dashboard/hub/<key>`.
    */
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
-    // No admin CRUD table for equipment — it's center-scoped and managed from
-    // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/disciplines/equipment',
+    // GN-75 (Nov 21, 2026): the 'equipments' override used to point here at the public
+    // /disciplines/equipment page, which MVP simplification just hid -- removed so this tile
+    // falls back to its own admin page (/dashboard/hub/equipments) instead of a dead link.
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     // No dedicated route exists for the client roster — it's a section of the
@@ -179,9 +189,6 @@ export class HubGridComponent implements OnChanges {
     // no card at all pointing at it before this, which is why the Recalculate control it already
     // has was unreachable from the UI.
     'payouts': '/dashboard/billing',
-    // PY-28/29/30: there was no Hub tile for either bypass-code system at all before this count
-    // existed -- a client's direct request could sit open indefinitely with nothing surfacing it.
-    'payment-codes': '/dashboard/payment-codes',
   };
 
   resolveRoute(key: string): string {

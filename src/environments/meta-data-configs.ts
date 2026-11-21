@@ -61,13 +61,13 @@ export const MetaDataConfig: Record<string, MetaData> = {
     },
     services: {
         title: 'Services - Online, Hybrid & In-Person Personal Training | Berliz',
-        description: 'What Berliz offers: online, hybrid and in-person personal training, gyms and training centers, and a shop on the way.',
+        description: 'What Berliz offers: online, hybrid and in-person personal training.',
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
     },
     disciplines: {
         title: 'Disciplines - Boxing, Yoga, Strength & More | Berliz',
-        description: 'Browse the disciplines you can train in on Berliz, explore equipment and exercise guides, and read member testimonials before you book.',
+        description: 'Browse the disciplines you can train in on Berliz, explore exercise guides, and read member testimonials before you book.',
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
     },

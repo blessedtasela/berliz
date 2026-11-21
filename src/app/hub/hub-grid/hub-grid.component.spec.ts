@@ -30,16 +30,15 @@ describe('HubGridComponent', () => {
   });
 
   /**
-   * PY-28/29/30: before this count existed, the two bypass-code systems had no Hub tile at all --
-   * a client's direct code request could sit open indefinitely with nothing surfacing it.
+   * GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes -- no tile for it may
+   * render anywhere, including "Other", or the Hub would still be pointing at a dead route.
    */
-  it('PY-28/29/30: routes the payment-codes count to the Payment codes page', () => {
+  it('GN-75: shows no tile at all for a hidden key, not even under "Other"', () => {
     component.items = { 'payment-codes': 2 };
     component.ngOnChanges({ items: {} as any });
-    const content = component.groups.find(g => g.id === 'content');
-    const item = content?.items.find(i => i.key === 'payment-codes');
-    expect(item).toBeTruthy();
-    expect(item?.link).toBe('/dashboard/payment-codes');
-    expect(item?.value).toBe(2);
+
+    for (const group of component.groups) {
+      expect(group.items.find(i => i.key === 'payment-codes')).toBeFalsy();
+    }
   });
 });

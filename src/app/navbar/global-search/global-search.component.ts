@@ -23,19 +23,10 @@ import {
   takeUntil
 } from 'rxjs';
 import { PostService } from 'src/app/services/post.service';
-import { BypassCodeService } from 'src/app/services/bypass-code.service';
 
 // ── PUBLIC ENTITIES ───────────────────────────────────────────────────────────
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
-import {
-  loadActiveCenters,
-  loadAllCenterEquipment
-} from 'src/app/state/center/center.actions';
-import {
-  selectActiveCenters,
-  selectCenterEquipment
-} from 'src/app/state/center/center.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
@@ -200,22 +191,9 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
       }),
       browseAllLink: ['/trainers']
     },
-    {
-      key: 'centers',
-      label: 'Centers',
-      icon: 'home',
-      adminOnly: false,
-      load: loadActiveCenters(),
-      select: selectActiveCenters,
-      match: (c, q) => has(c?.name, q) || (!!c?.featured && matchesCategory('Centers', q)),
-      toItem: c => ({
-        id: c.id,
-        label: c.name,
-        sublabel: c.featured ? `★ Featured${c.address ? ' · ' + c.address : ''}` : (c.address || c.location),
-        link: ['/centers', slug(c.name)]
-      }),
-      browseAllLink: ['/centers']
-    },
+    // GN-75 (Nov 21, 2026): MVP simplification hid /centers -- the 'centers' search source that
+    // linked into it removed too, not deleted, so search can't surface a link into a route that
+    // no longer resolves. Bring it back alongside the route.
     {
       key: 'categories',
       label: 'Disciplines',
@@ -339,23 +317,9 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         queryParams: (t.trainerName || t.centerName) ? { testimonialId: t.id } : undefined
       })
     },
-    {
-      key: 'equipment',
-      label: 'Equipment',
-      icon: 'package',
-      adminOnly: false,
-      load: loadAllCenterEquipment(),
-      select: selectCenterEquipment,
-      match: (e, q) => has(e?.name, q),
-      toItem: e => ({
-        id: e.id,
-        label: e.name,
-        sublabel: e.centerName,
-        link: ['/disciplines/equipment'],
-        queryParams: { equipmentId: e.id }
-      }),
-      browseAllLink: ['/disciplines/equipment']
-    },
+    // GN-75 (Nov 21, 2026): MVP simplification hid /disciplines/equipment -- the 'equipment'
+    // search source that linked into it removed too, not deleted, so search can't surface a
+    // link into a route that no longer resolves. Bring it back alongside the route.
 
     // ── ADMIN ONLY ────────────────────────────────────────────────────────
     {
@@ -511,33 +475,17 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: m.bodyPart,
         link: ['/dashboard/hub/muscle-groups', m.id]
       })
-    },
-    // PY-28/29/30: the admin notification telling a reviewer to "Open bypass codes" pointed at a
-    // page global search could never find -- this source exists mainly so typing "bypass" (the
-    // exact word used) finds the Payment codes page at all, with its own issued codes searchable too.
-    {
-      key: 'bypassCodes',
-      label: 'Bypass codes',
-      icon: 'key',
-      adminOnly: true,
-      fetch$: () => this.bypassCodeService.getAllBypassCodes(),
-      match: (c, q) => has(c?.code, q) || has(c?.planName, q) || has(c?.createdByAdminEmail, q),
-      toItem: c => ({
-        id: c.id,
-        label: c.code,
-        sublabel: `${c.planName} · ${c.status === 'true' ? 'Active' : 'Inactive'}`,
-        link: ['/dashboard/payment-codes']
-      }),
-      browseAllLink: ['/dashboard/payment-codes'],
-      categoryAliases: ['Payment codes']
     }
+    // GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes -- the 'bypassCodes'
+    // search source added for PY-28/29/30 was removed from here (no code deleted, just this
+    // registration) so search can't surface a link into a route that no longer resolves. Bring it
+    // back alongside restoring the route.
   ];
 
   constructor(
     private store: Store,
     private elementRef: ElementRef,
-    private postService: PostService,
-    private bypassCodeService: BypassCodeService
+    private postService: PostService
   ) { }
 
   ngOnInit(): void {

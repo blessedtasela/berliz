@@ -133,7 +133,8 @@
 
             <app-category-trainers [trainers]="trainers" [categoryName]="category.name"></app-category-trainers>
 
-            <app-category-centers [centers]="centers" [categoryName]="category.name"></app-category-centers>
+            <!-- GN-75 (Nov 21, 2026): MVP simplification hid /centers -- this widget's every link
+                 led there, so it's hidden too, not deleted. <app-category-centers [centers]="centers" [categoryName]="category.name"></app-category-centers> -->
 
             <app-category-exercises [exercises]="exercises" [categoryName]="category.name"></app-category-exercises>
 

@@ -52,9 +52,9 @@ export class DashboardActionComponent {
    * should actually land. Everything else falls back to `/dashboard/<key>`.
    */
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
-    // No admin CRUD table for equipment — it's center-scoped and managed from
-    // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/disciplines/equipment',
+    // GN-75 (Nov 21, 2026): the 'equipments' override used to point here at the public
+    // /disciplines/equipment page, which MVP simplification just hid -- removed so this tile
+    // falls back to its own admin page (/dashboard/equipments) instead of a dead link.
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     'liked-trainers': '/trainers',

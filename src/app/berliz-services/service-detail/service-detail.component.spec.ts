@@ -6,15 +6,14 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ServiceDetailComponent } from './service-detail.component';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
-import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 
 describe('ServiceDetailComponent', () => {
   let fixture: ComponentFixture<ServiceDetailComponent>;
   let params: BehaviorSubject<any>;
   let store: MockStore;
 
-  // provideMockStore({ selectors }) patches the shared selector instances; without this the overridden
-  // selectActiveCenters/selectActiveTrainers results leak into every later spec in the run.
+  // provideMockStore({ selectors }) patches the shared selector instance; without this the overridden
+  // selectActiveTrainers result leaks into every later spec in the run.
   afterEach(() => store?.resetSelectors());
 
   function setup(slug: string) {
@@ -29,7 +28,6 @@ describe('ServiceDetailComponent', () => {
               { id: 1, name: 'Ada Online', motto: 'Anywhere', hourlyRate: 30, serviceMode: 'ONLINE' },
               { id: 2, name: 'Ben Gym', motto: 'In the gym', hourlyRate: 50, serviceMode: 'IN_PERSON' },
             ] as any },
-            { selector: selectActiveCenters, value: [{ id: 9, name: 'Iron Works', motto: 'Lift' }] as any },
           ],
         }),
         { provide: ActivatedRoute, useValue: { paramMap: params } },
@@ -50,16 +48,9 @@ describe('ServiceDetailComponent', () => {
     expect(el.textContent).toContain('Find online trainers');
   });
 
-  it('lists centers for gyms & centers', () => {
-    const el = setup('gyms-and-centers');
-    expect(el.textContent).toContain('Iron Works');
-  });
-
-  it('sends the shop page to the real shop', () => {
-    const el = setup('shop');
-    expect(el.textContent).toContain('Open the shop');
-    expect(el.textContent).toContain('community marketplace');
-  });
+  // GN-75 (Nov 21, 2026): MVP simplification removed the 'gyms-and-centers' and 'shop' service
+  // entries along with /centers and /shop -- both slugs now correctly fall into "not found",
+  // covered by the test below.
 
   it('says so for an unknown service', () => {
     const el = setup('nope');

@@ -106,46 +106,9 @@ export const BERLIZ_SERVICES: BerlizService[] = [
     mode: 'IN_PERSON',
     ctaLabel: 'Find in-person trainers',
   },
-  {
-    slug: 'gyms-and-centers',
-    title: 'Gyms & training centers',
-    tagline: 'Connect with the right place to train.',
-    icon: 'home',
-    summary:
-      'Berliz connects you with gyms and training centers: see what each one offers, the equipment on the floor, the trainers who work there, their locations and pricing — then book a session or join.',
-    steps: [
-      { title: 'Browse centers', text: 'Compare centers by the disciplines they run, their locations and what they charge.' },
-      { title: 'Look inside', text: 'See the equipment, announcements, photos and the trainers affiliated with each center.' },
-      { title: 'Book or join', text: 'Send a booking request, or buy a membership or session pack from the center.' },
-    ],
-    benefits: [
-      'See the equipment before you walk in',
-      'Meet the trainers affiliated with each center',
-      'Memberships and packs with clear prices',
-      'Reviews and testimonials from real members',
-    ],
-    bestFor: ['Anyone looking for a new gym', 'Groups and classes', 'People who want trainers and facilities in one place'],
-    audience: 'centers',
-    ctaLabel: 'Browse centers',
-  },
-  {
-    slug: 'shop',
-    title: 'Shop',
-    tagline: 'New and used fitness gear from the Berliz community.',
-    icon: 'shopping-bag',
-    summary:
-      'The Berliz shop is a community marketplace for fitness gear. Members, trainers and centers list new and used equipment, and you can buy it with secure checkout — or sell your own. Listings are added by the community, so what is for sale changes day to day.',
-    steps: [
-      { title: 'Browse', text: 'Filter by new or used, and open a listing to see photos, price and condition.' },
-      { title: 'Order', text: 'Add to your cart and check out securely inside Berliz.' },
-      { title: 'Or sell', text: 'List your own gear from your account and get paid through Berliz.' },
-    ],
-    benefits: ['New and used, side by side', 'One account for training and shopping', 'Secure checkout', 'Sell your own gear'],
-    bestFor: ['Anyone kitting out a home gym', 'Trainers and centers with gear to sell', 'Members upgrading equipment'],
-    audience: 'none',
-    ctaLabel: 'Open the shop',
-    ctaLink: '/shop',
-  },
+  // GN-75 (Nov 21, 2026): MVP simplification hid /centers and /shop -- the "Gyms & training
+  // centers" and "Shop" service entries were removed here, not deleted (their CTAs had no
+  // other purpose than linking into those now-hidden routes). Restore alongside those routes.
 ];
 
 export function findService(slug: string | null | undefined): BerlizService | undefined {

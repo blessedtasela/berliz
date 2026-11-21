@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -11,7 +11,6 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 describe('GlobalSearchComponent', () => {
   let component: GlobalSearchComponent;
   let fixture: ComponentFixture<GlobalSearchComponent>;
-  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -28,7 +27,6 @@ describe('GlobalSearchComponent', () => {
 
     fixture = TestBed.createComponent(GlobalSearchComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController);
   });
 
   it('should create', () => {
@@ -37,23 +35,21 @@ describe('GlobalSearchComponent', () => {
   });
 
   /**
-   * PY-28/29/30: the admin notification literally says "Open bypass codes", but global search had
-   * no source at all for either bypass-code system -- typing the exact word it uses found nothing.
+   * GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes. The PY-28/29/30 search
+   * source that used to find it by "bypass" or "payment code" was removed along with it -- this
+   * guards against it silently reappearing (e.g. a future search source reusing that wording)
+   * while the route stays dead.
    */
-  it('PY-28/29/30: finds the Payment codes page by typing "bypass", with its issued codes searchable', async () => {
+  it('GN-75: "bypass" and "payment code" find nothing -- the page they used to find is hidden', async () => {
     (component as any).isAdmin = true;
-    // Every other source in this list reads an NgRx slice this bare mock store doesn't have --
-    // irrelevant to what this test checks, so every store-backed source resolves to no results.
     spyOn(TestBed.inject(Store), 'select').and.returnValue(of([]));
     (component as any).primeStores();
-    httpMock.expectOne(req => req.url.includes('/bypassCode/get')).flush({ data: [], success: true, message: '', statusCode: 200 });
 
-    const groups: any[] = await firstValueFrom((component as any).search('bypass'));
+    const bypassGroups: any[] = await firstValueFrom((component as any).search('bypass'));
+    const paymentCodeGroups: any[] = await firstValueFrom((component as any).search('payment code'));
 
-    const bypassGroup = groups.find((g: any) => g.key === 'bypassCodes');
-    expect(bypassGroup).toBeTruthy();
-    expect(bypassGroup.items.some((i: any) => i.label === 'See all Bypass codes')).toBeTrue();
-    expect(bypassGroup.items[0].link).toEqual(['/dashboard/payment-codes']);
+    expect(bypassGroups.every((g: any) => g.items.length === 0)).toBeTrue();
+    expect(paymentCodeGroups.every((g: any) => g.items.length === 0)).toBeTrue();
   });
 });
 

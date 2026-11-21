@@ -35,7 +35,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   { label: 'Home', path: '/home' },
   { label: 'Contact', path: '/contact' },
   { label: 'About', path: '/about' },
-  { label: 'Centers', path: '/centers' },
+  // { label: 'Centers', path: '/centers' }, -- GN-75 (Nov 21, 2026): MVP simplification hid /centers.
   { label: 'Services', path: '/services' },
   { label: 'Disciplines', path: '/disciplines' },
   { label: 'Trainers', path: '/trainers' },

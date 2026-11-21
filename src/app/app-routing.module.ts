@@ -38,20 +38,26 @@ export const routes: Routes = [
   // (empty path) so all three keep their original top-level paths.
   { path: '', loadChildren: () => import('./login/login-feature.module').then(m => m.LoginFeatureModule) },
   { path: 'trainers', loadChildren: () => import('./trainers/trainers-feature.module').then(m => m.TrainersFeatureModule) },
-  { path: 'centers', loadChildren: () => import('./centers/centers-feature.module').then(m => m.CentersFeatureModule) },
+  // GN-75 (Nov 21, 2026): MVP simplification -- the public Centers marketplace (listing +
+  // pricing pages) hidden (route removed, not deleted: CentersFeatureModule and its data are
+  // untouched). A trainer's own gym affiliation still shows as plain text on their profile,
+  // unaffected -- see my-trainer-centers.component.html, which never linked here.
+  // { path: 'centers', loadChildren: () => import('./centers/centers-feature.module').then(m => m.CentersFeatureModule) },
   // Disciplines (Boxing, Yoga, Powerlifting… — the `category` data) live at /disciplines. They used to be called
   // "Services" and sat at /services/<id>/<name>; "Services" now means what Berliz offers (online, hybrid and in-person
   // training, gyms & centers, the shop to come). The redirects below keep every old link, bookmark and indexed URL alive.
   { path: 'disciplines', loadChildren: () => import('./categories/disciplines-feature.module').then(m => m.DisciplinesFeatureModule) },
-  { path: 'services/equipment', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
+  // GN-75 (Nov 21, 2026): MVP simplification hid the Equipment page (part of the marketplace
+  // idea) -- this redirect into it commented out too, so it can't un-hide the page.
+  // { path: 'services/equipment', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
   { path: 'services/exercises', redirectTo: 'disciplines/exercises', pathMatch: 'full' },
   { path: 'services/faqs', redirectTo: 'faqs', pathMatch: 'full' },
   { path: 'services/:id/:name', redirectTo: 'disciplines/:id/:name', pathMatch: 'full' },
   { path: 'services', loadChildren: () => import('./berliz-services/berliz-services.routes').then(m => m.BERLIZ_SERVICES_ROUTES) },
   { path: 'testimonials', component: TestimonialPageComponent, data: { breadcrumb: 'Testimonials' } },
-  // Equipment and exercises are real pages at /disciplines/equipment and /disciplines/exercises — these old
-  // top-level paths redirect straight to them.
-  { path: 'equipments', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
+  // Exercises is a real page at /disciplines/exercises — this old top-level path redirects
+  // straight to it. (Its equipment sibling redirect was commented out above — GN-75, Nov 21, 2026.)
+  // { path: 'equipments', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
   { path: 'exercises', redirectTo: 'disciplines/exercises', pathMatch: 'full' },
   { path: 'report-problem', loadChildren: () => import('./report-problem/report-problem-feature.module').then(m => m.ReportProblemFeatureModule) },
   // FAQs are a page of their own at /faqs (old /services/faqs redirects here).
@@ -82,7 +88,10 @@ export const routes: Routes = [
   // UserModule distinct from the top-level one — see DashboardUserFeatureModule's
   // comment. Mounted at root (empty path) since both are already full paths.
   { path: '', loadChildren: () => import('./dashboard/user/dashboard-user-feature.module').then(m => m.DashboardUserFeatureModule) },
-  { path: 'shop', loadChildren: () => import('./shop/shop-feature.module').then(m => m.ShopFeatureModule) },
+  // GN-75 (Nov 21, 2026): MVP simplification -- Shop/Marketplace hidden (route commented out,
+  // not deleted: the whole ShopFeatureModule and its data are untouched). Uncomment this, plus
+  // the equipment route and its redirects above, to bring the marketplace idea back.
+  // { path: 'shop', loadChildren: () => import('./shop/shop-feature.module').then(m => m.ShopFeatureModule) },
 
   // Member profile — page itself has NO guard, so anonymous visitors can land
   // here, but the backend requires auth for the actual data (SecurityConfig).
