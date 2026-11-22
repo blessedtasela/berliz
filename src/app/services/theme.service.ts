@@ -31,12 +31,16 @@ export class ThemeService {
   private readonly isDarkSubject = new BehaviorSubject<boolean>(this.computeIsDark());
   readonly isDark$: Observable<boolean> = this.isDarkSubject.asObservable();
 
+  // No stored preference yet -> 'dark', not 'system': GN-76 (Nov 21, 2026) wants
+  // first-time visitors to land on the black brand look, not whatever the OS
+  // happens to prefer. Users can still explicitly pick Light/Dark/System in
+  // Settings > Appearance -- this only changes the un-set default.
   get mode(): ThemeMode {
     try {
       const raw = localStorage.getItem(MODE_KEY);
-      return raw === 'light' || raw === 'dark' || raw === 'system' ? raw : 'system';
+      return raw === 'light' || raw === 'dark' || raw === 'system' ? raw : 'dark';
     } catch {
-      return 'system';
+      return 'dark';
     }
   }
 

@@ -42,9 +42,16 @@ describe('FooterComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('(login required)');
   });
 
-  it('lists the pricing and testimonials pages in the quick links', () => {
+  it('lists the pricing and dashboard pages in the quick links', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Pricing');
-    expect(text).toContain('Testimonials');
+    expect(text).toContain('Dashboard');
+  });
+
+  it('drops Members, Services and Testimonials for the GN-75 MVP trim', () => {
+    const text = fixture.nativeElement.textContent;
+    expect(text).not.toContain('Members');
+    expect(text).not.toContain('Services');
+    expect(text).not.toContain('Testimonials');
   });
 });

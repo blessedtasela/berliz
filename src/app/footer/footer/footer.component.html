@@ -1,10 +1,15 @@
-<section class="bg-black text-white mt-24 rounded-t-md py-10 px-6 lg:px-16 w-full">
+<!-- GN-75 (Nov 21, 2026): MVP simplification -- trimmed to the four pillars (Trainers, Content,
+     Community, plus the dashboard itself) and basic support links. Removed here, not deleted:
+     Members (a public directory, not one of the MVP pillars) and Services/Testimonials (marketing
+     pages outside the MVP scope). Restore by re-adding the <li>/<a> below.
+     GN-76 (Nov 21, 2026): black/white/red brand redesign. -->
+<section class="bg-brand-bg text-brand-text mt-24 py-10 px-6 lg:px-16 w-full border-t border-brand-border">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
         <!-- Contact Info -->
         <div>
-            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Get in Touch</h2>
-            <div class="mt-4 text-sm font-sans space-y-2">
+            <h2 class="brand-heading text-base">Get in <span class="brand-accent-word">Touch</span></h2>
+            <div class="mt-4 text-sm font-sans space-y-2 text-brand-muted normal-case">
                 <p>555 Burrard Street,<br>Vancouver BC V7X 1M8</p>
                 <app-phone></app-phone>
                 <app-email></app-email>
@@ -12,51 +17,46 @@
             </div>
         </div>
 
-        <!-- Partners -->
+        <!-- Explore -->
         <div>
-            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Partners</h2>
-            <ul class="mt-4 text-sm font-sans space-y-2">
+            <h2 class="brand-heading text-base">Explore<span class="brand-heading-dot">.</span></h2>
+            <ul class="mt-4 text-sm font-sans space-y-2 text-brand-muted normal-case">
                 <li>
-                    <a [routerLink]="['/home']" class="hover:text-red-600 transition-all duration-300">
+                    <a [routerLink]="['/home']" class="hover:text-brand-red transition-all duration-300">
                         Home</a>
                 </li>
                 <!-- GN-75 (Nov 21, 2026): MVP simplification hid /centers. <li><a [routerLink]="['/centers']">Gym Centers</a></li> -->
                 <li>
-                    <a [routerLink]="['/trainers']" class="hover:text-red-600 transition-all duration-300">Trainers</a>
+                    <a [routerLink]="['/trainers']" class="hover:text-brand-red transition-all duration-300">Trainers</a>
                 </li>
+                <!-- GN-75 (Nov 21, 2026): MVP simplification -- not one of the four pillars. <li><a [routerLink]="['/members']">Members</a></li> -->
                 <li>
-                    <a [routerLink]="['/members']" class="hover:text-red-600 transition-all duration-300">Members</a>
+                    <a [routerLink]="['/faqs']" class="hover:text-brand-red transition-all duration-300">FAQs</a>
                 </li>
+                <!-- GN-75 (Nov 21, 2026): MVP simplification -- marketing page outside MVP scope. <li><a [routerLink]="['/services']">Services</a></li> -->
                 <li>
-                    <a [routerLink]="['/faqs']" class="hover:text-red-600 transition-all duration-300">FAQs</a>
-                </li>
-                <li>
-                    <a [routerLink]="['/services']" class="hover:text-red-600 transition-all duration-300">Services</a>
-                </li>
-                <li>
-                    <a [routerLink]="['/disciplines']" class="hover:text-red-600 transition-all duration-300">Disciplines</a>
+                    <a [routerLink]="['/disciplines']" class="hover:text-brand-red transition-all duration-300">Disciplines</a>
                 </li>
             </ul>
         </div>
 
         <!-- Quick Links -->
         <div>
-            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Quick Links</h2>
-            <ul class="mt-4 text-sm font-sans space-y-2">
+            <h2 class="brand-heading text-base">Quick <span class="brand-accent-word">Links</span></h2>
+            <ul class="mt-4 text-sm font-sans space-y-2 text-brand-muted normal-case">
                 <li><a [routerLink]="['/pricing']"
-                        class="hover:text-red-600 transition-all duration-300">Pricing</a></li>
-                <li><a [routerLink]="['/testimonials']"
-                        class="hover:text-red-600 transition-all duration-300">Testimonials</a></li>
+                        class="hover:text-brand-red transition-all duration-300">Pricing</a></li>
+                <!-- GN-75 (Nov 21, 2026): MVP simplification -- marketing page outside MVP scope. <li><a [routerLink]="['/testimonials']">Testimonials</a></li> -->
                 <li><a [routerLink]="['/dashboard']"
-                        class="hover:text-red-600 transition-all duration-300">Dashboard</a></li>
+                        class="hover:text-brand-red transition-all duration-300">Dashboard</a></li>
                 <li>
                     <a [routerLink]="['/disciplines/exercises']"
-                        class="hover:text-red-600 transition-all duration-300">Exercises</a>
+                        class="hover:text-brand-red transition-all duration-300">Exercises</a>
                 </li>
-                <li><a [routerLink]="['/report-problem']" class="hover:text-red-600 transition-all duration-300">Report
+                <li><a [routerLink]="['/report-problem']" class="hover:text-brand-red transition-all duration-300">Report
                         a Problem</a></li>
-                <li><a (click)="openFeedback()" class="hover:text-red-600 transition-all duration-300 cursor-pointer">Give
-                        Feedback<span *ngIf="feedbackNeedsLogin" class="text-[11px] text-zinc-400"> (login required)</span></a></li>
+                <li><a (click)="openFeedback()" class="hover:text-brand-red transition-all duration-300 cursor-pointer">Give
+                        Feedback<span *ngIf="feedbackNeedsLogin" class="text-[11px] text-brand-muted"> (login required)</span></a></li>
             </ul>
         </div>
 
