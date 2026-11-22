@@ -1,0 +1,82 @@
+<section class="font-sans flex flex-col gap-4 mt-4 max-w-xl mx-auto">
+
+  <app-page-header icon="compass" title="Tell us about your goals"
+    subtitle="5 quick questions to personalize your feed and recommendations"></app-page-header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 flex items-center justify-center">
+    <i-feather name="loader" class="animate-spin text-gray-400" style="width:20px;height:20px;"></i-feather>
+  </div>
+
+  <!-- Load error -->
+  <div *ngIf="!loading && loadError" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col items-center gap-3 text-center">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ loadError }}</p>
+    <button type="button" (click)="ngOnInit()" class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">
+      Try again
+    </button>
+  </div>
+
+  <!-- No active questions at all -->
+  <div *ngIf="!loading && !loadError && questions.length === 0" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 text-center">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Nothing to answer right now.</p>
+    <a routerLink="/dashboard" class="inline-block mt-3 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">Back to feed</a>
+  </div>
+
+  <!-- Finished -->
+  <div *ngIf="!loading && finished" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 flex flex-col items-center gap-3 text-center">
+    <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 flex items-center justify-center">
+      <i-feather name="check" class="text-emerald-600" style="width:20px;height:20px;"></i-feather>
+    </div>
+    <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Thanks! We'll use this to personalize your feed.</p>
+    <button type="button" (click)="continue()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition">
+      Continue
+    </button>
+  </div>
+
+  <!-- The quiz itself -->
+  <div *ngIf="!loading && !loadError && !finished && questions.length > 0 && currentQuestion"
+    class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 flex flex-col gap-5">
+
+    <!-- Progress -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center justify-between text-[11px] font-semibold text-gray-400 dark:text-gray-500">
+        <span>Question {{ step + 1 }} of {{ questions.length }}</span>
+        <button type="button" (click)="skip()" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition">Skip for now</button>
+      </div>
+      <div class="h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <div class="h-full rounded-full bg-red-600 transition-all duration-300 ease-out" [style.width.%]="((step + 1) / questions.length) * 100"></div>
+      </div>
+    </div>
+
+    <h2 class="text-base font-bold text-gray-900 dark:text-gray-100">{{ currentQuestion.text }}</h2>
+
+    <div class="flex flex-col gap-2">
+      <button *ngFor="let option of currentQuestion.options" type="button" (click)="choose(option.id)"
+        class="flex items-center gap-3 text-left px-4 py-3 rounded-xl border text-sm font-medium transition"
+        [ngClass]="answersByQuestionId[currentQuestion.id] === option.id
+          ? 'border-red-600 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300'
+          : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'">
+        <span class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center"
+          [ngClass]="answersByQuestionId[currentQuestion.id] === option.id ? 'border-red-600' : 'border-gray-300 dark:border-gray-600'">
+          <span *ngIf="answersByQuestionId[currentQuestion.id] === option.id" class="w-2 h-2 rounded-full bg-red-600"></span>
+        </span>
+        {{ option.text }}
+      </button>
+    </div>
+
+    <p *ngIf="submitError" role="alert" class="text-[11px] text-red-600 dark:text-red-400">{{ submitError }}</p>
+
+    <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+      <button type="button" (click)="back()" [disabled]="step === 0"
+        class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 disabled:opacity-0 disabled:pointer-events-none transition">
+        Back
+      </button>
+      <button type="button" (click)="next()" [disabled]="!canGoNext || submitting"
+        class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-60 disabled:cursor-default transition flex items-center gap-2">
+        <i-feather *ngIf="submitting" name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
+        {{ isLastStep ? 'Finish' : 'Next' }}
+      </button>
+    </div>
+  </div>
+
+</section>

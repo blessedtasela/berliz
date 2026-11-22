@@ -659,6 +659,10 @@ const dashboardRoutes: Routes = [
           { path: 'promo-codes', loadComponent: () => import('../promotions/admin-promo-codes/admin-promo-codes.component').then(m => m.AdminPromoCodesComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Promo codes', expectedRole: ['admin'] } },
           { path: 'testimonials', loadChildren: () => import('../admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
           { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
+          // GN-75 Phase 2: the profile quiz's admin-managed question bank. Named
+          // "profile quiz" (not "onboarding") to not collide with the unrelated
+          // client-onboarding feature already using that name just below.
+          { path: 'profile-quiz-questions', loadComponent: () => import('../admin/profile-quiz-questions/profile-quiz-questions.component').then(m => m.ProfileQuizQuestionsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Profile Quiz Questions', expectedRole: ['admin'] } },
           { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
           { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
           { path: 'billing', loadChildren: () => import('../admin/billing/billing.module').then(m => m.BillingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Billing', expectedRole: ['admin'] } },
@@ -681,6 +685,9 @@ const dashboardRoutes: Routes = [
           { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },
           { path: 'onboarding', component: ClientOnboardingWizardComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Onboarding', expectedRole: expectedRoleAll } },
           { path: 'clients/:userId/onboarding', component: ClientOnboardingViewComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client onboarding', expectedRole: expectedRoleAll } },
+          // GN-75 Phase 2's 5-question "tell us about your goals" quiz -- distinct from the
+          // client-onboarding wizard just above (that's a trainer onboarding a new client).
+          { path: 'profile-quiz', loadComponent: () => import('../profile-quiz/profile-quiz-wizard/profile-quiz-wizard.component').then(m => m.ProfileQuizWizardComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Profile Quiz', expectedRole: expectedRoleAll } },
 
           {
             path: 'partnership',
@@ -725,6 +732,7 @@ const dashboardRoutes: Routes = [
       { path: 'promo-codes', loadComponent: () => import('../promotions/admin-promo-codes/admin-promo-codes.component').then(m => m.AdminPromoCodesComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Promo codes', expectedRole: ['admin'] } },
       { path: 'testimonials', loadChildren: () => import('../admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
       { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
+      { path: 'profile-quiz-questions', loadComponent: () => import('../admin/profile-quiz-questions/profile-quiz-questions.component').then(m => m.ProfileQuizQuestionsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Profile Quiz Questions', expectedRole: ['admin'] } },
       { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
       { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
       { path: 'billing', loadChildren: () => import('../admin/billing/billing.module').then(m => m.BillingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Billing', expectedRole: ['admin'] } },

@@ -182,6 +182,7 @@ Image,
   ExternalLink,
   List,
   Tag,
+  Compass,
 
 } from 'angular-feather/icons';
 
@@ -367,6 +368,7 @@ const icons = {
   ExternalLink,
   List,
   Tag,
+  Compass,
 };
 
 @NgModule({

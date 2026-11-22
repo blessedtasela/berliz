@@ -28,6 +28,7 @@ import { SavedService } from 'src/app/services/saved.service';
 import { DraftService } from 'src/app/services/draft.service';
 import { DraftEntry } from 'src/app/models/draft.model';
 import { DraftResumeBannerComponent } from 'src/app/shared/draft-resume-banner/draft-resume-banner.component';
+import { ProfileQuizPromptComponent } from 'src/app/shared/profile-quiz-prompt/profile-quiz-prompt.component';
 import { imageValidator } from 'src/validators/form-validators.module';
 import { validatePostVideo } from 'src/app/utils/post-media.util';
 
@@ -72,7 +73,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 
 @Component({
     selector: 'app-dashboard-timeline',
-    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent],
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent, ProfileQuizPromptComponent],
     templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {

@@ -1,0 +1,84 @@
+<section class="font-sans flex flex-col gap-4">
+
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <app-page-header icon="compass" title="Profile Quiz Questions"
+      subtitle="The 5-question quiz new users see -- add, edit, reorder, retire or delete a question"></app-page-header>
+    <button type="button" (click)="addQuestion()"
+      class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+      <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+      Add question
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 flex items-center justify-center">
+    <i-feather name="loader" class="animate-spin text-gray-400" style="width:20px;height:20px;"></i-feather>
+  </div>
+
+  <div *ngIf="!loading && loadError" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col items-center gap-3 text-center">
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ loadError }}</p>
+    <button type="button" (click)="load()" class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">Try again</button>
+  </div>
+
+  <div *ngIf="!loading && !loadError && questions.length === 0" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+    No questions yet. Add one to start the quiz.
+  </div>
+
+  <div *ngFor="let question of questions; let qi = index"
+    class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
+
+    <div class="flex items-start gap-3">
+      <span class="shrink-0 mt-2 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center justify-center">{{ qi + 1 }}</span>
+      <textarea [(ngModel)]="question.text" rows="2" placeholder="Question text…"
+        class="flex-1 resize-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100
+               placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-2 pl-9">
+      <div *ngFor="let option of question.options; let oi = index" class="flex items-center gap-2">
+        <span class="w-4 h-4 rounded-full border-2 border-gray-300 dark:border-gray-600 shrink-0"></span>
+        <input [(ngModel)]="option.text" type="text" placeholder="Option text…"
+          class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-gray-100
+                 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition" />
+        <button type="button" (click)="removeOption(question, oi)" aria-label="Remove option"
+          class="text-gray-400 dark:text-gray-500 hover:text-red-600 transition shrink-0">
+          <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+        </button>
+      </div>
+      <button type="button" (click)="addOption(question)"
+        class="self-start flex items-center gap-1 text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-red-600 transition">
+        <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
+        Add option
+      </button>
+    </div>
+
+    <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+      <div class="flex items-center gap-3">
+        <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
+          Order
+          <input [(ngModel)]="question.displayOrder" type="number"
+            class="w-14 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-900 dark:text-gray-100
+                   focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition" />
+        </label>
+        <button *ngIf="question.id != null" type="button" (click)="toggleStatus(question)" [disabled]="question.saving"
+          class="text-[11px] font-semibold px-2.5 py-1 rounded-full border transition"
+          [ngClass]="question.active
+            ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900'
+            : 'text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'">
+          {{ question.active ? 'Active' : 'Inactive' }}
+        </button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="delete(question, qi)" [disabled]="question.saving"
+          class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-60 transition">
+          Delete
+        </button>
+        <button type="button" (click)="save(question)" [disabled]="question.saving"
+          class="px-4 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition flex items-center gap-1.5">
+          <i-feather *ngIf="question.saving" name="loader" class="animate-spin" style="width:11px;height:11px;"></i-feather>
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>
