@@ -1,11 +1,16 @@
 import { Injector } from '@angular/core';
 import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
+import { ReconnectionTimeMode, StompConfig } from '@stomp/stompjs';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { environment } from 'src/environments/environment';
 
-export const myRxStompConfig: RxStompConfig = {
+// RxStompConfig doesn't declare reconnectTimeMode/maxReconnectDelay, but its
+// configure() forwards whatever it's given straight to the underlying
+// stompjs Client, which does support them -- so we widen the type rather
+// than drop the fields.
+export const myRxStompConfig: RxStompConfig & Pick<StompConfig, 'reconnectTimeMode' | 'maxReconnectDelay'> = {
 
   // Which server?
   brokerURL: environment.brokerURL,
@@ -15,8 +20,13 @@ export const myRxStompConfig: RxStompConfig = {
   heartbeatIncoming: 0, // Typical value 0 - disabled
   heartbeatOutgoing: 20000, // Typical value 20000 - every 20 seconds
 
-  // Typical value 500 (500 milli seconds)
+  // First retry waits reconnectDelay; every attempt after that doubles the
+  // wait (capped at maxReconnectDelay) so a broker/auth failure that keeps
+  // recurring backs off instead of hammering at a fixed interval forever.
+  // A successful connect resets the delay back to reconnectDelay.
   reconnectDelay: 5000,
+  reconnectTimeMode: ReconnectionTimeMode.EXPONENTIAL,
+  maxReconnectDelay: 60000,
 
   // Skip this key to stop logging to console
   // debug: (msg: string): void => {

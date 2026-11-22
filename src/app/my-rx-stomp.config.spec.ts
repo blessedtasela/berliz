@@ -1,9 +1,20 @@
 import { Injector } from '@angular/core';
 import { RxStomp } from '@stomp/rx-stomp';
+import { ReconnectionTimeMode } from '@stomp/stompjs';
 import { of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
-import { prepareConnect } from './my-rx-stomp.config';
+import { myRxStompConfig, prepareConnect } from './my-rx-stomp.config';
+
+describe('myRxStompConfig', () => {
+  // A repeatedly failing connection (backend down, or a rejected CONNECT)
+  // must back off instead of retrying at a fixed interval forever.
+  it('backs off exponentially, capped, instead of retrying at a fixed rate forever', () => {
+    expect(myRxStompConfig.reconnectDelay).toBeGreaterThan(0);
+    expect(myRxStompConfig.reconnectTimeMode).toBe(ReconnectionTimeMode.EXPONENTIAL);
+    expect(myRxStompConfig.maxReconnectDelay).toBeGreaterThanOrEqual(myRxStompConfig.reconnectDelay as number);
+  });
+});
 
 describe('prepareConnect', () => {
   let auth: jasmine.SpyObj<AuthService>;
