@@ -5,6 +5,13 @@
 
 <section class="font-sans flex flex-col gap-4 mt-4 max-w-2xl mx-auto">
 
+    <!-- GN-75 Phase 2: recommendations lead the feed -- the owner's call ("put trainers on top
+         recommended trainers and other [sections] underneath close to them") -- a tight pair of
+         horizontal-scroll strips right at the top, each with its own "See all" through to the full page. -->
+    <app-recommended-trainers></app-recommended-trainers>
+
+    <app-recommended-workouts></app-recommended-workouts>
+
     <app-trainer-pulse-header></app-trainer-pulse-header>
 
     <!-- Page header -->
@@ -22,10 +29,6 @@
     </div>
 
     <app-profile-quiz-prompt></app-profile-quiz-prompt>
-
-    <app-recommended-trainers></app-recommended-trainers>
-
-    <app-recommended-workouts></app-recommended-workouts>
 
     <!-- ── COMPOSE ───────────────────────────────────────────────────────── -->
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">

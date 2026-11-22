@@ -14,20 +14,23 @@ import { DraftEntry } from 'src/app/models/draft.model';
     selector: 'app-draft-resume-banner',
     imports: [CommonModule, IconsModule],
     template: `
-    <div *ngIf="draft" class="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3">
-      <i-feather name="clock" class="text-amber-600 shrink-0 mt-0.5" style="width:14px;height:14px;"></i-feather>
+    <div *ngIf="draft" class="flex items-start gap-2.5 rounded-xl border px-3.5 py-3"
+      [ngClass]="dark ? 'border-amber-900/50 bg-amber-950/30' : 'border-amber-200 bg-amber-50'">
+      <i-feather name="clock" [ngClass]="dark ? 'text-amber-500' : 'text-amber-600'" class="shrink-0 mt-0.5" style="width:14px;height:14px;"></i-feather>
       <div class="min-w-0 flex-1">
-        <p class="text-xs font-bold text-amber-900">
+        <p class="text-xs font-bold" [ngClass]="dark ? 'text-amber-300' : 'text-amber-900'">
           Unfinished {{ itemLabel }} from {{ relativeTime }}
         </p>
-        <p *ngIf="draft.preview" class="text-[11px] text-amber-700 mt-0.5 truncate">{{ draft.preview }}</p>
+        <p *ngIf="draft.preview" class="text-[11px] mt-0.5 truncate" [ngClass]="dark ? 'text-amber-400/80' : 'text-amber-700'">{{ draft.preview }}</p>
         <div class="flex items-center gap-2 mt-2">
           <button type="button" (click)="resume.emit(draft)"
-            class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">
+            class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white transition"
+            [ngClass]="dark ? 'bg-amber-600 hover:bg-amber-500' : 'bg-amber-600 hover:bg-amber-700'">
             Continue
           </button>
           <button type="button" (click)="startFresh.emit()"
-            class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 transition">
+            class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition"
+            [ngClass]="dark ? 'border-amber-800 text-amber-400 hover:bg-amber-950/50' : 'border-amber-300 text-amber-700 hover:bg-amber-100'">
             Start fresh
           </button>
         </div>
@@ -39,6 +42,8 @@ export class DraftResumeBannerComponent {
   @Input() draft: DraftEntry | null = null;
   /** Human word for what's in progress, e.g. "post", "booking" -- read as "Unfinished {{itemLabel}} from...". */
   @Input() itemLabel = 'draft';
+  /** GN-76: a brand-dark skin for a screen that's always dark regardless of the user's light/dark toggle. */
+  @Input() dark = false;
 
   @Output() resume = new EventEmitter<DraftEntry>();
   @Output() startFresh = new EventEmitter<void>();

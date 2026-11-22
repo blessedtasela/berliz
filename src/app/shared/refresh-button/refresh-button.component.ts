@@ -15,6 +15,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class RefreshButtonComponent {
   @Input() loading = false;
   @Input() title = 'Refresh';
+  /** GN-76: a brand-dark skin for a screen that's always dark regardless of the user's light/dark toggle
+   *  (same `[dark]` convention as SelectComponent/InlineAlertComponent), independent of the default. */
+  @Input() dark = false;
   @Output() refresh = new EventEmitter<void>();
 
   onClick(): void {

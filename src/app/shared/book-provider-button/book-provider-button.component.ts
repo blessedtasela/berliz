@@ -21,7 +21,8 @@ import { BookingLauncherService } from 'src/app/booking/booking-launcher.service
         'px-4 py-2 text-xs': size === 'md',
         'w-full justify-center': block,
         'bg-red-600 text-white hover:bg-red-700': !subtle,
-        'bg-red-50 text-red-700 border border-red-100 hover:bg-red-100': subtle
+        'bg-red-50 text-red-700 border border-red-100 hover:bg-red-100': subtle && !dark,
+        'bg-brand-red/10 text-brand-red border border-brand-red/30 hover:bg-brand-red/20': subtle && dark
       }">
       <i-feather name="calendar" [style.width.px]="size === 'sm' ? 12 : 14" [style.height.px]="size === 'sm' ? 12 : 14"></i-feather>
       {{ label }}
@@ -38,6 +39,9 @@ export class BookProviderButtonComponent {
   /** Quieter styling (tinted, not solid) for dense contexts like a feed card. */
   @Input() subtle = false;
   @Input() label = 'Book a session';
+  /** GN-76: a brand-dark skin for a screen that's always dark regardless of the user's light/dark toggle --
+   *  only changes the `subtle` tint (the solid variant is already brand-red regardless of background). */
+  @Input() dark = false;
 
   constructor(private bookingLauncher: BookingLauncherService) {}
 
