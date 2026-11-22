@@ -25,7 +25,8 @@ describe('DashboardTimelineComponent', () => {
   let queryParamMap: Record<string, string>;
 
   beforeEach(() => {
-    postServiceSpy = jasmine.createSpyObj('PostService', ['getFeed', 'getMyTimeline', 'getPostById', 'addPost']);
+    postServiceSpy = jasmine.createSpyObj('PostService', ['getForYouFeed', 'getFeed', 'getMyTimeline', 'getPostById', 'addPost']);
+    postServiceSpy.getForYouFeed.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
     postServiceSpy.getFeed.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
     postServiceSpy.getMyTimeline.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
 

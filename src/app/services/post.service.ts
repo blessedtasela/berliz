@@ -37,9 +37,14 @@ export class PostService {
     return this.httpClient.get<ApiResponse<PostResponse[]>>(this.url + `/post/timeline/${userId}`);
   }
 
-  /** The signed-in user's own posts plus their accepted connections' posts. */
+  /** The signed-in user's own posts plus their accepted connections'/followees' posts -- the "Friends" tab. */
   getFeed(): Observable<ApiResponse<PostResponse[]>> {
     return this.httpClient.get<ApiResponse<PostResponse[]>>(this.url + '/post/feed');
+  }
+
+  /** GN-89: every recent post regardless of the viewer's social graph -- the "For You" tab, and the default. */
+  getForYouFeed(): Observable<ApiResponse<PostResponse[]>> {
+    return this.httpClient.get<ApiResponse<PostResponse[]>>(this.url + '/post/for-you');
   }
 
   /** One post by id — for the notification bell's deep link. */

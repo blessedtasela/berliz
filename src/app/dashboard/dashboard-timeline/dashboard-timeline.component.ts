@@ -45,15 +45,19 @@ interface PostDraftData {
   uploadedVideo?: { strapiId: number; videoUrl: string; mimeType: string } | null;
 }
 
-type TimelineTab = 'feed' | 'mine';
+/**
+ * GN-89: three tabs, not two. "forYou" is the global feed (everyone, not just who you follow --
+ * the default, so a brand-new account who follows nobody still sees a live feed instead of an
+ * empty one); "friends" is the old "feed" tab, renamed, unchanged (connections + follows +
+ * yourself); "mine" is unchanged (your own posts only).
+ */
+type TimelineTab = 'forYou' | 'friends' | 'mine';
 
 /**
- * Compose + view your own posts, and see your accepted connections' posts —
- * `/dashboard/timeline`. Defaults to the Feed tab; toggles to "My Timeline"
- * for just your own posts. Reads from PostService directly (no NgRx slice:
- * the only consumer of this state is this one page, plus the read-only
- * viewer on DashboardUserProfileComponent which fetches its own copy
- * independently). Comment threads are PostCommentsComponent, shared with
+ * Compose + view the feed in three tabs (For You / Friends / My Timeline) — `/dashboard/timeline`.
+ * Defaults to For You. Reads from PostService directly (no NgRx slice: the only consumer of this
+ * state is this one page, plus the read-only viewer on DashboardUserProfileComponent which
+ * fetches its own copy independently). Comment threads are PostCommentsComponent, shared with
  * both profile pages' Timeline sections.
  */
 /** Activity a post can be framed as. GENERAL is the plain-post default and isn't shown as a chip. */
@@ -88,8 +92,9 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   readonly activityOptions = ACTIVITY_OPTIONS;
 
-  tab: TimelineTab = 'feed';
+  tab: TimelineTab = 'forYou';
 
+  forYouPosts: PostResponse[] = [];
   feedPosts: PostResponse[] = [];
   myPosts: PostResponse[] = [];
   loading = false;
@@ -176,11 +181,14 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   refresh(): void {
     this.loading = true;
-    const request = this.tab === 'feed' ? this.postService.getFeed() : this.postService.getMyTimeline();
+    const request = this.tab === 'forYou' ? this.postService.getForYouFeed()
+      : this.tab === 'friends' ? this.postService.getFeed()
+      : this.postService.getMyTimeline();
     request.subscribe({
       next: res => {
         this.loading = false;
-        if (this.tab === 'feed') { this.feedPosts = res.data ?? []; }
+        if (this.tab === 'forYou') { this.forYouPosts = res.data ?? []; }
+        else if (this.tab === 'friends') { this.feedPosts = res.data ?? []; }
         else { this.myPosts = res.data ?? []; }
       },
       error: () => { this.loading = false; },
@@ -194,7 +202,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   }
 
   get posts(): PostResponse[] {
-    return this.tab === 'feed' ? this.feedPosts : this.myPosts;
+    return this.tab === 'forYou' ? this.forYouPosts : this.tab === 'friends' ? this.feedPosts : this.myPosts;
   }
 
   // ── Compose ──────────────────────────────────────────────────────────────
@@ -343,8 +351,12 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         this.posting = false;
         const post = res.data;
         if (post) {
+          // A fresh post is always visible to its own author in all three tabs -- For You
+          // (everyone), Friends (includes yourself), and My Timeline -- so prepend to all three
+          // local caches regardless of which one is currently showing.
           this.myPosts = [post, ...this.myPosts];
-          if (this.tab === 'feed') { this.feedPosts = [post, ...this.feedPosts]; }
+          this.feedPosts = [post, ...this.feedPosts];
+          this.forYouPosts = [post, ...this.forYouPosts];
         }
         this.draftContent = '';
         this.draftActivityType = 'GENERAL';
@@ -429,6 +441,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         next: () => {
           this.myPosts = this.myPosts.filter(p => p.id !== post.id);
           this.feedPosts = this.feedPosts.filter(p => p.id !== post.id);
+          this.forYouPosts = this.forYouPosts.filter(p => p.id !== post.id);
           this.snackBarService.openSnackBar('Post deleted', '');
         },
         error: () => this.snackBarService.openSnackBar('Could not delete post', 'error'),
@@ -459,6 +472,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     };
     applyTo(this.feedPosts);
     applyTo(this.myPosts);
+    applyTo(this.forYouPosts);
   }
 
   trackByPostId(_: number, post: PostResponse): number {

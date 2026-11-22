@@ -125,11 +125,17 @@
     </div>
 
     <!-- ── TAB TOGGLE ────────────────────────────────────────────────────── -->
+    <!-- GN-89: For You (global, default) / Friends (connections + follows) / My Timeline (own posts only). -->
     <div class="bg-brand-card border border-brand-border rounded-xl p-1 flex gap-1 w-fit">
-        <button type="button" (click)="setTab('feed')"
+        <button type="button" (click)="setTab('forYou')"
             class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
-            [ngClass]="tab === 'feed' ? 'bg-brand-red text-white' : 'text-brand-muted hover:text-brand-text'">
-            Feed
+            [ngClass]="tab === 'forYou' ? 'bg-brand-red text-white' : 'text-brand-muted hover:text-brand-text'">
+            For You
+        </button>
+        <button type="button" (click)="setTab('friends')"
+            class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="tab === 'friends' ? 'bg-brand-red text-white' : 'text-brand-muted hover:text-brand-text'">
+            Friends
         </button>
         <button type="button" (click)="setTab('mine')"
             class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
@@ -257,10 +263,12 @@
             <i-feather name="activity" class="text-brand-muted" style="width:22px;height:22px;"></i-feather>
         </div>
         <p class="text-sm font-bold text-brand-text">
-            {{ tab === 'feed' ? 'Nothing here yet' : 'No posts yet' }}
+            {{ tab === 'mine' ? 'No posts yet' : 'Nothing here yet' }}
         </p>
         <p class="text-xs text-brand-muted max-w-xs leading-relaxed">
-            {{ tab === 'feed' ? 'Posts from you and your connections will show up here.' : 'Share your first update above.' }}
+            {{ tab === 'forYou' ? 'Posts from everyone on Berliz will show up here.'
+                : tab === 'friends' ? 'Posts from you and your connections will show up here.'
+                : 'Share your first update above.' }}
         </p>
     </div>
 
