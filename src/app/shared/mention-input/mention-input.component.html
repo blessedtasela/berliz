@@ -1,5 +1,11 @@
 <div class="relative">
-    <input #input type="text" [ngModel]="value" (ngModelChange)="onModel($event)"
+    <!-- GN-88: no name/autocomplete here used to let the browser's own autofill heuristics
+         guess at what this field was for -- a bare, unlabelled text input with an @-mention
+         suggestions dropdown underneath it is exactly the shape a password manager tends to
+         mistake for a username field, popping up "fill username" instead of letting you type a
+         comment. autocomplete="off" turns that heuristic off; name/aria-label just say plainly
+         what the field actually is. -->
+    <input #input type="text" name="comment" autocomplete="off" aria-label="Comment" [ngModel]="value" (ngModelChange)="onModel($event)"
         (input)="onInput(input)" (keydown.enter)="onEnter(); $event.preventDefault()" (keydown.escape)="close()"
         [placeholder]="placeholder" [maxlength]="maxLength"
         class="w-full text-xs rounded-lg px-3 py-2 border focus:outline-none focus:ring-1 transition"
