@@ -697,30 +697,33 @@ p {
   }
 }
 
-/* ─── Success: solid zinc-950, unmissable ───────────────────────────────── */
+/* ─── Success: brand-card near-black, unmissable ────────────────────────── */
+/* GN-76 (Nov 22, 2026): swapped the old zinc-950/stock-red-600 pair for the real
+   brand-* tokens (tailwind.config.js) -- same black/red/white system as every
+   other redesigned screen, not a one-off palette just for toasts. */
 
 .snack-bar-success.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  background-color: #09090b !important;
+  background-color: #1A1A1A !important; /* brand-card */
   border-left: 4px solid #22c55e !important;
 }
 
 .snack-bar-success .mdc-snackbar__label {
-  color: #ffffff !important;
+  color: #ffffff !important; /* brand-text */
 }
 
 .snack-bar-success .mat-mdc-snack-bar-action {
   color: #22c55e !important;
 }
 
-/* ─── Error: solid red-600, unmissable ──────────────────────────────────── */
+/* ─── Error: brand-red, unmissable ──────────────────────────────────────── */
 
 .snack-bar-error.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  background-color: #dc2626 !important;
+  background-color: #E62E2E !important; /* brand-red */
   border-left: 4px solid #7f1d1d !important;
 }
 
 .snack-bar-error .mdc-snackbar__label {
-  color: #ffffff !important;
+  color: #ffffff !important; /* brand-text */
 }
 
 .snack-bar-error .mat-mdc-snack-bar-action {
