@@ -51,12 +51,14 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   // it's just no longer the first thing you see.
   { name: 'Home', icon: 'home', route: '/dashboard', exact: true },
   { name: 'Dashboard', icon: 'bar-chart-2', route: '/dashboard/overview', exact: true },
-  { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
   { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
-  { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
   // The Hub is where every module and entity lives (a client's tools, an admin's managed entities), so it stays a
   // top-level row for every role. It was folded into the collapsed Community group, which made it look gone.
   { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
+  // GN-75: Messages and Bookings moved into Community/Find & Book below (Nov 22, 2026) --
+  // every feature should sit in its thematic group, not loose at the top level, unless
+  // it's a true cross-cutting utility like the four rows above (landing page, stats,
+  // notifications, the admin/entity hub).
 
   // A trainer/center is a partner first-class citizen, not just "a user with
   // extra pages" -- same reasoning as the mobile app's TRAINER_SECTION /
@@ -95,40 +97,60 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
 
   { label: 'Explore' },
   {
+    // GN-75 MVP sidebar trim (Nov 21, 2026): kept Workout Room/Workouts/Exercises & Gear --
+    // the owner's call was these three stay grouped together as "workout-related features,"
+    // not that the group gets emptied down to the catalog-only items. Runs/Tasks/To-do
+    // list/My Progress/Recap/Achievements are hidden (not deleted -- restore by uncommenting
+    // below); none of them map to the MVP's Trainers/Clients/Content/Community pillars.
+    // Their routes, dashboard widgets and notification deep-links are untouched: this is a
+    // sidebar-menu trim only, not a route kill like the Shop/Centers "hide phase" -- several
+    // of these routes are still reachable from Dashboard Overview's own todo-list widget,
+    // payment-success, and notification links, which stay working features.
     name: 'Train', icon: 'activity', items: [
       { name: 'Workout Room', icon: 'zap', route: '/dashboard/workout-room' },
       { name: 'Workouts', icon: 'play-circle', route: '/dashboard/workouts' },
-      { name: 'Runs', icon: 'wind', route: '/dashboard/runs' },
-      { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
-      { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
-      { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
-      { name: 'Recap', icon: 'bar-chart-2', route: '/dashboard/recap' },
-      { name: 'Achievements', icon: 'award', route: '/dashboard/achievements' },
+      // { name: 'Runs', icon: 'wind', route: '/dashboard/runs' },
+      // { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
+      // { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
+      // { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
+      // { name: 'Recap', icon: 'bar-chart-2', route: '/dashboard/recap' },
+      // { name: 'Achievements', icon: 'award', route: '/dashboard/achievements' },
       { name: 'Exercises & Gear', icon: 'layers', route: '/dashboard/exercises' },
     ],
   },
   {
+    // GN-75 MVP sidebar trim: Deals hidden (marketing/promo browsing, same genre as the
+    // footer's already-hidden Members/Services/Testimonials) -- not deleted, restore by
+    // uncommenting. Find a Provider and Sessions stay: Find a Provider is explicitly named
+    // in the ticket's own MVP list, and Sessions (peer-to-peer workouts between connections)
+    // reads as Community, not an extra.
     name: 'Find & Book', icon: 'search', items: [
       { name: 'Find a Provider', icon: 'search', route: '/dashboard/find-providers' },
-      { name: 'Deals', icon: 'percent', route: '/dashboard/deals' },
+      { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
+      // { name: 'Deals', icon: 'percent', route: '/dashboard/deals' },
       { name: 'Sessions', icon: 'user-check', route: '/dashboard/my-sessions' },
     ],
   },
   {
     name: 'Community', icon: 'users', items: [
       { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
+      { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
       { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
       { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
     ],
   },
   {
+    // GN-75 MVP sidebar trim: Rewards hidden (growth/marketing, same genre as Deals above) --
+    // not deleted, restore by uncommenting. Everything else here maps to a basic account
+    // function, Clients (Onboarding/Subscriptions/My Memberships), or Content (Saved/My
+    // Drafts/My Reviews), same bar the footer trim used for its own "basic support link" keeps.
     name: 'Me', icon: 'user', items: [
       { name: 'Profile', icon: 'user', route: '/dashboard/profile/view' },
       { name: 'Settings', icon: 'settings', route: '/dashboard/profile/edit' },
       { name: 'Onboarding', icon: 'clipboard', route: '/dashboard/onboarding' },
       { name: 'Saved', icon: 'bookmark', route: '/dashboard/saved' },
       { name: 'My Drafts', icon: 'edit-3', route: '/dashboard/my-drafts' },
-      { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
+      // { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
       { name: 'My Reviews', icon: 'star', route: '/dashboard/my-trainer-reviews' },
       { name: 'My Memberships', icon: 'home', route: '/dashboard/my-memberships' },
       { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },

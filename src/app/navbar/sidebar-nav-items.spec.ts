@@ -32,18 +32,37 @@ describe('sidebar-nav-items groups', () => {
     expect(rows.length).toBeLessThanOrEqual(10);
   });
 
-  it('still reaches every page that used to be a top-level entry', () => {
+  it('still reaches every MVP page that used to be a top-level entry', () => {
     const routes = leaves(filterSidebarNavItems('user')).map(i => i.route);
     for (const r of [
       '/dashboard', '/dashboard/messages', '/dashboard/my-notifications', '/dashboard/timeline', '/dashboard/connections',
-      '/dashboard/my-sessions', '/dashboard/member-directory', '/dashboard/workout-room', '/dashboard/achievements',
-      '/dashboard/my-tasks', '/dashboard/my-todos', '/dashboard/workouts', '/dashboard/runs', '/dashboard/my-progress',
-      '/dashboard/recap', '/dashboard/exercises', '/dashboard/find-providers', '/dashboard/deals', '/dashboard/my-bookings',
+      '/dashboard/my-sessions', '/dashboard/member-directory', '/dashboard/workout-room',
+      '/dashboard/workouts', '/dashboard/exercises', '/dashboard/find-providers', '/dashboard/my-bookings',
       '/dashboard/profile/view', '/dashboard/profile/edit', '/dashboard/saved', '/dashboard/my-drafts',
-      '/dashboard/my-rewards', '/dashboard/my-subscriptions', '/dashboard/hub', '/dashboard/my-faqs',
+      '/dashboard/my-subscriptions', '/dashboard/hub', '/dashboard/my-faqs',
     ]) {
       expect(routes).toContain(r);
     }
+  });
+
+  // GN-75 MVP sidebar trim (Nov 21, 2026): these never mapped to Trainers/Clients/Content/
+  // Community, so the owner's call was to drop them from the menu -- same "hide, don't
+  // delete" mechanism as the earlier Shop/Centers pass, but menu-only here: the routes
+  // themselves, their dashboard widgets and notification deep-links are untouched.
+  it('drops non-MVP items from the Train/Find & Book/Me groups', () => {
+    const routes = leaves(filterSidebarNavItems('user')).map(i => i.route);
+    for (const r of [
+      '/dashboard/runs', '/dashboard/my-tasks', '/dashboard/my-todos', '/dashboard/my-progress',
+      '/dashboard/recap', '/dashboard/achievements', '/dashboard/deals', '/dashboard/my-rewards',
+    ]) {
+      expect(routes).not.toContain(r);
+    }
+  });
+
+  it('keeps Workout Room grouped with Workouts and Exercises & Gear in Train', () => {
+    const train = SIDEBAR_NAV_ITEMS.find(i => i.name === 'Train')!;
+    const names = train.items!.map(i => i.name);
+    expect(names).toEqual(['Workout Room', 'Workouts', 'Exercises & Gear']);
   });
 
   it('gives groups a name, an icon and items, and never a route of their own', () => {
@@ -63,7 +82,7 @@ describe('sidebar-nav-items groups', () => {
 
   it('reports a group as active on any of its pages', () => {
     const train = SIDEBAR_NAV_ITEMS.find(i => i.name === 'Train')!;
-    expect(sidebarGroupIsActive(train, '/dashboard/runs/12')).toBeTrue();
+    expect(sidebarGroupIsActive(train, '/dashboard/workouts/12')).toBeTrue();
     expect(sidebarGroupIsActive(train, '/dashboard/messages')).toBeFalse();
     expect(sidebarGroupIsActive(train, null)).toBeFalse();
     expect(sidebarGroupRoute(train)).toBe('/dashboard/workout-room');
