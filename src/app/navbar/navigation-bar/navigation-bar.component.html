@@ -47,10 +47,17 @@
                  menu -- instead of being stuck looking logged-out. -->
             <li class="py-1.5 lg:py-0 lg:ml-3 flex items-center gap-2" *ngIf="getUser()">
 
-                <a [routerLink]="['/dashboard']" title="Dashboard" aria-label="Dashboard"
-                    class="w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
+                <a [routerLink]="['/dashboard']" aria-label="Home"
+                    class="relative group w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
                            text-white hover:bg-red-600 hover:border-red-600 transition shrink-0">
                     <i-feather name="home" style="width:16px;height:16px;"></i-feather>
+                    <!-- Custom tooltip, not the native `title` attribute (unstyled browser box; also stale --
+                         "Dashboard" predates GN-75 making /dashboard the Home/feed landing page). -->
+                    <span class="pointer-events-none absolute top-full right-0 mt-2 whitespace-nowrap px-2 py-1 rounded-lg
+                                 bg-gray-900 text-white text-[11px] font-semibold opacity-0 group-hover:opacity-100
+                                 transition-opacity duration-150 shadow-lg z-50">
+                        Home
+                    </span>
                 </a>
 
                 <div class="relative">

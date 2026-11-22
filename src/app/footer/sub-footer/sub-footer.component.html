@@ -1,6 +1,6 @@
 <section class="w-full bottom-0 text-sm">
-  <div class="bg-gray-950 rounded-b-md py-4 px-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center text-white text-center ">
+  <div class="bg-brand-bg rounded-b-md py-4 px-4 border-t border-brand-border">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center text-brand-text text-center ">
 
       <!-- Column 1: Copyright -->
       <div>
@@ -12,7 +12,7 @@
         <h3 class="flex justify-center items-center gap-1">
           <span class="hidden md:inline">&copy;</span>
           Developed by
-          <span class="text-red-600 font-bold cursor-pointer" (click)="openBlessedTasela()" role="button" tabindex="0" (keydown.enter)="openBlessedTasela()">
+          <span class="text-brand-red font-bold cursor-pointer" (click)="openBlessedTasela()" role="button" tabindex="0" (keydown.enter)="openBlessedTasela()">
             Blessed Tasela
           </span>
         </h3>
@@ -20,10 +20,10 @@
 
       <!-- Column 3: Links -->
       <div class="flex flex-wrap justify-center gap-4 text-sm">
-        <a [routerLink]="['/faqs']" class="hover:text-red-600 transition">FAQs</a>
-        <a [routerLink]="['/terms']" class="hover:text-red-600 transition">Terms</a>
-        <a [routerLink]="['/privacy']" class="hover:text-red-600 transition">Privacy</a>
-        <a [routerLink]="['/help-center']" class="hover:text-red-600 transition">Help</a>
+        <a [routerLink]="['/faqs']" class="hover:text-brand-red transition">FAQs</a>
+        <a [routerLink]="['/terms']" class="hover:text-brand-red transition">Terms</a>
+        <a [routerLink]="['/privacy']" class="hover:text-brand-red transition">Privacy</a>
+        <a [routerLink]="['/help-center']" class="hover:text-brand-red transition">Help</a>
       </div>
     </div>
   </div>

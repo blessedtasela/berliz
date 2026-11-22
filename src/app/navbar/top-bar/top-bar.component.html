@@ -103,10 +103,18 @@
 
         <!-- RIGHT: Home + Profile -->
         <div class="items-center gap-3 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
-            <button type="button" [routerLink]="['/dashboard']" title="Dashboard" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+            <button type="button" [routerLink]="['/dashboard']" aria-label="Home" class="relative group w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                flex items-center justify-center transition">
                 <feather-icon name="home" class="text-gray-700 dark:text-gray-300"
                     style="width:16px;height:16px;width:16px;"></feather-icon>
+                <!-- Custom tooltip, not the native `title` attribute -- that rendered as the browser's own
+                     unstyled black box, which also used to say "Dashboard" (stale since GN-75 made this icon's
+                     target, /dashboard, the Home/feed landing page rather than the widget Dashboard). -->
+                <span class="pointer-events-none absolute top-full right-0 mt-2 whitespace-nowrap px-2 py-1 rounded-lg
+                             bg-gray-900 dark:bg-gray-700 text-white text-[11px] font-semibold opacity-0 group-hover:opacity-100
+                             transition-opacity duration-150 shadow-lg z-50">
+                    Home
+                </span>
             </button>
 
             <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
