@@ -34,7 +34,10 @@ that ships a feature — add the row under the right domain, and log it under
 | Feature | Status | Notes |
 |---|---|---|
 | Connections (request / accept / remove) | ✅ | Gates the feed audience |
-| Follow (one-way, no acceptance needed) | ✅ | GN-75: separate from Connections — `FollowRest` (`/follow`), `FollowButtonComponent`. A followee's posts join the feed the same way an accepted connection's do. Wired on the trainer public profile hero so far; not yet on post cards or a "recommended trainers" section (that section doesn't exist yet) |
+| Follow (one-way, no acceptance needed) | ✅ | GN-75: separate from Connections — `FollowRest` (`/follow`), `FollowButtonComponent`. A followee's posts join the feed the same way an accepted connection's do. Wired on the trainer public profile hero and the feed's own "Recommended for you" cards; not yet on post cards |
+| Recommended trainers on the feed | ✅ | `RecommendedTrainersComponent` — the public listing's real featured/promoted ranking minus anyone already followed. Hidden for a trainer/center. Deeper personalization (profile-quiz training-preference match, discipline match) is a documented next step, not faked |
+| Recommended workouts on the feed | ✅ | `RecommendedWorkoutsComponent` — the existing admin-curated template library (`/workout/getTemplates`), sorted by clone count |
+| Trainer/center "pulse" header on the feed | ✅ | `TrainerPulseHeaderComponent` — active clients, bookings, packages at the top of the feed, same `/dashboard/details` counts the Dashboard Overview widget already shows |
 | Timeline / feed of connections' + followees' posts | ✅ | `dashboard-timeline` — also the signed-in landing page now, at the bare `/dashboard` URL (GN-75); the old full-widget page moved to `/dashboard/overview` |
 | Create post — text, photo or video, activity type badge | ✅ | Types: GENERAL, WORKOUT, SESSION, TESTIMONIAL, REVIEW, PROGRESS, MILESTONE. **A post carries one photo OR one video** (MP4 / WebM / MOV, up to 50MB, uploaded like any other media); the composer disables the other picker once one is attached, and the server rejects both together and clears the old media when an edit swaps it. Videos play inline in the feed, on both profile pages and on the Saved page, and in the media + comments sheet. *This row used to say image/video, but posts were photo-only on every layer until now.* |
 | Post like + like count | ✅ | Toggle like; denormalized counter |
@@ -85,7 +88,7 @@ Not the same feature as "3b. Client onboarding" above (that's a trainer intake-i
 | 5-question quiz (goal, fitness level, training preference, days/week, workout type) | ✅ | GN-75: `OnboardingQuestion`/`OnboardingOption`/`OnboardingAnswer` on the backend (`/onboarding`), `ProfileQuizWizardComponent` at `/dashboard/hub/profile-quiz` on the frontend. Single-choice, one question per step, prefills and resumes at the first unanswered question |
 | Admin-manageable question bank (add/edit/reorder/retire/delete) | ✅ | `/admin/onboarding-questions`, admin-only; `ProfileQuizQuestionsComponent` at `/dashboard/hub/profile-quiz-questions`. The 5 seeded questions are a starting point, not a hard limit |
 | Dismissible feed nudge for anyone who hasn't finished it | ✅ | `ProfileQuizPromptComponent`, self-contained, dropped into the Timeline feed. "Skip for now" always works — a preference survey, never a gate on using the app |
-| Feeds the recommendation engine | ⏳ Planned | Answers aren't consumed by anything yet — the still-unbuilt "recommended trainers" and "recommended workout for today" feed sections are what this exists for |
+| Feeds the recommendation engine | ⏳ Planned | The "Recommended for you" trainers/workouts feed sections exist now (see Social, above) but don't consume quiz answers yet — they rank by real platform signals (subscription tier, clone count). Matching the quiz's training-preference answer against a trainer's serviceMode is the next step |
 
 ## 4. Training & tracking
 
