@@ -5,6 +5,7 @@ import { Users } from 'src/app/models/users.interface';
 import { DatePipe } from '@angular/common';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { genericError, passwordMatchValidator } from 'src/validators/form-validators.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -32,6 +33,9 @@ export class UserDetailsModalComponent {
   isSuperAdmin = false;
   overridingTrialRisk = false;
 
+  /** GN-78: only a super admin may impersonate, and never their own account (meaningless -- it's already their session). */
+  impersonating = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<UserDetailsModalComponent>,
@@ -39,7 +43,8 @@ export class UserDetailsModalComponent {
     private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
-    private userService: UserService,) {
+    private userService: UserService,
+    private authService: AuthService,) {
     this.userData = this.data.userData;
     this.profilePhoto = this.data.photo;
     try {
@@ -51,6 +56,44 @@ export class UserDetailsModalComponent {
   /** One line per signal that fired, for display under the risk badge. */
   get trialRiskReasonsList(): string[] {
     return (this.userData?.trialRiskReasons ?? '').split('\n').filter(r => !!r);
+  }
+
+  /** Impersonating yourself is meaningless -- it's already your own session. */
+  get canImpersonate(): boolean {
+    return this.isSuperAdmin
+      && this.userData?.email?.toLowerCase() !== this.authService.getCurrentUserEmail()?.toLowerCase();
+  }
+
+  /**
+   * GN-78: super admin only. Swaps the live session for this user's own freshly-issued tokens
+   * (stashing the admin's own session first, see AuthService.startImpersonation) and does a
+   * full page load rather than an Angular route change -- every NgRx slice and cached service
+   * state must start clean against the new identity, not carry anything over from the admin's.
+   */
+  impersonateUser(): void {
+    if (this.impersonating || !this.canImpersonate) return;
+    this.impersonating = true;
+    this.userService.impersonate(this.userData.id).subscribe({
+      next: (res: any) => {
+        const auth = res?.data;
+        if (!auth?.accessToken) {
+          this.impersonating = false;
+          this.snackBarService.openSnackBar(res?.message || genericError, '');
+          return;
+        }
+        this.authService.startImpersonation(auth.accessToken, auth.refreshToken);
+        this.hardNavigateTo('/dashboard');
+      },
+      error: (error: any) => {
+        this.impersonating = false;
+        this.snackBarService.openSnackBar(error?.error?.message || genericError, '');
+      }
+    });
+  }
+
+  /** A thin, overridable seam around the real navigation -- real browsers refuse to let a spec stub `window.location` itself. */
+  protected hardNavigateTo(url: string): void {
+    window.location.href = url;
   }
 
   overrideTrialRisk(): void {

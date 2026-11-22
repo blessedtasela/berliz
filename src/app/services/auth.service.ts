@@ -125,12 +125,60 @@ export class AuthService {
     return this.getCurrentUserRole() === 'trainer';
   }
 
-  /** Drops the stored tokens without navigating anywhere -- see AuthInterceptor.forceLogout for why a dead session shouldn't always yank the visitor to /login. */
+  /**
+   * Drops the stored tokens without navigating anywhere -- see AuthInterceptor.forceLogout for
+   * why a dead session shouldn't always yank the visitor to /login. Also drops any stashed
+   * impersonator tokens (GN-78): a real logout ends impersonation too, so a later, completely
+   * unrelated login session never finds a leftover `impersonator_token` and misreports itself
+   * as "impersonating" someone.
+   */
   clearTokens(): void {
     if (this.isBrowser) {
       localStorage.removeItem('token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('impersonator_token');
+      localStorage.removeItem('impersonator_refresh_token');
     }
+  }
+
+  /**
+   * GN-78: true while the super admin is acting as another account -- the original admin
+   * session's tokens are stashed under the `impersonator_*` keys, set only by
+   * {@link startImpersonation} and cleared only by {@link stopImpersonation}.
+   */
+  isImpersonating(): boolean {
+    return this.isBrowser && !!localStorage.getItem('impersonator_token');
+  }
+
+  /**
+   * Swaps the live session for the impersonated user's freshly-issued tokens, stashing the
+   * CURRENT session aside first so {@link stopImpersonation} can restore it. If impersonation
+   * is already active (the admin switched targets without returning first), the already-stashed
+   * original admin tokens are left alone -- they must always point back to the real admin, never
+   * to whichever account was being impersonated a moment ago.
+   */
+  startImpersonation(accessToken: string, refreshToken: string): void {
+    if (!this.isBrowser) return;
+    if (!this.isImpersonating()) {
+      const adminToken = this.getToken();
+      const adminRefreshToken = this.getRefreshToken();
+      if (adminToken) localStorage.setItem('impersonator_token', adminToken);
+      if (adminRefreshToken) localStorage.setItem('impersonator_refresh_token', adminRefreshToken);
+    }
+    localStorage.setItem('token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
+  }
+
+  /** Restores the super admin's own session. A no-op (returns false) if impersonation isn't active. */
+  stopImpersonation(): boolean {
+    if (!this.isImpersonating()) return false;
+    const adminToken = localStorage.getItem('impersonator_token');
+    const adminRefreshToken = localStorage.getItem('impersonator_refresh_token');
+    localStorage.removeItem('impersonator_token');
+    localStorage.removeItem('impersonator_refresh_token');
+    if (adminToken) localStorage.setItem('token', adminToken);
+    if (adminRefreshToken) localStorage.setItem('refresh_token', adminRefreshToken);
+    return true;
   }
 
   /** GN-49: must reset the NgRx `user` state too, not just localStorage -- see

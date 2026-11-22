@@ -1,5 +1,6 @@
 import { ErrorHandler, Injector, NgModule, PLATFORM_ID, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { DemoBannerComponent } from './shared/demo/demo-banner.component';
+import { ImpersonationBannerComponent } from './shared/impersonation/impersonation-banner.component';
 import { ProductTourComponent } from './shared/demo/product-tour.component';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -159,6 +160,7 @@ const dbConfig: DBConfig = {
     exports: [],
     bootstrap: [AppComponent], imports: [BrowserModule,
         DemoBannerComponent,
+        ImpersonationBannerComponent,
         ProductTourComponent,
         PhotoLightboxComponent,
         NavHistoryControlsComponent,

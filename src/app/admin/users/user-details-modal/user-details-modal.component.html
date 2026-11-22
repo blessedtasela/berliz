@@ -24,11 +24,21 @@
         data-fallback-src="../../../assets/icons/user.png" />
 
     <!-- Status -->
-    <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="userData.status === 'true'
-            ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900'
-            : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
-        {{ userData.status === 'true' ? 'Active' : 'Inactive' }}
-    </span>
+    <div class="flex items-center justify-between gap-2">
+        <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="userData.status === 'true'
+                ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
+            {{ userData.status === 'true' ? 'Active' : 'Inactive' }}
+        </span>
+
+        <!-- GN-78: super admin only, never on your own account. -->
+        <button *ngIf="canImpersonate" type="button" (click)="impersonateUser()" [disabled]="impersonating"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-sky-200 dark:border-sky-800
+                   text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/30 active:scale-[0.98] transition disabled:opacity-50">
+            <i-feather name="log-in" style="width:12px;height:12px;"></i-feather>
+            {{ impersonating ? 'Logging in…' : 'Log in as this user' }}
+        </button>
+    </div>
 
     <!-- PY-32: trial-abuse risk assessment, admin-visible only. Absent entirely for a user who never attempted a trial. -->
     <div *ngIf="userData.trialRiskBand" class="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2">

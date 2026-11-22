@@ -221,6 +221,14 @@ export class UserService {
     );
   }
 
+  /** GN-78: super admin only -- mints a fresh token pair for the target user. See AuthService.startImpersonation for what the caller does with the result. */
+  impersonate(id: number): Observable<ApiResponse<AuthResponse>> {
+    return this.httpClient.post<ApiResponse<AuthResponse>>(
+      this.url + `/user/impersonate/${id}`,
+      null
+    );
+  }
+
   updateUserRole(data: any): Observable<ApiResponse<string>> {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/updateRole",
