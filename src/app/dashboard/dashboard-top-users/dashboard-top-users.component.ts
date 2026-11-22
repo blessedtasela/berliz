@@ -7,7 +7,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { selectUsers, selectUserLoading } from 'src/app/state/user/user.selector';
+import { selectUsers, selectUsersLoading } from 'src/app/state/user/user.selector';
 import { loadAllUsers } from 'src/app/state/user/user.actions';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
@@ -60,7 +60,7 @@ export class DashboardTopUsersComponent implements OnInit, OnDestroy {
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;
       }),
-      this.store.select(selectUserLoading).subscribe((loading) => {
+      this.store.select(selectUsersLoading).subscribe((loading) => {
         this.loading = loading;
       }),
     );

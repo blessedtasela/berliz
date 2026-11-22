@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { selectUsers, selectUserLoading } from 'src/app/state/user/user.selector';
+import { selectUsers, selectUsersLoading } from 'src/app/state/user/user.selector';
 import { loadAllUsers, loadUsersFailure, loadUsersSuccess } from 'src/app/state/user/user.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
@@ -61,7 +61,7 @@ export class UsersComponent implements OnDestroy {
     this.deepLinkUserId = raw ? Number(raw) : null;
 
     this.loadErrorSub = watchLoadError(this.actions$, loadUsersFailure, [loadAllUsers, loadUsersSuccess], null, m => this.loadError = m);
-    this.loadingSub = this.store.select(selectUserLoading).subscribe(l => this.loading = l);
+    this.loadingSub = this.store.select(selectUsersLoading).subscribe(l => this.loading = l);
     this.store.dispatch(loadAllUsers());
     this.handleEmitEvent()
     // this.userStateService.allUsersData$.subscribe((cachedData) => {

@@ -7,7 +7,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { DashboardTopUsersComponent } from './dashboard-top-users.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { selectUsers, selectUserLoading } from 'src/app/state/user/user.selector';
+import { selectUsers, selectUsersLoading } from 'src/app/state/user/user.selector';
 
 describe('DashboardTopUsersComponent', () => {
   let component: DashboardTopUsersComponent;
@@ -27,7 +27,7 @@ describe('DashboardTopUsersComponent', () => {
         provideMockStore({
           selectors: [
             { selector: selectUsers, value: [] },
-            { selector: selectUserLoading, value: true },
+            { selector: selectUsersLoading, value: true },
           ],
         }),
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
@@ -59,7 +59,7 @@ describe('DashboardTopUsersComponent', () => {
     });
 
     it('shows "No users yet" only once loading has genuinely finished with nothing found', () => {
-      store.overrideSelector(selectUserLoading, false);
+      store.overrideSelector(selectUsersLoading, false);
       store.refreshState();
       fixture.detectChanges();
 
@@ -71,7 +71,7 @@ describe('DashboardTopUsersComponent', () => {
     it('shows the real list and count once users have loaded', () => {
       const users = [{ id: 1, firstname: 'Ada', lastname: 'Lovelace', email: 'ada@example.com', role: 'client', status: 'true', date: '2026-01-01' }] as any;
       store.overrideSelector(selectUsers, users);
-      store.overrideSelector(selectUserLoading, false);
+      store.overrideSelector(selectUsersLoading, false);
       store.refreshState();
       fixture.detectChanges();
 

@@ -9,7 +9,7 @@ import { loadAllUsers, loadUsersFailure, loadUsersSuccess } from 'src/app/state/
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { UsersComponent } from './users.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { selectUserLoading } from 'src/app/state/user/user.selector';
+import { selectUsersLoading } from 'src/app/state/user/user.selector';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -33,7 +33,7 @@ describe('UsersComponent', () => {
     });
     fixture = TestBed.createComponent(UsersComponent);
     component = fixture.componentInstance;
-    TestBed.inject(MockStore).overrideSelector(selectUserLoading, false);
+    TestBed.inject(MockStore).overrideSelector(selectUsersLoading, false);
     fixture.detectChanges();
   });
 
@@ -78,7 +78,7 @@ describe('UsersComponent', () => {
     const el = () => fixture.nativeElement as HTMLElement;
 
     it('shows a spinner, not the table or the empty/error state', () => {
-      TestBed.inject(MockStore).overrideSelector(selectUserLoading, true);
+      TestBed.inject(MockStore).overrideSelector(selectUsersLoading, true);
       TestBed.inject(MockStore).refreshState();
       fixture.detectChanges();
 
@@ -88,12 +88,12 @@ describe('UsersComponent', () => {
     });
 
     it('hides the spinner once loading resolves', () => {
-      TestBed.inject(MockStore).overrideSelector(selectUserLoading, true);
+      TestBed.inject(MockStore).overrideSelector(selectUsersLoading, true);
       TestBed.inject(MockStore).refreshState();
       fixture.detectChanges();
 
       actions$.next(loadUsersSuccess({ response: [] } as any));
-      TestBed.inject(MockStore).overrideSelector(selectUserLoading, false);
+      TestBed.inject(MockStore).overrideSelector(selectUsersLoading, false);
       TestBed.inject(MockStore).refreshState();
       fixture.detectChanges();
 

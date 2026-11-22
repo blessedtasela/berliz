@@ -30,23 +30,24 @@ export const userReducer = createReducer(
     error
   })),
 
-  // LIST USERS
+  // LIST USERS -- usersLoading, not loading: see UserState.usersLoading for why these two
+  // tracks must stay independent of the single-user-profile loading below.
   on(UserActions.loadAllUsers, (state) => ({
     ...state,
-    loading: true,
+    usersLoading: true,
     error: null
   })),
 
   on(UserActions.loadUsersSuccess, (state, { response }) => ({
     ...state,
     users: response,
-    loading: false,
+    usersLoading: false,
     error: null
   })),
 
   on(UserActions.loadUsersFailure, (state, { error }) => ({
     ...state,
-    loading: false,
+    usersLoading: false,
     error
   })),
 
@@ -90,5 +91,5 @@ export const userReducer = createReducer(
   // =========================================================================
   // STOMP REFRESH — re-triggers loadAllUsers$ in effects
   // =========================================================================
-  on(UserActions.refreshUsers, state => ({ ...state, loading: true })),
+  on(UserActions.refreshUsers, state => ({ ...state, usersLoading: true })),
 );

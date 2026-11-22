@@ -21,10 +21,17 @@ export const selectUsers = createSelector(
   (state) => state.users?.data || []
 );
 
-// LOADING
+// LOADING (the single signed-in user's own profile -- see UserState.usersLoading for the
+// all-users list's own, deliberately separate flag)
 export const selectUserLoading = createSelector(
   selectUserState,
   (state) => state.loading
+);
+
+// LOADING -- the all-users list specifically (loadAllUsers/refreshUsers)
+export const selectUsersLoading = createSelector(
+  selectUserState,
+  (state) => state.usersLoading
 );
 
 // ERROR
