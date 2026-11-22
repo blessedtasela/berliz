@@ -7,9 +7,13 @@ export interface Message {
 
   senderId: number;
   senderName: string;
+  /** GN-85: true once the sender has self-deleted their account. Not to be confused with `deleted` below, which means this one message was unsent. */
+  senderAccountDeleted?: boolean;
 
   recipientId: number;
   recipientName: string;
+  /** GN-85: true once the recipient has self-deleted their account. */
+  recipientAccountDeleted?: boolean;
 
   body: string;
   isRead: boolean;
@@ -26,6 +30,8 @@ export interface Message {
   replyToMessageId?: number | null;
   replyToSenderId?: number | null;
   replyToSenderName?: string | null;
+  /** GN-85: true once the quoted reply's sender has self-deleted their account. */
+  replyToSenderAccountDeleted?: boolean | null;
   replyToBody?: string | null;
   /** True if the quoted original was later unsent -- replyToBody is null in that case too. */
   replyToDeleted?: boolean | null;
@@ -60,6 +66,8 @@ export interface ConversationSummary {
   otherUserRole: string;
   /** Base64, same encoding as User.profilePhoto elsewhere in the app. */
   otherUserPhoto?: string;
+  /** GN-85: true once the other side has self-deleted their account -- render "Deleted account", no actions, no new message box. */
+  otherUserDeleted?: boolean;
 
   lastMessage: string;
   lastMessageDate: Date;

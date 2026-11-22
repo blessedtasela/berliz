@@ -9,6 +9,8 @@ export interface CommentResponse {
   authorName: string;
   authorUsername?: string;
   authorPhoto?: string;
+  /** GN-85: true once the author has self-deleted their account -- render "Deleted account", no actions. */
+  authorDeleted?: boolean;
 
   content: string;
 

@@ -14,6 +14,8 @@ export interface Connection {
   otherHandle?: string;
   otherUserRole: string;
   otherUserPhoto?: string;
+  /** GN-85: true once the other side has self-deleted their account -- render "Deleted account", no actions. */
+  otherUserDeleted?: boolean;
 
   /** "incoming" (they requested you) or "outgoing" (you requested them). */
   direction: ConnectionDirection;

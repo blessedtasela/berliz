@@ -7,6 +7,8 @@ export interface Booking {
   clientEmail: string;
   clientUsername?: string;
   clientPhoto?: string;
+  /** GN-85: true once the client has self-deleted their account -- render "Deleted account", no actions. */
+  clientDeleted?: boolean;
 
   trainerId: number | null;
   trainerName: string | null;

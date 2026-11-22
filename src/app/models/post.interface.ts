@@ -37,6 +37,8 @@ export interface PostResponse {
   authorRole?: string;
   authorTrainerId?: number | null;
   authorCenterId?: number | null;
+  /** GN-85: true once the author has self-deleted their account -- render "Deleted account", no actions. */
+  authorDeleted?: boolean;
   content: string;
   photoUrl?: string | null;
   /** Set when the post carries a video instead of a photo. */
