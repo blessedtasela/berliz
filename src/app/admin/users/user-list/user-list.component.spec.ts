@@ -83,4 +83,40 @@ describe('UserListComponent', () => {
       expect(snackbarServiceSpy.openSnackBar).toHaveBeenCalledWith('Too many attempts.', 'error');
     });
   });
+
+  // GN-85: a deleted (self-service-scrubbed) account must never look like, or act like, a live one.
+  describe('a deleted account', () => {
+    beforeEach(() => {
+      component.usersData = [{ id: 433, firstname: 'Deleted', lastname: 'User', email: 'deleted-433@deleted.berliz.fitness', status: 'false', deletedAt: '2026-11-20T00:00:00Z' } as any];
+      fixture.detectChanges();
+    });
+
+    it('renders "Deleted account" instead of the scrubbed name', () => {
+      expect(fixture.nativeElement.textContent).toContain('Deleted account');
+    });
+
+    it('offers no Activate, Resend, Edit or Delete controls', () => {
+      const text: string = fixture.nativeElement.textContent;
+      expect(text).not.toContain('Activate');
+      expect(text).not.toContain('Resend activation');
+      expect(fixture.nativeElement.querySelector('[title="Edit"]')).toBeNull();
+      expect(fixture.nativeElement.querySelector('[title="Delete"]')).toBeNull();
+      expect(fixture.nativeElement.querySelector('[title="View"]')).toBeNull();
+      expect(fixture.nativeElement.querySelector('[title="Edit role"]')).toBeNull();
+    });
+  });
+
+  describe('a live account, for comparison', () => {
+    beforeEach(() => {
+      component.usersData = [{ id: 7, firstname: 'Rishab', lastname: 'Rohilla', email: 'rishab@example.com', status: 'true' } as any];
+      fixture.detectChanges();
+    });
+
+    it('still shows its real name and the normal row actions', () => {
+      const text: string = fixture.nativeElement.textContent;
+      expect(text).toContain('Rishab');
+      expect(text).not.toContain('Deleted account');
+      expect(fixture.nativeElement.querySelector('[title="Delete"]')).not.toBeNull();
+    });
+  });
 });

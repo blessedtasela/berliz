@@ -22,7 +22,8 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let user of usersData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="relative shrink-0">
+            <!-- GN-85: a deleted account gets a plain, unclickable placeholder -- no View profile, no photo upload. -->
+            <div *ngIf="!user.deletedAt; else deletedMobilePhoto" class="relative shrink-0">
                 <button type="button" (click)="goToProfile(user.id)" title="View profile">
                     <img alt="" [src]="photoSrc(user)"
                         data-fallback-src="../../../assets/icons/user.png"
@@ -35,7 +36,16 @@
                 <input accept="image/*" type="file" id="fileInput-m-{{user.id}}" style="display: none;"
                     (change)="onImgSelected($event, user.id)">
             </div>
+            <ng-template #deletedMobilePhoto>
+                <img alt="" src="../../../assets/icons/user.png" class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 opacity-40 shrink-0">
+            </ng-template>
 
+            <!-- GN-85: a deleted account is never clickable into details and gets no actions at all. -->
+            <div *ngIf="user.deletedAt; else liveMobileRow" class="min-w-0 flex-1">
+                <p class="font-semibold text-gray-400 dark:text-gray-500 italic truncate">Deleted account</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">This account has been deleted</p>
+            </div>
+            <ng-template #liveMobileRow>
             <div class="min-w-0 flex-1" (click)="openUserDetails(user.id)" role="button" tabindex="0" (keydown.enter)="openUserDetails(user.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ user.firstname }} {{ user.lastname }}</p>
@@ -68,6 +78,7 @@
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
             </div>
+            </ng-template>
         </div>
     </div>
 
@@ -88,8 +99,12 @@
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 <tr *ngFor="let user of usersData; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ i + 1 }}</td>
+                    <!-- GN-85: a deleted account is never clickable into details, never editable, and gets no actions at all. -->
                     <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
+                        <div *ngIf="user.deletedAt" class="flex items-center gap-2">
+                            <img alt="" src="../../../assets/icons/user.png" class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 opacity-40">
+                        </div>
+                        <div *ngIf="!user.deletedAt" class="flex items-center gap-2">
                             <div class="relative">
                                 <!-- Default image -- click goes to the public profile; hover previews it larger. -->
                                 <button type="button" (click)="goToProfile(user.id)"
@@ -123,15 +138,20 @@
                             </button>
                         </div>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.firstname }}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.lastname }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                        {{ user.email }}
-                        <span *ngIf="user.username" class="block text-xs text-gray-400 dark:text-gray-500">&#64;{{ user.username }}</span>
-                    </td>
+                    <ng-container *ngIf="user.deletedAt; else liveNameCells">
+                        <td class="px-4 py-3 font-semibold text-gray-400 dark:text-gray-500 italic" colspan="3">Deleted account</td>
+                    </ng-container>
+                    <ng-template #liveNameCells>
+                        <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.firstname }}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.lastname }}</td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                            {{ user.email }}
+                            <span *ngIf="user.username" class="block text-xs text-gray-400 dark:text-gray-500">&#64;{{ user.username }}</span>
+                        </td>
+                    </ng-template>
                     <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ user.id }}</td>
                     <td class="px-4 py-3">
-                        <div class="flex items-center gap-1">
+                        <div *ngIf="!user.deletedAt" class="flex items-center gap-1">
                             <span
                                 class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
                                 {{ user.role }}
@@ -144,7 +164,8 @@
                         </div>
                     </td>
                     <td class="px-4 py-3">
-                        <div class="flex items-center justify-end gap-1">
+                        <div *ngIf="user.deletedAt" class="text-right text-[11px] text-gray-400 dark:text-gray-500 italic">No actions</div>
+                        <div *ngIf="!user.deletedAt" class="flex items-center justify-end gap-1">
                             <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openUserDetails(user.id)" title="View">
                                 <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>

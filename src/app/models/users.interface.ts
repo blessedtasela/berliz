@@ -32,6 +32,9 @@ export interface Users {
 
     status: string;
 
+    /** GN-85: null for a live account. Set once by self-service account deletion -- a non-null value means a scrubbed "Deleted account", never render its name/photo/actions as if it were live. */
+    deletedAt?: string | null;
+
     /** "public" | "private" — what /user/getPublicProfile/{id} is allowed to expose. */
     profileVisibility?: ProfileVisibility;
 
