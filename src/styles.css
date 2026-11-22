@@ -746,8 +746,12 @@ p {
   flex: auto;
 }
 
+/* Caps every dialog using this panelClass at 90vh -- without overflow-y, content taller than
+   that was silently clipped instead of scrolling (the admin Users detail modal is one concrete
+   case: the trial-risk box + details + password form can run past 90vh on a short viewport). */
 .mat-dialog-height {
   max-height: 90vh;
+  overflow-y: auto;
 }
 
 .custom-checkbox {
