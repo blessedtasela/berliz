@@ -45,7 +45,12 @@ export interface SidebarNavChildItem {
  * further in.
  */
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
-  { name: 'Dashboard', icon: 'package', route: '/dashboard', exact: true },
+  // GN-75 (Nov 21, 2026): Home (the feed) is the signed-in landing page now --
+  // '/dashboard' itself. The old full-widget page moved to /dashboard/overview
+  // and keeps the "Dashboard" name: all its info/charts/stats are still there,
+  // it's just no longer the first thing you see.
+  { name: 'Home', icon: 'home', route: '/dashboard', exact: true },
+  { name: 'Dashboard', icon: 'bar-chart-2', route: '/dashboard/overview', exact: true },
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
   { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
   { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },

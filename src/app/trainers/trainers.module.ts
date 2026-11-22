@@ -50,6 +50,7 @@ import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.comp
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
 import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booking-assurance.component';
+import { FollowButtonComponent } from 'src/app/shared/follow-button/follow-button.component';
 @NgModule({
   declarations: [
     TrainersDetailsComponent,
@@ -84,6 +85,7 @@ import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booki
   imports: [
     TrainerAddReviewComponent,
     BookingAssuranceComponent,
+    FollowButtonComponent,
     ListSkeletonComponent,
     StarRatingComponent,
     LoadErrorComponent,

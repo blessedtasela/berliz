@@ -104,13 +104,32 @@ const dashboardRoutes: Routes = [
     },
     children: [
 
-      // Dashboard home
+      // Home -- GN-75 (Nov 21, 2026): the feed is now the signed-in landing page
+      // (every guard/redirect that already sent users to the bare '/dashboard'
+      // URL keeps working unchanged -- it's just what's rendered there that
+      // changed). Same component as 'timeline' below, not a redirect to it:
+      // /dashboard/timeline keeps working on its own for existing deep links
+      // (draft "resume" banners, notification ?postId= links) without a
+      // round-trip through this route first.
       {
         path: '',
-        component: DashboardMainComponent,
+        loadComponent: () => import('./dashboard-timeline/dashboard-timeline.component').then(m => m.DashboardTimelineComponent),
         canActivate: [AuthGuard, RoleGuard],
         data: {
           breadcrumb: null, // don't double up on "Dashboard"
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // Dashboard -- the old full-widget home, moved here now that Home above
+      // owns '/dashboard'. Still all info/charts/statistics, just no longer
+      // the landing page.
+      {
+        path: 'overview',
+        component: DashboardMainComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Overview',
           expectedRole: expectedRoleAll
         }
       },

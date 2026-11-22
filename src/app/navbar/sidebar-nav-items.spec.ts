@@ -87,6 +87,19 @@ describe('sidebar-nav-items groups', () => {
   });
 });
 
+describe('sidebar-nav-items Home/Dashboard split', () => {
+  it('Home is the feed at /dashboard; Dashboard is the full-widget page at /dashboard/overview', () => {
+    const topLevel = SIDEBAR_NAV_ITEMS.filter(i => !i.label && !i.items);
+    const home = topLevel.find(i => i.name === 'Home');
+    const dashboard = topLevel.find(i => i.name === 'Dashboard');
+
+    expect(home?.route).toBe('/dashboard');
+    expect(home?.exact).toBeTrue();
+    expect(dashboard?.route).toBe('/dashboard/overview');
+    expect(dashboard?.exact).toBeTrue();
+  });
+});
+
 describe('sidebar-nav-items Hub', () => {
   it('is a top-level row, visible without opening any group, for every role including admin', () => {
     for (const role of ['user', 'client', 'trainer', 'center', 'admin', null, undefined]) {

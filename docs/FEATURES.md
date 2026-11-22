@@ -34,7 +34,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Feature | Status | Notes |
 |---|---|---|
 | Connections (request / accept / remove) | ✅ | Gates the feed audience |
-| Timeline / feed of connections' posts | ✅ | `dashboard-timeline` |
+| Follow (one-way, no acceptance needed) | ✅ | GN-75: separate from Connections — `FollowRest` (`/follow`), `FollowButtonComponent`. A followee's posts join the feed the same way an accepted connection's do. Wired on the trainer public profile hero so far; not yet on post cards or a "recommended trainers" section (that section doesn't exist yet) |
+| Timeline / feed of connections' + followees' posts | ✅ | `dashboard-timeline` — also the signed-in landing page now, at the bare `/dashboard` URL (GN-75); the old full-widget page moved to `/dashboard/overview` |
 | Create post — text, photo or video, activity type badge | ✅ | Types: GENERAL, WORKOUT, SESSION, TESTIMONIAL, REVIEW, PROGRESS, MILESTONE. **A post carries one photo OR one video** (MP4 / WebM / MOV, up to 50MB, uploaded like any other media); the composer disables the other picker once one is attached, and the server rejects both together and clears the old media when an edit swaps it. Videos play inline in the feed, on both profile pages and on the Saved page, and in the media + comments sheet. *This row used to say image/video, but posts were photo-only on every layer until now.* |
 | Post like + like count | ✅ | Toggle like; denormalized counter |
 | See who liked a post | ✅ | Tap the "N likes" text → block-filtered liker list (`GET /post/{id}/likes`) |
