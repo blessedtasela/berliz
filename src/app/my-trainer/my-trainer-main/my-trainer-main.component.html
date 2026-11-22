@@ -206,7 +206,7 @@
     </app-my-trainer-pricing>
 
     <!-- The same plans/packages pricing a client sees on the public profile, so the trainer can check how their own offers actually look. -->
-    <app-provider-packages class="block scroll-mt-20" eyebrow="How clients see your plans" [trainerId]="trainer?.id">
+    <app-provider-packages class="block scroll-mt-20" eyebrow="How clients see your plans" [trainerId]="trainer?.id" [singleSessionRate]="trainer?.hourlyRate">
     </app-provider-packages>
 
     <app-my-trainer-benefits id="benefits" class="block scroll-mt-20" [trainerBenefit]="trainerBenefit">

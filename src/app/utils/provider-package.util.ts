@@ -1,4 +1,5 @@
 import { ProviderPackage } from 'src/app/models/provider-package.model';
+import { caMoney } from 'src/app/utils/trainer-plan-pricing.util';
 
 /**
  * A trainer/center sells three different things, and the client should always know which one they're getting:
@@ -64,6 +65,43 @@ export function planCheckoutNote(plan: Pick<ProviderPackage, 'billingType' | 'se
     default:
       return `You pay once now for unlimited sessions${plan.durationDays ? ` for ${plan.durationDays} days` : ''}. Book as many as you like while it lasts.`;
   }
+}
+
+/** How a plan's price is shown (owner rule, Nov 2026): the amount per session after any discount and how many sessions, not the lump total -- ported to mobile's utils/provider-package.ts (same wording). */
+export interface PlanPriceView {
+  /** "CA$18" -- per session when the plan has a session count, otherwise the plan price itself. */
+  amount: string;
+  /** "/ session", or whatever {@link planPriceNote} says when there's no session count to divide by. */
+  note: string;
+  /** "5 sessions" ("5 sessions a month" for a subscription), or "Unlimited sessions". */
+  sessions: string;
+  /** What is actually charged, in small print: "Paid once: CA$90" / "Billed CA$90 every month". Empty when the headline already is the price. */
+  charged: string;
+  /** "Save 10% on every session vs CA$20 for a single one", when the provider's single-session rate is known and higher. */
+  saving: string | null;
+}
+
+type PricedPlanLike = PlanLike & { price: number };
+
+/** @param singleSessionRate The provider's plain single-session rate (hourlyRate), for the "Save X% vs a single session" comparison -- omit or pass null/0 when it isn't known. */
+export function planPriceView(plan: PricedPlanLike, singleSessionRate?: number | null): PlanPriceView {
+  const count = plan.sessionCount ?? 0;
+  if (count <= 0) {
+    return { amount: caMoney(plan.price), note: planPriceNote(plan), sessions: 'Unlimited sessions', charged: '', saving: null };
+  }
+
+  const recurring = planKind(plan) === 'subscription';
+  const each = Math.round((plan.price / count) * 100) / 100;
+  const single = Number(singleSessionRate ?? 0);
+  const pct = single > 0 && each < single ? Math.round(((single - each) / single) * 100) : 0;
+
+  return {
+    amount: caMoney(each),
+    note: '/ session',
+    sessions: `${count} session${count === 1 ? '' : 's'}${recurring ? ' a month' : ''}`,
+    charged: recurring ? `Billed ${caMoney(plan.price)} every month` : `Paid once: ${caMoney(plan.price)}`,
+    saving: pct > 0 ? `Save ${pct}% on every session vs ${caMoney(single)} for a single one` : null,
+  };
 }
 
 /** The order the Level Up page lists them in: the ongoing commitment first, then the one-off buys. */

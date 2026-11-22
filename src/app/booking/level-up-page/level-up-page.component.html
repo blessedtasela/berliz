@@ -156,9 +156,15 @@
 
           <span *ngIf="plan.description" class="text-[11px] leading-snug text-gray-500 dark:text-gray-400 line-clamp-3">{{ plan.description }}</span>
 
-          <span class="flex items-baseline gap-1">
-            <span class="text-2xl font-extrabold text-gray-900 dark:text-gray-100">{{ plan.price | currency:plan.currency:'symbol':'1.0-2' }}</span>
-            <span class="text-[11px] text-gray-600 dark:text-gray-400">{{ priceNote(plan) }}</span>
+          <!-- Owner rule, Nov 2026: lead with the per-session price after any discount, not the
+               lump total -- that stays visible as small print (priceView(plan).charged) and in full
+               in the checkout summary below, so nobody is surprised what they're actually paying. -->
+          <span class="flex flex-col gap-0.5">
+            <span class="flex items-baseline gap-1">
+              <span class="text-2xl font-extrabold text-gray-900 dark:text-gray-100">{{ priceView(plan).amount }}</span>
+              <span class="text-[11px] text-gray-600 dark:text-gray-400">{{ priceView(plan).note }}</span>
+            </span>
+            <span *ngIf="priceView(plan).charged" class="text-[10px] text-gray-500 dark:text-gray-400">{{ priceView(plan).charged }}</span>
           </span>
 
           <span class="flex flex-col gap-1 text-[11px] text-gray-600 dark:text-gray-300">

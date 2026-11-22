@@ -117,7 +117,7 @@
     <!-- Business details: what a provider charges, how cancelling works, what they sell, when they work -->
     <app-provider-terms theme="light" providerLabel="this center" [hourlyRate]="center?.hourlyRate"
         [freeCancelHours]="center?.freeCancelHours" [lateCancelRefundPercent]="center?.lateCancelRefundPercent"></app-provider-terms>
-    <app-provider-packages theme="light" [centerId]="center?.id" [showEmpty]="true" [selectable]="true" (choose)="openPlan($event)"></app-provider-packages>
+    <app-provider-packages theme="light" [centerId]="center?.id" [singleSessionRate]="center?.hourlyRate" [showEmpty]="true" [selectable]="true" (choose)="openPlan($event)"></app-provider-packages>
     <app-provider-availability theme="light" [centerId]="center?.id" [showEmpty]="true"></app-provider-availability>
     <app-provider-contact theme="light" [name]="center?.name ?? 'this center'"
         [phone]="center?.contactPhone" [email]="center?.contactEmail"></app-provider-contact>

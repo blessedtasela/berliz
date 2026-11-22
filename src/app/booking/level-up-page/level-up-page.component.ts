@@ -26,7 +26,7 @@ import {
 } from 'src/app/utils/trainer-plan-pricing.util';
 import { Users } from 'src/app/models/users.interface';
 import {
-  PLAN_KIND_BLURB, PLAN_KIND_LABEL, PlanGroup, groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote,
+  PLAN_KIND_BLURB, PLAN_KIND_LABEL, PlanGroup, groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote, planPriceView,
 } from 'src/app/utils/provider-package.util';
 import { environment } from 'src/environments/environment';
 import { isUnauthorizedHttpError } from 'src/app/utils/auth-error.util';
@@ -88,6 +88,8 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
   readonly actionLabel = planActionLabel;
   readonly priceNote = planPriceNote;
   readonly includes = planIncludes;
+  /** Owner rule, Nov 2026: plan cards lead with the per-session price after any discount and the session count, not the lump total (that's checkout's job, via plan.price directly). */
+  readonly priceView = planPriceView;
   readonly checkoutNote = planCheckoutNote;
 
   private user: Users | null = null;

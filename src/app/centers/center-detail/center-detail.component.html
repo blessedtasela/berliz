@@ -159,7 +159,8 @@
             <!-- PLANS & PRICING -->
             <div id="plans" class="scroll-mt-24 flex flex-col gap-6">
                 <app-provider-packages theme="dark" eyebrow="Choose how you train" [highlightFirst]="true"
-                    [centerId]="center.id" [planLink]="['/centers', center.name.split(' ').join('-'), 'level-up']">
+                    [centerId]="center.id" [singleSessionRate]="center.hourlyRate"
+                    [planLink]="['/centers', center.name.split(' ').join('-'), 'level-up']">
                 </app-provider-packages>
 
             <!-- PRICING -->

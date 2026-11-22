@@ -6,7 +6,7 @@ import { catchError, of } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
-import { PLAN_KIND_LABEL, planActionLabel, planKind, planPriceNote } from 'src/app/utils/provider-package.util';
+import { PLAN_KIND_LABEL, planActionLabel, planKind, planPriceView } from 'src/app/utils/provider-package.util';
 import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme';
 
 /**
@@ -41,19 +41,21 @@ import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme
             <p *ngIf="p.description" class="text-[11px] leading-snug line-clamp-3" [ngClass]="t.muted">{{ p.description }}</p>
           </div>
 
-          <div class="flex items-baseline gap-1">
-            <span class="text-2xl font-extrabold" [ngClass]="t.heading">{{ p.price | currency:p.currency:'symbol':'1.0-2' }}</span>
-            <span class="text-[11px]" [ngClass]="t.muted">{{ priceNote(p) }}</span>
+          <!-- Owner rule, Nov 2026: lead with the per-session price after any discount and the
+               session count, never the lump total -- that's only small print (priceView.charged). -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-extrabold" [ngClass]="t.heading">{{ priceView(p).amount }}</span>
+              <span class="text-[11px]" [ngClass]="t.muted">{{ priceView(p).note }}</span>
+            </div>
+            <p *ngIf="priceView(p).charged" class="text-[10px]" [ngClass]="t.muted">{{ priceView(p).charged }}</p>
+            <p *ngIf="priceView(p).saving" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">{{ priceView(p).saving }}</p>
           </div>
 
           <ul class="flex flex-col gap-1.5 text-[11px]" [ngClass]="t.body">
-            <li *ngIf="p.sessionCount" class="flex items-center gap-1.5">
+            <li class="flex items-center gap-1.5">
               <i-feather name="check" [ngClass]="t.accent" style="width:12px;height:12px;"></i-feather>
-              {{ p.sessionCount }} session{{ p.sessionCount === 1 ? '' : 's' }}
-              <span [ngClass]="t.muted">· {{ perSession(p) | currency:p.currency:'symbol':'1.0-2' }} each</span>
-            </li>
-            <li *ngIf="!p.sessionCount" class="flex items-center gap-1.5">
-              <i-feather name="check" [ngClass]="t.accent" style="width:12px;height:12px;"></i-feather> Unlimited sessions
+              {{ priceView(p).sessions }}
             </li>
             <li *ngIf="p.durationDays" class="flex items-center gap-1.5">
               <i-feather name="check" [ngClass]="t.accent" style="width:12px;height:12px;"></i-feather> Valid for {{ p.durationDays }} days
@@ -77,6 +79,8 @@ export class ProviderPackagesComponent implements OnChanges {
   @Input() theme: ProfileTheme = 'light';
   @Input() trainerId: number | null | undefined = null;
   @Input() centerId: number | null | undefined = null;
+  /** The provider's plain single-session rate (hourlyRate), for each card's "Save X% vs a single session" line. */
+  @Input() singleSessionRate: number | null | undefined = null;
   @Input() planLink: any[] | null = null;
   @Input() eyebrow = 'Save on regular training';
   @Input() showEmpty = false;
@@ -99,11 +103,8 @@ export class ProviderPackagesComponent implements OnChanges {
 
   kindLabel = (p: ProviderPackage) => PLAN_KIND_LABEL[planKind(p)];
   actionLabel = planActionLabel;
-  priceNote = planPriceNote;
 
-  perSession(p: ProviderPackage): number {
-    return p.sessionCount ? p.price / p.sessionCount : p.price;
-  }
+  priceView = (p: ProviderPackage) => planPriceView(p, this.singleSessionRate);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['trainerId'] && !changes['centerId']) return;

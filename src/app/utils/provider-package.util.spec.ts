@@ -1,4 +1,4 @@
-import { groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote } from './provider-package.util';
+import { groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote, planPriceView } from './provider-package.util';
 
 describe('provider-package util', () => {
   const pack = { billingType: 'ONE_TIME' as const, sessionCount: 5 };
@@ -58,6 +58,46 @@ describe('provider-package util', () => {
     const groups = groupPlansByKind([{ id: 1, ...pack }, { id: 2, ...subscription }]);
 
     expect(groups.map(g => g.kind)).toEqual(['subscription', 'pack']);
+  });
+
+  // Owner rule, Nov 2026 (relayed via mobile, which built it first): plan cards lead with the
+  // per-session price after any discount and the session count, never the lump total up front.
+  describe('planPriceView', () => {
+    it('shows the plain price for a membership -- there is no session count to divide by', () => {
+      const view = planPriceView({ ...membership, price: 90 });
+      expect(view).toEqual({ amount: 'CA$90.00', note: 'one-time', sessions: 'Unlimited sessions', charged: '', saving: null });
+    });
+
+    it('divides a pack\'s price across its sessions, with the total only as small print', () => {
+      const view = planPriceView({ ...pack, price: 90 });
+      expect(view.amount).toBe('CA$18.00');
+      expect(view.note).toBe('/ session');
+      expect(view.sessions).toBe('5 sessions');
+      expect(view.charged).toBe('Paid once: CA$90.00');
+    });
+
+    it('labels a subscription\'s sessions "a month" and its small print as billed, not paid once', () => {
+      const view = planPriceView({ ...subscription, sessionCount: 8, price: 160 });
+      expect(view.amount).toBe('CA$20.00');
+      expect(view.sessions).toBe('8 sessions a month');
+      expect(view.charged).toBe('Billed CA$160.00 every month');
+    });
+
+    it('calls out the saving against a higher single-session rate', () => {
+      const view = planPriceView({ ...pack, price: 90 }, 20);
+      expect(view.saving).toBe('Save 10% on every session vs CA$20.00 for a single one');
+    });
+
+    it('says nothing about saving when the per-session price is not actually cheaper', () => {
+      expect(planPriceView({ ...pack, price: 90 }, 18).saving).toBeNull();
+      expect(planPriceView({ ...pack, price: 90 }, 10).saving).toBeNull();
+      expect(planPriceView({ ...pack, price: 90 }).saving).toBeNull();
+    });
+
+    it('rounds a non-even split to the cent', () => {
+      const view = planPriceView({ billingType: 'ONE_TIME', sessionCount: 3, price: 100 });
+      expect(view.amount).toBe('CA$33.33');
+    });
   });
 
   describe('weekly plans', () => {
