@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -20,26 +20,32 @@ const DISMISSED_KEY = 'profileQuizPromptDismissed';
   standalone: true,
   imports: [CommonModule, RouterModule, IconsModule],
   template: `
-    <div *ngIf="visible" class="flex items-center gap-3 rounded-xl border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/30 px-4 py-3">
-      <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-900 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
-        <i-feather name="compass" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+    <div *ngIf="visible" class="flex items-center gap-3 rounded-xl border px-4 py-3"
+      [ngClass]="dark ? 'border-brand-red/30 bg-brand-red/10' : 'border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/30'">
+      <div class="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0"
+        [ngClass]="dark ? 'bg-brand-card border-brand-red/30' : 'bg-white dark:bg-gray-900 border-red-100 dark:border-red-900'">
+        <i-feather name="compass" [ngClass]="dark ? 'text-brand-red' : 'text-red-600'" style="width:14px;height:14px;"></i-feather>
       </div>
       <div class="min-w-0 flex-1">
-        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">Tell us about your goals</p>
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">5 quick questions to personalize your feed</p>
+        <p class="text-xs font-bold" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">Tell us about your goals</p>
+        <p class="text-[11px]" [ngClass]="dark ? 'text-brand-muted' : 'text-gray-500 dark:text-gray-400'">5 quick questions to personalize your feed</p>
       </div>
       <a routerLink="/dashboard/hub/profile-quiz"
-        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-brand-red text-white hover:bg-red-700 transition">
         Start
       </a>
       <button type="button" (click)="dismiss()" aria-label="Dismiss"
-        class="shrink-0 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition">
+        class="shrink-0 transition"
+        [ngClass]="dark ? 'text-brand-muted hover:text-brand-text' : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'">
         <i-feather name="x" style="width:14px;height:14px;"></i-feather>
       </button>
     </div>
   `
 })
 export class ProfileQuizPromptComponent implements OnInit {
+  /** Permanently-dark brand skin for a GN-76-redesigned host page, independent of the light/dark theme toggle. */
+  @Input() dark = false;
+
   visible = false;
 
   constructor(

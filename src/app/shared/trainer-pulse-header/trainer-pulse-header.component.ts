@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -24,35 +24,41 @@ import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors
   template: `
     <div *ngIf="visible" class="grid grid-cols-3 gap-2">
       <a routerLink="/dashboard/partnership/trainer-details"
-        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2.5 hover:border-red-300 dark:hover:border-red-800 transition">
-        <div class="flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
+        class="flex flex-col gap-1 rounded-xl border px-3 py-2.5 transition"
+        [ngClass]="dark ? 'border-brand-border bg-brand-card hover:border-brand-red/40' : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-red-300 dark:hover:border-red-800'">
+        <div class="flex items-center gap-1.5" [ngClass]="dark ? 'text-brand-muted' : 'text-gray-400 dark:text-gray-500'">
           <i-feather name="users" style="width:12px;height:12px;"></i-feather>
           <span class="text-[10px] font-semibold uppercase tracking-wide">Active clients</span>
         </div>
-        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ activeClients }}</span>
+        <span class="text-lg font-bold" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">{{ activeClients }}</span>
       </a>
 
       <a routerLink="/dashboard/my-bookings"
-        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2.5 hover:border-red-300 dark:hover:border-red-800 transition">
-        <div class="flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
+        class="flex flex-col gap-1 rounded-xl border px-3 py-2.5 transition"
+        [ngClass]="dark ? 'border-brand-border bg-brand-card hover:border-brand-red/40' : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-red-300 dark:hover:border-red-800'">
+        <div class="flex items-center gap-1.5" [ngClass]="dark ? 'text-brand-muted' : 'text-gray-400 dark:text-gray-500'">
           <i-feather name="clock" style="width:12px;height:12px;"></i-feather>
           <span class="text-[10px] font-semibold uppercase tracking-wide">Bookings</span>
         </div>
-        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ bookings }}</span>
+        <span class="text-lg font-bold" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">{{ bookings }}</span>
       </a>
 
       <a routerLink="/dashboard/my-packages"
-        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2.5 hover:border-red-300 dark:hover:border-red-800 transition">
-        <div class="flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
+        class="flex flex-col gap-1 rounded-xl border px-3 py-2.5 transition"
+        [ngClass]="dark ? 'border-brand-border bg-brand-card hover:border-brand-red/40' : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-red-300 dark:hover:border-red-800'">
+        <div class="flex items-center gap-1.5" [ngClass]="dark ? 'text-brand-muted' : 'text-gray-400 dark:text-gray-500'">
           <i-feather name="package" style="width:12px;height:12px;"></i-feather>
           <span class="text-[10px] font-semibold uppercase tracking-wide">Packages</span>
         </div>
-        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ packages }}</span>
+        <span class="text-lg font-bold" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">{{ packages }}</span>
       </a>
     </div>
   `
 })
 export class TrainerPulseHeaderComponent implements OnInit, OnDestroy {
+  /** Permanently-dark brand skin for a GN-76-redesigned host page, independent of the light/dark theme toggle. */
+  @Input() dark = false;
+
   visible = false;
   activeClients = 0;
   bookings = 0;

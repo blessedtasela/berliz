@@ -1,21 +1,22 @@
 <div *ngIf="visible && (loading || trainers.length > 0)" class="flex flex-col gap-2">
   <div class="flex items-center justify-between">
-    <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
-      <i-feather name="star" class="text-red-600" style="width:13px;height:13px;"></i-feather>
+    <h2 class="text-xs font-bold flex items-center gap-1.5" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">
+      <i-feather name="star" [ngClass]="dark ? 'text-brand-red' : 'text-red-600'" style="width:13px;height:13px;"></i-feather>
       Recommended for you
     </h2>
-    <a routerLink="/trainers" class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 hover:text-red-600 transition">See all</a>
+    <a routerLink="/trainers" class="text-[11px] font-semibold transition"
+      [ngClass]="dark ? 'text-brand-muted hover:text-brand-red' : 'text-gray-400 dark:text-gray-500 hover:text-red-600'">See all</a>
   </div>
 
   <div class="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1" style="scrollbar-width: none;">
     <ng-container *ngIf="loading">
-      <div *ngFor="let _ of [1,2,3]" class="shrink-0 w-36 h-44 rounded-xl bg-gray-100 dark:bg-gray-800 animate-pulse"></div>
+      <div *ngFor="let _ of [1,2,3]" class="shrink-0 w-36 h-44 rounded-xl animate-pulse" [ngClass]="dark ? 'bg-brand-card' : 'bg-gray-100 dark:bg-gray-800'"></div>
     </ng-container>
 
     <a *ngFor="let trainer of trainers" [routerLink]="['/trainers', nameSlug(trainer.name)]"
-      class="shrink-0 w-36 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-2.5 flex flex-col gap-2
-             hover:border-red-300 dark:hover:border-red-800 transition">
-      <div class="relative w-full h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+      class="shrink-0 w-36 rounded-xl border p-2.5 flex flex-col gap-2 transition"
+      [ngClass]="dark ? 'border-brand-border bg-brand-card hover:border-brand-red/40' : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-red-300 dark:hover:border-red-800'">
+      <div class="relative w-full h-20 rounded-lg overflow-hidden" [ngClass]="dark ? 'bg-brand-border' : 'bg-gray-100 dark:bg-gray-800'">
         <img *ngIf="trainer.photoResponse?.photoUrl" [src]="trainer.photoResponse.photoUrl | strapiUrl" [alt]="trainer.name"
           class="w-full h-full object-cover object-top" />
         <span *ngIf="trainer.featured" class="absolute top-1 right-1 flex items-center gap-0.5 text-[9px] font-bold
@@ -24,9 +25,9 @@
           Featured
         </span>
       </div>
-      <p class="text-[11px] font-bold text-gray-900 dark:text-gray-100 truncate">{{ trainer.name }}</p>
+      <p class="text-[11px] font-bold truncate" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">{{ trainer.name }}</p>
       <app-provider-card-meta [rate]="trainer.hourlyRate" [reviewCount]="trainer.reviewCount" [averageRating]="trainer.averageRating"
-        theme="light"></app-provider-card-meta>
+        [theme]="dark ? 'dark' : 'light'"></app-provider-card-meta>
     </a>
   </div>
 </div>

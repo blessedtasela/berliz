@@ -76,4 +76,14 @@ describe('ProfileQuizPromptComponent', () => {
     expect(component.visible).toBeFalse();
     expect(localStorage.getItem('profileQuizPromptDismissed')).toBe('1');
   });
+
+  it('renders the brand-dark skin when [dark]="true"', () => {
+    component.visible = true;
+    component.dark = true;
+
+    fixture.detectChanges();
+
+    const card: HTMLElement = fixture.nativeElement.querySelector('div');
+    expect(card.className).toContain('bg-brand-red/10');
+  });
 });

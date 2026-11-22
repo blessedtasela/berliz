@@ -72,4 +72,17 @@ describe('RecommendedWorkoutsComponent', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
     expect(component.workouts).toEqual([]);
   });
+
+  it('renders the brand-dark skin when [dark]="true"', () => {
+    setup();
+    authService.hasSession.and.returnValue(true);
+    workoutService.getTemplates.and.returnValue(of({ success: true, message: '', data: [workout(1, 2)], statusCode: 200 } as any));
+    component.dark = true;
+
+    fixture.detectChanges();
+
+    const links: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('a');
+    const card = links[links.length - 1];
+    expect(card.className).toContain('bg-brand-card');
+  });
 });

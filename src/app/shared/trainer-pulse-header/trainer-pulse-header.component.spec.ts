@@ -68,4 +68,14 @@ describe('TrainerPulseHeaderComponent', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
     expect(component.activeClients).toBe(0);
   });
+
+  it('renders the brand-dark skin when [dark]="true"', () => {
+    setup({ trainer: true });
+    component.dark = true;
+
+    fixture.detectChanges();
+
+    const tile: HTMLElement = fixture.nativeElement.querySelector('a');
+    expect(tile.className).toContain('bg-brand-card');
+  });
 });

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -23,6 +23,9 @@ import { WorkoutResponse } from 'src/app/models/workout.interface';
   templateUrl: './recommended-workouts.component.html',
 })
 export class RecommendedWorkoutsComponent implements OnInit {
+  /** Permanently-dark brand skin for a GN-76-redesigned host page, independent of the light/dark theme toggle. */
+  @Input() dark = false;
+
   visible = false;
   loading = true;
   workouts: WorkoutResponse[] = [];

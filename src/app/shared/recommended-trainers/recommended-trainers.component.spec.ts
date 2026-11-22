@@ -110,4 +110,20 @@ describe('RecommendedTrainersComponent', () => {
     expect(component.trainers).toEqual([]);
     expect(component.loading).toBeFalse();
   });
+
+  it('renders the brand-dark skin when [dark]="true"', () => {
+    setup();
+    authService.hasSession.and.returnValue(true);
+    authService.isTrainer.and.returnValue(false);
+    authService.isCenter.and.returnValue(false);
+    trainerService.getActiveTrainers.and.returnValue(of({ success: true, message: '', data: [trainer(1, 10)], statusCode: 200 } as any));
+    followService.getFollowing.and.returnValue(of({ success: true, message: '', data: [], statusCode: 200 } as any));
+    component.dark = true;
+
+    fixture.detectChanges();
+
+    const links: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('a');
+    const card = links[links.length - 1];
+    expect(card.className).toContain('bg-brand-card');
+  });
 });

@@ -1,25 +1,27 @@
 <div *ngIf="visible && (loading || workouts.length > 0)" class="flex flex-col gap-2">
   <div class="flex items-center justify-between">
-    <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+    <h2 class="text-xs font-bold flex items-center gap-1.5" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">
       <i-feather name="zap" class="text-orange-500" style="width:13px;height:13px;"></i-feather>
       Recommended workouts
     </h2>
-    <a routerLink="/dashboard/workouts" class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 hover:text-red-600 transition">See all</a>
+    <a routerLink="/dashboard/workouts" class="text-[11px] font-semibold transition"
+      [ngClass]="dark ? 'text-brand-muted hover:text-brand-red' : 'text-gray-400 dark:text-gray-500 hover:text-red-600'">See all</a>
   </div>
 
   <div class="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1" style="scrollbar-width: none;">
     <ng-container *ngIf="loading">
-      <div *ngFor="let _ of [1,2,3]" class="shrink-0 w-40 h-24 rounded-xl bg-gray-100 dark:bg-gray-800 animate-pulse"></div>
+      <div *ngFor="let _ of [1,2,3]" class="shrink-0 w-40 h-24 rounded-xl animate-pulse" [ngClass]="dark ? 'bg-brand-card' : 'bg-gray-100 dark:bg-gray-800'"></div>
     </ng-container>
 
     <a *ngFor="let workout of workouts" [routerLink]="['/dashboard/workouts', workout.id]"
-      class="shrink-0 w-40 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 flex flex-col gap-2
-             hover:border-red-300 dark:hover:border-red-800 transition">
-      <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900 flex items-center justify-center">
+      class="shrink-0 w-40 rounded-xl border p-3 flex flex-col gap-2 transition"
+      [ngClass]="dark ? 'border-brand-border bg-brand-card hover:border-brand-red/40' : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-red-300 dark:hover:border-red-800'">
+      <div class="w-7 h-7 rounded-lg border flex items-center justify-center"
+        [ngClass]="dark ? 'bg-orange-950/30 border-orange-900' : 'bg-orange-50 dark:bg-orange-950/30 border-orange-100 dark:border-orange-900'">
         <i-feather name="zap" class="text-orange-500" style="width:13px;height:13px;"></i-feather>
       </div>
-      <p class="text-[11px] font-bold text-gray-900 dark:text-gray-100 line-clamp-2">{{ workout.name }}</p>
-      <div class="flex items-center gap-2 text-[10px] text-gray-400 dark:text-gray-500">
+      <p class="text-[11px] font-bold line-clamp-2" [ngClass]="dark ? 'text-brand-text' : 'text-gray-900 dark:text-gray-100'">{{ workout.name }}</p>
+      <div class="flex items-center gap-2 text-[10px]" [ngClass]="dark ? 'text-brand-muted' : 'text-gray-400 dark:text-gray-500'">
         <span class="flex items-center gap-1">
           <i-feather name="layers" style="width:10px;height:10px;"></i-feather>
           {{ workout.exercises?.length || 0 }} exercise{{ (workout.exercises?.length || 0) === 1 ? '' : 's' }}
