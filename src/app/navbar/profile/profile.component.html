@@ -51,9 +51,22 @@
 
     </div>
 
-    <!-- Dropdown -->
-    <div *ngIf="profileOpen" id="profileDropdown" class="absolute top-full mt-2 w-64 bg-white dark:bg-gray-900
-    border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-[100] overflow-hidden -right-4">
+    <!-- Backdrop: closes on outside click/tap, same pattern as the notification dropdown
+         (navigation-bar.component.html) -- also means a scroll under it can't leave it open
+         with no way to dismiss. -->
+    <div *ngIf="profileOpen" class="fixed inset-0 z-[99] bg-black/10 backdrop-blur-sm" (click)="closeDropdown()"></div>
+
+    <!-- Dropdown: GN-80 -- this used to be `absolute`/`right: -1rem`, anchored to this component's
+         own (often narrow, off-right-edge-in-a-mobile-menu) trigger element. That let a trigger far
+         from the viewport's right edge push the panel's left side off-screen, and a trigger flush
+         against the edge push it back out past the RIGHT side instead -- there was no trigger
+         position where a fixed negative offset off a fixed width was safe. `fixed`, capped to the
+         viewport width/height and scrolling its own content, is anchored to the SCREEN instead of
+         the trigger, so it can never overflow regardless of where that trigger sits, and no longer
+         drifts or gets clipped by whatever scrolls underneath it. -->
+    <div *ngIf="profileOpen" id="profileDropdown" class="fixed top-16 right-4 z-[100] w-64 max-w-[calc(100vw-2rem)]
+    max-h-[calc(100vh-5rem)] overflow-y-auto bg-white dark:bg-gray-900
+    border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl">
 
         <!-- User info -->
         <div class="flex items-center gap-3 px-4 py-3.5 bg-gray-50/60 dark:bg-gray-800/60 border-b border-gray-100 dark:border-gray-800">

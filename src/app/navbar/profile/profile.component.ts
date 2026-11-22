@@ -59,9 +59,13 @@ export class ProfileComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.subscribeToCloseProfileOnClick()
-    this.subscribeToCloseProfileOnMouseDown()
-    this.subscribeToCloseProfileOnScroll()
+    // GN-80: this used to be three separate document-level listeners (click/mousedown/scroll)
+    // manually checking "was the event inside #profileDropdown". The scroll one was actively
+    // buggy -- `scroll` doesn't bubble, so it only ever fired for the page's own scroll, never
+    // for scrolling the dropdown's own (now scrollable) content, so the page closed the menu out
+    // from under you on any outside scroll while scrolling the menu's own content did nothing.
+    // The template's full-viewport backdrop (closeDropdown() on click) is the one, reliable way
+    // to dismiss outside the menu now, the same pattern the notification dropdown already uses.
   }
 
   handleEmitEvent(): void {
@@ -70,35 +74,6 @@ export class ProfileComponent {
       this.userData = user;
     });
 
-  }
-
-  subscribeToCloseProfileOnClick() {
-    document.addEventListener('click', (event) => {
-      if (!this.isClickInsideDropdown(event)) {
-        this.closeDropdown();
-      }
-    });
-  }
-
-  subscribeToCloseProfileOnMouseDown() {
-    document.addEventListener('mousedown', (event) => {
-      if (!this.isClickInsideDropdown(event)) {
-        this.closeDropdown();
-      }
-    });
-  }
-
-  subscribeToCloseProfileOnScroll() {
-    document.addEventListener('scroll', (event) => {
-      if (!this.isClickInsideDropdown(event)) {
-        this.closeDropdown();
-      }
-    });
-  }
-
-  isClickInsideDropdown(event: Event): any {
-    const dropdownElement = document.getElementById('profileDropdown');
-    return dropdownElement && dropdownElement.contains(event.target as Node);
   }
 
   closeDropdown() {
