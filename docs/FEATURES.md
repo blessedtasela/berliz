@@ -76,6 +76,17 @@ that ships a feature — add the row under the right domain, and log it under
 | "Tell your trainer about you" on the checklist | ✅ | Ticks when every required answer is filled |
 | Soft prompt on the booking page | ✅ | Never blocks booking |
 
+## 3c. Profile quiz
+
+Not the same feature as "3b. Client onboarding" above (that's a trainer intake-ing a *new client*) — this is a short preference survey every user can answer, named "profile quiz" in the frontend specifically to avoid colliding with that one.
+
+| Feature | Status | Notes |
+|---|---|---|
+| 5-question quiz (goal, fitness level, training preference, days/week, workout type) | ✅ | GN-75: `OnboardingQuestion`/`OnboardingOption`/`OnboardingAnswer` on the backend (`/onboarding`), `ProfileQuizWizardComponent` at `/dashboard/hub/profile-quiz` on the frontend. Single-choice, one question per step, prefills and resumes at the first unanswered question |
+| Admin-manageable question bank (add/edit/reorder/retire/delete) | ✅ | `/admin/onboarding-questions`, admin-only; `ProfileQuizQuestionsComponent` at `/dashboard/hub/profile-quiz-questions`. The 5 seeded questions are a starting point, not a hard limit |
+| Dismissible feed nudge for anyone who hasn't finished it | ✅ | `ProfileQuizPromptComponent`, self-contained, dropped into the Timeline feed. "Skip for now" always works — a preference survey, never a gate on using the app |
+| Feeds the recommendation engine | ⏳ Planned | Answers aren't consumed by anything yet — the still-unbuilt "recommended trainers" and "recommended workout for today" feed sections are what this exists for |
+
 ## 4. Training & tracking
 
 | Feature | Status | Notes |
