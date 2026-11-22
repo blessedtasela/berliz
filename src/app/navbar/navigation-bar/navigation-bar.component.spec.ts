@@ -52,6 +52,19 @@ describe('NavigationBarComponent', () => {
     expect(store.dispatch).toHaveBeenCalledTimes(2);
   });
 
+  // GN-80: on mobile the signed-in row (Home/bell/account) stretches to the full width of the
+  // hamburger menu, so without justify-end its icons sat left-aligned -- putting the account
+  // menu's trigger far from the right edge and sending its dropdown (anchored off that trigger)
+  // past the left of the screen. justify-end puts the trigger where the dashboard top bar
+  // already has it, where the same dropdown renders fine.
+  it('right-aligns the signed-in icon row so the account menu opens where it renders correctly (GN-80)', () => {
+    authServiceSpy.isAuthenticated.and.returnValue(true);
+    fixture.detectChanges();
+
+    const row: HTMLElement = fixture.nativeElement.querySelector('li.justify-end');
+    expect(row).withContext('the signed-in icon row (Home/bell/account) should render with justify-end').not.toBeNull();
+  });
+
   it('toggles the notification dropdown open and closed', () => {
     authServiceSpy.isAuthenticated.and.returnValue(true);
     fixture.detectChanges();

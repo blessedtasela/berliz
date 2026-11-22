@@ -45,7 +45,13 @@
             <!-- GN-49: signed-in visitors on a public page get the real app
                  header controls here -- dashboard link, notifications, account
                  menu -- instead of being stuck looking logged-out. -->
-            <li class="py-1.5 lg:py-0 lg:ml-3 flex items-center gap-2" *ngIf="getUser()">
+            <!-- GN-80: this `<li>` stretches to the full width of the mobile menu (flex-col's
+                 default stretch), so without justify-end its icons sat left-aligned -- which put
+                 app-profile's trigger far from the right edge, and its dropdown (absolutely
+                 positioned off that trigger, see profile.component.html's `right: -1rem`) ran off
+                 the left of the screen. Right-aligning the row on mobile only puts the trigger
+                 where the dashboard top bar already has it, where the same dropdown renders fine. -->
+            <li class="py-1.5 lg:py-0 lg:ml-3 flex items-center justify-end gap-2 lg:justify-start" *ngIf="getUser()">
 
                 <a [routerLink]="['/dashboard']" aria-label="Home"
                     class="relative group w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
