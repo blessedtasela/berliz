@@ -56,7 +56,7 @@ export class PostService {
    * Sets the current user's reaction on a post. `reaction` defaults to `LIKE`; sending the
    * same reaction again clears it, a different one switches it (the total is unchanged).
    */
-  toggleLike(id: number, reaction: string = 'LIKE'): Observable<ApiResponse<PostResponse>> {
+  toggleLike(id: number, reaction: string = 'LOVE'): Observable<ApiResponse<PostResponse>> {
     return this.httpClient.put<ApiResponse<PostResponse>>(
       this.url + `/post/like/${id}`, {}, { params: { reaction } });
   }

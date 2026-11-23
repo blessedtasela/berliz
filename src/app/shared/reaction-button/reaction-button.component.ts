@@ -12,7 +12,7 @@ import { REACTIONS, ReactionType, reactionEmoji } from 'src/app/models/post.inte
 
 /**
  * The reaction control shared by every post card and comment: a trigger that
- * plain-clicks to toggle a 👍, and reveals a 👍💪🔥👏❤️ picker on hover
+ * plain-clicks to toggle a ❤️, and reveals a ❤️🔥💪👏😮🎉 picker on hover
  * (desktop) or long-press (touch). A separate "N reactions" affordance next to
  * it opens the "who reacted" list. One component so the behaviour and styling
  * stay identical on the feed, both profile pages, and comment threads.
@@ -53,13 +53,13 @@ export class ReactionButtonComponent {
   }
 
   get triggerLabel(): string {
-    return REACTIONS.find(r => r.type === this.myReaction)?.label ?? 'Like';
+    return REACTIONS.find(r => r.type === this.myReaction)?.label ?? 'Love';
   }
 
-  /** Plain click: react with LIKE, or clear the current reaction. */
+  /** Plain click: react with LOVE, or clear the current reaction. */
   onTrigger(): void {
     this.closePicker();
-    this.react.emit((this.myReaction as ReactionType) ?? 'LIKE');
+    this.react.emit((this.myReaction as ReactionType) ?? 'LOVE');
   }
 
   pick(type: ReactionType): void {

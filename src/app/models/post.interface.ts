@@ -8,21 +8,27 @@ export type PostActivityType =
   | 'PROGRESS'
   | 'MILESTONE';
 
-/** The five reactions a user can leave on a post or comment. LIKE is the default. */
-export type ReactionType = 'LIKE' | 'STRONG' | 'FIRE' | 'CLAP' | 'LOVE';
+/**
+ * The reactions a user can leave on a post or comment. GN-124: LOVE is the default (what a
+ * plain tap sends) and the only ones offered in the picker are LOVE/FIRE/STRONG("Muscle")/CLAP/
+ * WOW/CELEBRATE. LIKE is kept in the type only because a pre-existing like row from before
+ * reactions existed can still report it -- it's never offered as a pick.
+ */
+export type ReactionType = 'LIKE' | 'STRONG' | 'FIRE' | 'CLAP' | 'LOVE' | 'WOW' | 'CELEBRATE';
 
-/** Display metadata for each reaction, in picker order. */
+/** Display metadata for each pickable reaction, in picker order. */
 export const REACTIONS: { type: ReactionType; emoji: string; label: string }[] = [
-  { type: 'LIKE', emoji: '👍', label: 'Like' },
-  { type: 'STRONG', emoji: '💪', label: 'Strong' },
-  { type: 'FIRE', emoji: '🔥', label: 'Fire' },
-  { type: 'CLAP', emoji: '👏', label: 'Clap' },
   { type: 'LOVE', emoji: '❤️', label: 'Love' },
+  { type: 'FIRE', emoji: '🔥', label: 'Fire' },
+  { type: 'STRONG', emoji: '💪', label: 'Muscle' },
+  { type: 'CLAP', emoji: '👏', label: 'Clap' },
+  { type: 'WOW', emoji: '😮', label: 'Wow' },
+  { type: 'CELEBRATE', emoji: '🎉', label: 'Celebrate' },
 ];
 
-/** emoji for a reaction name (defaults to the Like thumb for anything unknown/absent). */
+/** emoji for a reaction name (defaults to the Love heart for anything unknown/absent, including the retired LIKE). */
 export function reactionEmoji(type?: string | null): string {
-  return REACTIONS.find(r => r.type === type)?.emoji ?? '👍';
+  return REACTIONS.find(r => r.type === type)?.emoji ?? '❤️';
 }
 
 /** Mirrors the backend `PostResponse` (see PostMapper). */

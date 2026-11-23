@@ -45,7 +45,7 @@ export class CommentService {
    * `reaction` defaults to `LIKE`; sending the same reaction again clears it, a different
    * one switches it.
    */
-  toggleCommentLike(id: number, reaction: string = 'LIKE'): Observable<ApiResponse<CommentResponse>> {
+  toggleCommentLike(id: number, reaction: string = 'LOVE'): Observable<ApiResponse<CommentResponse>> {
     return this.httpClient.put<ApiResponse<CommentResponse>>(
       this.url + `/comment/like/${id}`, {}, { params: { reaction } });
   }
