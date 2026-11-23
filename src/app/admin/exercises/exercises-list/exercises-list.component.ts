@@ -31,6 +31,8 @@ export class ExercisesListComponent implements OnDestroy {
   showFullData: boolean = false;
   @Input() exercisesData: Exercises[] = [];
   @Input() totalExercises: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   selectedDemo: any;
 
   private subscriptions: Subscription[] = [];

@@ -27,6 +27,8 @@ export class TrainerPricingListComponent implements OnDestroy {
   showFullData: boolean = false;
   @Input() trainerPricingData: TrainerPricing[] = [];
   @Input() totalTrainerPricing: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   private subscriptions: Subscription[] = [];
 

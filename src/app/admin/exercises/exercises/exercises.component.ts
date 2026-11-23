@@ -19,7 +19,8 @@ export class ExercisesComponent {
   totalExercises: number = 0;
   exercisesLength: number = 0;
   searchComponent: string = 'exercise'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
@@ -61,6 +62,10 @@ export class ExercisesComponent {
   handleSearchResults(results: Exercises[]): void {
     this.exercisesData = results;
     this.totalExercises = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
 

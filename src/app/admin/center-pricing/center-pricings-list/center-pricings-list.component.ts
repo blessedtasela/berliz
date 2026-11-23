@@ -25,6 +25,8 @@ export class CenterPricingsListComponent implements OnInit, OnDestroy {
   responseMessage: any;
   @Input() centerPricingData: CenterPricing[] = [];
   @Input() totalCenterPricing: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   private subscriptions: Subscription[] = [];
 

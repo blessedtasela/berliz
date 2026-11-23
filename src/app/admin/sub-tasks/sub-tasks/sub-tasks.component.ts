@@ -17,7 +17,8 @@ export class SubTasksComponent {
   totalSubTasks: number = 0;
   subTasksLength: number = 0;
   searchComponent: string = 'sub-task'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
 
   readonly selectSubTasks = selectSubTasks;
@@ -52,5 +53,9 @@ export class SubTasksComponent {
   handleSearchResults(results: SubTasks[]): void {
     this.subTasksData = results;
     this.totalSubTasks = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 }

@@ -27,6 +27,8 @@ export class ClientsListComponent implements OnDestroy {
   showFullData: boolean = false;
   @Input() clientsData: Clients[] = [];
   @Input() totalClients: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   // Both watchers below already use take(1), so they self-unsubscribe after
   // their first message -- but tracking them here still lets ngOnDestroy

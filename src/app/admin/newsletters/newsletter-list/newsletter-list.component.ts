@@ -29,6 +29,8 @@ export class NewsletterListComponent implements OnDestroy {
   @Input() newsletterData: Newsletter[] = [];
   showFullData: boolean = false;
   @Input() totalNewsletters: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   subscription = new Subscription;
   private subscriptions: Subscription[] = [];
 

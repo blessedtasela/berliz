@@ -26,6 +26,8 @@ export class CenterListComponent {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() totalCenters: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   subscriptions: Subscription[] = []
   @Output() emitEvent = new EventEmitter()
   selectedImage: any;

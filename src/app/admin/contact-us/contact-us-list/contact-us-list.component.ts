@@ -28,6 +28,8 @@ export class ContactUsListComponent implements OnDestroy {
   @Input() contactUsData: ContactUs[] = [];
   showFullData: boolean = false;
   @Input() totalContactUs: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   private subscriptions: Subscription[] = [];
 

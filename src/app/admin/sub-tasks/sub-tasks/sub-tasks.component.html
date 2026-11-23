@@ -1,6 +1,6 @@
 <app-page-header icon="check-square" title="Sub-tasks" subtitle="The steps inside each task"></app-page-header>
 <app-admin-search [selector]="selectSubTasks" [fields]="subTaskSearchFields"
-    placeholder="Search sub-tasks..." (results)="handleSearchResults($event)"></app-admin-search>
+    placeholder="Search sub-tasks..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-sub-tasks-header [subTasksData]="subTasksData" [totalSubTasks]="totalSubTasks"
     [subTasksLength]="subTasksLength"></app-sub-tasks-header>
-<app-sub-tasks-list [subTasksData]="subTasksData" [totalSubTasks]="totalSubTasks"></app-sub-tasks-list>
+<app-sub-tasks-list [subTasksData]="subTasksData" [totalSubTasks]="totalSubTasks" [hasActiveQuery]="hasActiveQuery"></app-sub-tasks-list>

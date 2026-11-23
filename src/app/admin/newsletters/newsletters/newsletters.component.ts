@@ -20,7 +20,8 @@ export class NewslettersComponent {
   totalNewsletters: number = 0;
   newsletterLength: number = 0;
   searchComponent: string = 'newsletter'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
@@ -62,6 +63,10 @@ export class NewslettersComponent {
   handleSearchResults(results: Newsletter[]): void {
     this.newsletterData = results;
     this.totalNewsletters = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
 

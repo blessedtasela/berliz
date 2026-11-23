@@ -85,6 +85,6 @@
         <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
             <i-feather name="inbox" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
         </div>
-        <p class="text-sm text-gray-400 dark:text-gray-500">No tags yet.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">{{ hasActiveQuery ? 'No tags match your search.' : 'No tags yet.' }}</p>
     </div>
 </div>

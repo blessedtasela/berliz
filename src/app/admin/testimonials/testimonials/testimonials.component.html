@@ -1,10 +1,10 @@
 <app-page-header icon="message-square" title="Testimonials" subtitle="Reviews and testimonials awaiting or on display"></app-page-header>
 <app-admin-search [selector]="selectTestimonials" [fields]="testimonialSearchFields"
-    placeholder="Search testimonials..." (results)="handleSearchResults($event)"></app-admin-search>
+    placeholder="Search testimonials..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-load-error *ngIf="!loading && loadError && testimonialsData.length === 0" title="Couldn't load testimonials" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 <ng-container *ngIf="testimonialsData.length > 0 || (!loading && !loadError)">
 <app-testimonials-header [testimonialsData]="testimonialsData" [totalTestimonials]="totalTestimonials"
     [testimonialsLength]="testimonialsLength"></app-testimonials-header>
 <app-testimonials-list [testimonialsData]="testimonialsData"
-    [totalTestimonials]="totalTestimonials"></app-testimonials-list>
+    [totalTestimonials]="totalTestimonials" [hasActiveQuery]="hasActiveQuery"></app-testimonials-list>
 </ng-container>

@@ -27,13 +27,15 @@
     <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
     <!-- Empty state -->
-    <div *ngIf="centerLikes.length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
+    <!-- GN-125: gated on visibleLikes() (the filtered list), not centerLikes -- a search that matches
+         nothing used to render neither this nor the list below, i.e. a blank area with no message at all. -->
+    <div *ngIf="visibleLikes().length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="heart" style="width:28px;height:28px;"></i-feather>
-        <p class="text-xs italic">No likes yet.</p>
+        <p class="text-xs italic">{{ searchTerm.trim() ? 'No likes match your search.' : 'No likes yet.' }}</p>
     </div>
 
     <!-- List -->
-    <div *ngIf="centerLikes.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+    <div *ngIf="visibleLikes().length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-2">
 
         <div *ngFor="let like of visibleLikes()"
             class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex items-center gap-3">

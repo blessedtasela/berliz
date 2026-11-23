@@ -27,6 +27,8 @@ export class MembersListComponent implements OnDestroy {
   showFullData: boolean = false;
   @Input() membersData: Members[] = [];
   @Input() totalMembers: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   private subscriptions: Subscription[] = [];
 

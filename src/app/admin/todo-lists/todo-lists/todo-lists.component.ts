@@ -21,7 +21,8 @@ export class TodoListsComponent {
   totalTodoList: number = 0;
   todoListLength: number = 0;
   searchComponent: string = 'todoList'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
@@ -80,6 +81,10 @@ export class TodoListsComponent {
   handleSearchResults(results: TodoList[]): void {
     this.todoListData = results;
     this.totalTodoList = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
   watchGetTodoFromMap() {

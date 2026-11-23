@@ -26,6 +26,8 @@ export class TagListComponent {
   private destroyRef = inject(DestroyRef);
   responseMessage: any;
   @Input() tagsData: Tags[] = [];
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   showFullData: boolean = false;
 
   constructor(private tagService: TagService,

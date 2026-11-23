@@ -28,6 +28,8 @@ export class PaymentsListComponent {
   showFullData: boolean = false;
   @Input() paymentsData: Payments[] = [];
   @Input() totalPayments: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   subscriptions: Subscription[] = []
 
   constructor(private datePipe: DatePipe,

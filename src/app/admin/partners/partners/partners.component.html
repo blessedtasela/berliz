@@ -6,10 +6,10 @@
   was an unfinished CLI stub that was never even embedded here.
 -->
 <app-admin-search [selector]="selectPartners" [fields]="partnerSearchFields"
-  placeholder="Search partners..." (results)="handleSearchResults($event)"></app-admin-search>
+  placeholder="Search partners..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-load-error *ngIf="!loading && loadError && partnersData.length === 0" title="Couldn't load partners" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 <ng-container *ngIf="partnersData.length > 0 || (!loading && !loadError)">
 <app-partner-header [partnersData]="partnersData" [totalPartners]="totalPartners"
     [partnersLength]="partnersLength"></app-partner-header>
-<app-partner-list [partnersData]="partnersData" [totalPartners]="totalPartners"></app-partner-list>
+<app-partner-list [partnersData]="partnersData" [totalPartners]="totalPartners" [hasActiveQuery]="hasActiveQuery"></app-partner-list>
 </ng-container>

@@ -26,7 +26,9 @@ import { selectPartners } from 'src/app/state/partner/partner.selectors';
 export class PartnerListComponent implements OnDestroy {
   responseMessage: any;
   @Input() partnersData: Partner[] = [];
-  @Input() totalPartners: number = 0
+  @Input() totalPartners: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   showFullData: boolean = false;
 
   private subscriptions: Subscription[] = [];

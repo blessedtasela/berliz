@@ -21,7 +21,8 @@ export class UsersComponent implements OnDestroy {
   totalUsers: number = 0;
   usersLength: number = 0;
   searchComponent: string = 'user'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
   /** True until the first load settles (success or failure) -- gates the empty-state message so it can't flash during a fetch. */
@@ -97,6 +98,10 @@ export class UsersComponent implements OnDestroy {
   handleSearchResults(results: Users[]): void {
     this.usersData = results;
     this.totalUsers = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
   watchGetUserFromMap() {

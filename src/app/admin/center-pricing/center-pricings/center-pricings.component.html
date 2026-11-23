@@ -1,7 +1,7 @@
 <app-page-header icon="dollar-sign" title="Center pricing" subtitle="What each center charges for its plans"></app-page-header>
 <app-admin-search [selector]="selectCenterPricing" [fields]="centerPricingSearchFields"
-    placeholder="Search center pricing..." (results)="handleSearchResults($event)"></app-admin-search>
+    placeholder="Search center pricing..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-center-pricings-header [centerPricingData]="centerPricingData" [totalCenterPricing]="totalCenterPricing"
     [centerPricingLength]="centerPricingLength"></app-center-pricings-header>
 <app-center-pricings-list [centerPricingData]="centerPricingData"
-    [totalCenterPricing]="totalCenterPricing"></app-center-pricings-list>
+    [totalCenterPricing]="totalCenterPricing" [hasActiveQuery]="hasActiveQuery"></app-center-pricings-list>

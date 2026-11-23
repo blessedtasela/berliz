@@ -20,7 +20,8 @@ export class TrainerPricingComponent {
   totalTrainerPricing: number = 0;
   trainerPricingLength: number = 0;
   searchComponent: string = 'trainer-pricing'
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
 
   readonly selectTrainerPricing = selectTrainerPricing;
   readonly trainerPricingSearchFields: AdminSearchField<TrainerPricing>[] = [
@@ -54,6 +55,10 @@ export class TrainerPricingComponent {
   handleSearchResults(results: TrainerPricing[]): void {
     this.trainerPricingData = results;
     this.totalTrainerPricing = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
 }

@@ -20,7 +20,8 @@ export class CategoryComponent {
   totalCategories: number = 0;
   categoriesLength: number = 0;
   searchComponent: string = ''
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
   loadError: string | null = null;
@@ -70,6 +71,10 @@ export class CategoryComponent {
     this.categoriesData = results;
     this.totalCategories = results.length;
     this.categoriesLength = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
   watchLikeCategory() {

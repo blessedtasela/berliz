@@ -29,6 +29,8 @@ export class UserListComponent implements OnChanges {
   private destroyRef = inject(DestroyRef);
   @Input() usersData: Users[] = [];
   @Input() deepLinkUserId: number | null = null;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   private deepLinkHandled = false;
   responseMessage: any;
   showFullData: boolean = false;

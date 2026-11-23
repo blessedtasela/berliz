@@ -26,6 +26,8 @@ export class AdminSearchComponent<T = any> implements OnInit, OnDestroy {
   @Input() fields: AdminSearchField<T>[] = [];
   @Input() placeholder = 'Search...';
   @Output() results = new EventEmitter<T[]>();
+  /** GN-125: true while a non-blank query is active, so the host can tell "genuinely empty" from "query matched nothing" instead of showing the same "No X yet" either way. */
+  @Output() queryActive = new EventEmitter<boolean>();
 
   query = '';
   selectedField = '';
@@ -72,9 +74,11 @@ export class AdminSearchComponent<T = any> implements OnInit, OnDestroy {
       const field = this.fields.find(f => f.value === this.selectedField);
       const query = this.query.trim().toLowerCase();
       if (!query || !field) {
+        this.queryActive.emit(false);
         this.results.emit(data);
         return;
       }
+      this.queryActive.emit(true);
       this.results.emit(
         data.filter(item => (field.accessor(item) || '').toString().toLowerCase().includes(query))
       );

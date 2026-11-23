@@ -1,10 +1,10 @@
 <app-page-header icon="activity" title="Muscle groups" subtitle="Groups exercises are filed under"></app-page-header>
 <app-admin-search [selector]="selectMuscleGroups" [fields]="muscleGroupSearchFields"
-    placeholder="Search muscle groups..." (results)="handleSearchResults($event)"></app-admin-search>
+    placeholder="Search muscle groups..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-load-error *ngIf="!loading && loadError && muscleGroupsData.length === 0" title="Couldn't load muscle groups" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 <ng-container *ngIf="muscleGroupsData.length > 0 || (!loading && !loadError)">
 <app-muscle-groups-header [muscleGroupsData]="muscleGroupsData" [totalMuscleGroups]="totalMuscleGroups"
     [muscleGroupsLength]="muscleGroupsLength"></app-muscle-groups-header>
 <app-muscle-groups-list [muscleGroupsData]="muscleGroupsData"
-    [totalMuscleGroups]="totalMuscleGroups"></app-muscle-groups-list>
+    [totalMuscleGroups]="totalMuscleGroups" [hasActiveQuery]="hasActiveQuery"></app-muscle-groups-list>
 </ng-container>

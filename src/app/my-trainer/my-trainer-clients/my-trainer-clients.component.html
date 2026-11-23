@@ -34,7 +34,7 @@
     <div *ngIf="filteredClients().length === 0"
         class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="users" style="width:28px;height:28px;"></i-feather>
-        <p class="text-xs font-medium">No clients found.</p>
+        <p class="text-xs font-medium">{{ searchTerm.trim() ? 'No clients match your search.' : 'No clients found.' }}</p>
     </div>
 
     <!-- Grid -->

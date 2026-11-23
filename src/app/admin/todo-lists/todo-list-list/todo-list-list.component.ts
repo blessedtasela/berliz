@@ -29,6 +29,8 @@ export class TodoListListComponent {
   @Input() todoListData: TodoList[] = [];
   showFullData: boolean = false;
   @Input() totalTodoList: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   subscription = new Subscription;
 
   constructor(private datePipe: DatePipe,

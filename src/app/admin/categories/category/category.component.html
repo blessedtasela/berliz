@@ -9,10 +9,10 @@
   table, so this embed is a distinct, real feature.
 -->
 <app-admin-search [selector]="selectCategories" [fields]="categorySearchFields"
-  placeholder="Search categories..." (results)="handleSearchResults($event)"></app-admin-search>
+  placeholder="Search categories..." (results)="handleSearchResults($event)" (queryActive)="onQueryActive($event)"></app-admin-search>
 <app-load-error *ngIf="!loading && loadError && categoriesData.length === 0" title="Couldn't load categories" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 <ng-container *ngIf="categoriesData.length > 0 || (!loading && !loadError)">
 <app-categories-header [categoriesData]="categoriesData" [totalCategories]="totalCategories"
     [categoriesLength]="categoriesLength"></app-categories-header>
-<app-categories-list [categoriesData]="categoriesData" [totalCategories]="totalCategories"></app-categories-list>
+<app-categories-list [categoriesData]="categoriesData" [totalCategories]="totalCategories" [hasActiveQuery]="hasActiveQuery"></app-categories-list>
 </ng-container>

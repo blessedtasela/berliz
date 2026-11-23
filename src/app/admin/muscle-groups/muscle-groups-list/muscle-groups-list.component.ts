@@ -28,6 +28,8 @@ export class MuscleGroupsListComponent implements OnDestroy {
   showFullData: boolean = false;
   @Input() muscleGroupsData: MuscleGroups[] = [];
   @Input() totalMuscleGroups: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
   selectedImage: any;
 
   private subscriptions: Subscription[] = [];

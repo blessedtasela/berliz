@@ -18,6 +18,8 @@ export class CenterPricingsComponent {
   centerPricingData: CenterPricing[] = [];
   totalCenterPricing: number = 0;
   centerPricingLength: number = 0;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
 
   readonly selectCenterPricing = selectCenterPricing;
   readonly centerPricingSearchFields: AdminSearchField<CenterPricing>[] = [
@@ -49,5 +51,9 @@ export class CenterPricingsComponent {
   handleSearchResults(results: CenterPricing[]): void {
     this.centerPricingData = results;
     this.totalCenterPricing = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 }

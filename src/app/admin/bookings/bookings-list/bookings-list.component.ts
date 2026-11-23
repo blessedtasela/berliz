@@ -25,6 +25,8 @@ export class BookingsListComponent {
   responseMessage: any;
   @Input() bookingsData: Booking[] = [];
   @Input() totalBookings: number = 0;
+  /** GN-125: true while the search box has a non-blank query -- changes the empty-state text. */
+  @Input() hasActiveQuery = false;
 
   constructor(private datePipe: DatePipe,
     private bookingService: BookingService,

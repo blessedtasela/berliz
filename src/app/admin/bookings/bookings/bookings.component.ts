@@ -20,7 +20,8 @@ export class BookingsComponent {
   totalBookings: number = 0;
   bookingsLength: number = 0;
   searchComponent: string = 'booking';
-  isSearch: boolean = true;
+  /** GN-125: true while the search box has a non-blank query, so the list can tell "genuinely empty" apart from "query matched nothing". */
+  hasActiveQuery = false;
   subscriptions: Subscription[] = [];
   /** Why the list couldn't be loaded -- so a failed load never reads as an empty table (and never leaves the global spinner stuck). */
   loadError: string | null = null;
@@ -75,6 +76,10 @@ export class BookingsComponent {
   handleSearchResults(results: Booking[]): void {
     this.bookingsData = results;
     this.totalBookings = results.length;
+  }
+
+  onQueryActive(active: boolean): void {
+    this.hasActiveQuery = active;
   }
 
 }
