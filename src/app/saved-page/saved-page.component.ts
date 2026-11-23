@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { take } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { PostVideoComponent } from 'src/app/shared/post-video/post-video.component';
 import { PostResponse } from 'src/app/models/post.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { SavedService } from 'src/app/services/saved.service';
@@ -22,7 +23,7 @@ import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  */
 @Component({
     selector: 'app-saved-page',
-    imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe, LoadErrorComponent],
+    imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe, LoadErrorComponent, PostVideoComponent],
     templateUrl: './saved-page.component.html'
 })
 export class SavedPageComponent implements OnInit {

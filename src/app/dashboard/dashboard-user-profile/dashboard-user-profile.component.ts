@@ -11,6 +11,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { PostVideoComponent } from 'src/app/shared/post-video/post-video.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
@@ -63,7 +64,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
  */
 @Component({
     selector: 'app-dashboard-user-profile',
-    imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, ProfileAchievementsComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, PostVideoComponent, RanksCardComponent, ProfileAchievementsComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
     templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {

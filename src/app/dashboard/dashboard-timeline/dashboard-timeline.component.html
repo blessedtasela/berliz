@@ -202,8 +202,8 @@
             </span>
         </button>
 
-        <video loop *ngIf="post.videoUrl" [src]="post.videoUrl | strapiUrl" controls preload="metadata" playsinline
-            class="w-full max-h-96 rounded-xl border border-brand-border bg-black"></video>
+        <app-post-video *ngIf="post.videoUrl" [videoUrl]="post.videoUrl"
+            videoClass="w-full max-h-96 rounded-xl border border-brand-border bg-black"></app-post-video>
 
         <!-- Linked workout template -->
         <div *ngIf="post.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-900 bg-orange-950/30 px-3 py-2">

@@ -227,8 +227,8 @@
                             <span class="text-[11px] font-bold text-white bg-black/50 px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">View</span>
                         </span>
                     </button>
-                    <video loop *ngIf="post.videoUrl" [src]="post.videoUrl | strapiUrl" controls preload="metadata" playsinline
-                        class="w-full max-h-96 rounded-xl border border-gray-100 dark:border-gray-800 bg-black"></video>
+                    <app-post-video *ngIf="post.videoUrl" [videoUrl]="post.videoUrl"
+                        videoClass="w-full max-h-96 rounded-xl border border-gray-100 dark:border-gray-800 bg-black"></app-post-video>
 
                     <div class="border-t border-gray-100 dark:border-gray-800 pt-2 flex items-center gap-1.5">
                         <app-reaction-button [myReaction]="post.myReaction" [count]="post.likes"

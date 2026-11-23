@@ -13,6 +13,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { PostVideoComponent } from 'src/app/shared/post-video/post-video.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
@@ -85,7 +86,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 
 @Component({
     selector: 'app-dashboard-timeline',
-    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent, ProfileQuizPromptComponent, TrainerPulseHeaderComponent, RecommendedTrainersComponent, RecommendedWorkoutsComponent],
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, PostVideoComponent, BookProviderButtonComponent, DraftResumeBannerComponent, ProfileQuizPromptComponent, TrainerPulseHeaderComponent, RecommendedTrainersComponent, RecommendedWorkoutsComponent],
     templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {

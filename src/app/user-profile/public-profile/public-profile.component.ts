@@ -22,6 +22,7 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
+import { PostVideoComponent } from 'src/app/shared/post-video/post-video.component';
 import { ProfileAchievementsComponent } from 'src/app/shared/profile-achievements/profile-achievements.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { RequestPersonalizedPlanButtonComponent } from 'src/app/shared/request-personalized-plan-button/request-personalized-plan-button.component';
@@ -56,7 +57,7 @@ import {
  */
 @Component({
     selector: 'app-public-profile',
-    imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent, ProfileAchievementsComponent, BookProviderButtonComponent, RequestPersonalizedPlanButtonComponent],
+    imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent, PostVideoComponent, ProfileAchievementsComponent, BookProviderButtonComponent, RequestPersonalizedPlanButtonComponent],
     templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {

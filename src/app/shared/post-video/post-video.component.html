@@ -1,0 +1,28 @@
+<div #hostEl class="relative" [class.min-h-40]="errored" (click)="onToggle()">
+  <video #videoEl loop playsinline [muted]="muted" [preload]="preload" [src]="resolvedUrl"
+      [class]="videoClass" (error)="onError()"></video>
+
+  <!-- paused overlay -->
+  <div *ngIf="paused && !errored" class="absolute inset-0 flex items-center justify-center bg-black/10">
+    <div class="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
+      <i-feather name="play" class="text-white" style="width:20px;height:20px;"></i-feather>
+    </div>
+  </div>
+
+  <!-- mute toggle -->
+  <button *ngIf="!errored" type="button" (click)="onToggleMute($event)"
+      class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+    <i-feather [name]="muted ? 'volume-x' : 'volume-2'" class="text-white" style="width:16px;height:16px;"></i-feather>
+  </button>
+
+  <!-- error overlay -->
+  <div *ngIf="errored" class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 text-white text-sm px-4 text-center">
+    <span>This video can't play right now.</span>
+    <div class="flex items-center gap-3">
+      <button type="button" (click)="onRetry($event)" class="underline">Try again</button>
+      <a [href]="resolvedUrl" target="_blank" rel="noopener" (click)="$event.stopPropagation()" class="underline inline-flex items-center gap-1">
+        Open in new tab <i-feather name="external-link" style="width:12px;height:12px;"></i-feather>
+      </a>
+    </div>
+  </div>
+</div>
