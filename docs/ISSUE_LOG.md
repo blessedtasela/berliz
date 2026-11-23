@@ -1395,3 +1395,29 @@ and eligibility logic directly rather than mocking `IntersectionObserver`. Full 
 (2538/2538), `tsc --noEmit` clean. Not verified in the browser -- same login gap as GN-124/GN-78
 (no seeded local dev account, no local mail for activation); a restarted dev server compiled with
 zero errors across all 4 host pages. `berliz`, this commit.
+
+## GN-126: re-checked, already fixed by GN-80 -- locked in with a regression test (Nov 23, 2026)
+
+Reported as "the profile dropdown doesn't close on scroll," the same class of complaint GN-80
+(documented earlier in this file) already root-caused and fixed in this same session, before this
+ticket was raised: the old design relied on a `document`-level `scroll` listener to dismiss the
+menu, which never actually worked (`scroll` doesn't bubble, so it only ever fired for the page's
+own scroll, never for scrolling the dropdown's own content). That was replaced outright with a
+full-viewport backdrop as the one dismiss mechanism -- the same pattern the notification dropdown
+already used -- specifically so a scroll could never leave it open with no way to close it. Read
+through `profile.component.html`/`.ts` again end to end rather than assuming the earlier fix
+covers this: it does. There is no scroll listener left anywhere to be buggy, and nothing else
+(mobile vs. desktop, public vs. dashboard navbar -- both themes share the one `ProfileComponent`)
+renders a second, unfixed copy of this dropdown.
+
+Most likely explanation: this was reported from testing done before the GN-80 fix had deployed,
+or re-describes the GN-80 symptom under a new ID rather than a surviving defect.
+
+Added two regression tests rather than just asserting this in prose: scrolling the page (dispatched
+on both `document` and `window`) does not close the dropdown, and clicking the backdrop does --
+locking the deliberate design in so a future change can't silently reintroduce the old, broken
+scroll-listener approach. Full suite green (2540/2540), `tsc --noEmit` clean. If this is still
+reported after a fresh test against this build, the next thing to check is whether it's actually
+describing a *different* interaction entirely (e.g. a touch-scroll gesture behaving differently on
+a specific mobile browser) rather than this exact "doesn't close on scroll" wording. `berliz`, this
+commit.

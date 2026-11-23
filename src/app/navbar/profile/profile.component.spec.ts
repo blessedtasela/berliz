@@ -141,6 +141,38 @@ describe('ProfileComponent', () => {
     });
   });
 
+  // GN-126 was reported as "the profile dropdown doesn't close on scroll" -- the same class of
+  // complaint GN-80 already root-caused and fixed: scroll was never a reliable way to dismiss it
+  // (the old document-level `scroll` listener never even fired for scrolling the dropdown's own
+  // content, only the page's), so it was replaced outright with a full-viewport backdrop as the
+  // one dismiss mechanism, matching the notification dropdown's own pattern. Locking that design
+  // in here: scrolling must never close it (nothing should listen for scroll at all), and the
+  // backdrop click must.
+  describe('dismissal (GN-80/GN-126)', () => {
+    beforeEach(() => {
+      component.userData = { firstname: 'A', lastname: 'B', role: 'user' } as any;
+      component.profileOpen = true;
+      fixture.detectChanges();
+    });
+
+    it('scrolling the page does not close the dropdown', () => {
+      document.dispatchEvent(new Event('scroll'));
+      window.dispatchEvent(new Event('scroll'));
+
+      expect(component.profileOpen).toBeTrue();
+    });
+
+    it('clicking the full-viewport backdrop closes it', () => {
+      const backdrop = fixture.nativeElement.querySelector('.fixed.inset-0.z-\\[99\\]');
+      expect(backdrop).toBeTruthy();
+
+      backdrop.click();
+      fixture.detectChanges();
+
+      expect(component.profileOpen).toBeFalse();
+    });
+  });
+
   it('only shows the Partnership link for a provider (trainer/center)', () => {
     component.userData = { firstname: 'A', lastname: 'B', role: 'trainer' } as any;
     component.profileOpen = true;
