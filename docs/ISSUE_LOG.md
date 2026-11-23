@@ -1328,3 +1328,70 @@ Reported on the bookings search specifically (typing a client email that doesn't
 **Deliberately left alone** (confirmed correct or genuinely out of scope during the audit): `dashboard-members`, `members-directory`, `dashboard-exercises`, `find-providers`, `my-notifications`, `assign-workout-modal`, `my-workouts`, the equipment pages, `exercises-section`, the search-only widgets (`center-search`, `trainers-search`, `categories-search`, `global-search`), and `admin-cms` -- all already distinguish the two empty states correctly. `connections-main`, `runs`, `messages-main`, `message-popup`, `payment-codes`, the dead/unused `search-todo` component, and several admin pages with no search box at all (`berliz-feedback`, `payouts-list`, `faqs`, `problem-reports`, `profile-quiz-questions`) have no instance of this bug.
 
 **Tests:** full suite 2524/2524 (2521 + 3 new), `tsc --noEmit` clean. `berliz`, this commit.
+
+## Videos unplayable on iPhone, and autoplay like Instagram/TikTok (Nov 22-23, 2026)
+
+Mobile flagged this first, product-relevant for web/backend: trainer album videos and post
+videos uploaded through the web app come out as `.webm`, which iPhone/Safari cannot play at all
+-- silently unplayable for the owner's mostly-iOS users. Root cause: the web trainer-video-album/
+feature-video trimmers (`my-trainer-video-album.component.ts`, `legacy/services/video-cropper.
+service.ts`) re-encode client-side via `MediaRecorder` after trimming/cropping, and no mainstream
+browser's `MediaRecorder` actually produces an MP4 container -- so every trimmed clip comes out
+as WebM regardless of the original file's format. Confirmed live: `strapi-berliz/webm-backup-*`
+holds real `album_<timestamp>_<hash>.webm` files matching that naming.
+
+Owner's decision on the fix: transcode on upload (new uploads only; backfilling existing `.webm`
+rows is a separate, later task). Fixed in `strapi-berliz` (`src/index.ts`): a new `beforeCreate`
+lifecycle hook on `plugin::upload.file`, alongside the existing duration-remux `afterCreate`
+hook, transcodes a `video/webm` upload to H.264/AAC MP4 (ffmpeg, already wired up for the
+existing remux feature) and rewrites `data.url`/`.ext`/`.mime`/`.name`/`.size` **before** the row
+is inserted, not after -- doing the swap post-insert would race whatever already read the
+original webm url/mime out of the upload response (web -> Spring's `/strapi/upload` -> Strapi's
+`/api/upload`) and stored it permanently on a Post/trainer-album entity. A failed transcode
+leaves the data untouched, falling through to the existing remux step unchanged.
+
+**A bigger finding along the way:** this whole fix sat uncommitted in `strapi-berliz` for over 3
+months -- `git log --all`/`git branch -a` showed only 4 commits ever, dating back to August 14.
+`config/middlewares.ts` (CORS origins for the real production domains, not just localhost),
+`config/plugins.ts` (a documented Windows upload-crash workaround), and `package.json`'s
+`ffmpeg-static`/`ffprobe-static` dependencies -- which the *existing* duration-remux feature
+already imports -- were all sitting locally, never pushed. Without that `package.json` committed,
+a fresh Railway build would never have installed `ffmpeg-static` at all, meaning the pre-existing
+remux feature could never have actually run in a real deploy either. Committed that backlog
+separately from the new transcode fix so the history stays clear about what was pre-existing vs.
+new. Left the untracked orphan-cleanup scripts and local media backups alone (not something that
+belongs in git).
+
+**Tests:** no test framework exists in `strapi-berliz` (no test script, no spec files) -- not
+adding one for this fix alone. Verified instead by generating a synthetic WebM with the installed
+`ffmpeg-static` binary and running the exact transcode command this hook uses against it: produced
+a valid H.264/AAC MP4 with a correct finite duration, confirmed via `ffmpeg -i`. The Railway
+deployment (`strapi-berliz`) booted clean after pushing -- "Strapi started successfully" in the
+deploy logs, no errors. **Not verified against a real upload** -- Strapi's `/api/upload` requires
+auth and this session has no credentials for it; the owner doing one real video upload (trainer
+album clip or a post video) is the confirmation still needed, same as GN-78/GN-95 earlier.
+`strapi-berliz`, two commits.
+
+**Web autoplay**, same request: a post's video should autoplay Instagram/TikTok-style when in
+view (muted, pausing when scrolled away, tap to pause/play) on the feed, profile timelines and
+Saved -- mobile shipped this first (master `37b491b`). New shared `app-post-video` component
+(`src/app/shared/post-video/`) replaces the plain `<video controls>` at the 4 real post-video
+spots; `dashboard-timeline-preview`'s video was deliberately left alone -- it's a static,
+non-playable still-frame thumbnail by design, not a player. A new `ActiveVideoService` lets
+every post-video report whether it's currently eligible to play (in view past a 0.6
+IntersectionObserver threshold, not manually paused, no error, motion/data-saver allows it);
+among whichever are eligible, the topmost on the page wins and the rest pause, coalesced through
+one microtask so a burst of simultaneous IntersectionObserver callbacks doesn't thrash. A single
+document-level `visibilitychange` listener pauses whatever's playing when the tab is hidden,
+rather than each video owning one. Scrolling a video out of view always forgets a manual pause --
+it autoplays again next time it's back in view, per the spec.
+
+This autoplay change is cosmetically live already but won't actually fix anything for iPhone
+users until the transcode fix above reaches real uploads -- a WebM clip still hits the new error
+state (Try again / Open in new tab) on Safari either way; the two fixes are meant to land together.
+
+**Tests:** 19 new (`ActiveVideoService` + `PostVideoComponent`), driving the visibility-threshold
+and eligibility logic directly rather than mocking `IntersectionObserver`. Full suite green
+(2538/2538), `tsc --noEmit` clean. Not verified in the browser -- same login gap as GN-124/GN-78
+(no seeded local dev account, no local mail for activation); a restarted dev server compiled with
+zero errors across all 4 host pages. `berliz`, this commit.
