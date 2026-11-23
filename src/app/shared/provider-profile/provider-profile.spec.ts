@@ -149,7 +149,7 @@ describe('provider profile shared cards', () => {
       expect(t).toContain('Starter');
       expect(t).toContain('$200');
       expect(t).toContain('5 sessions');
-      expect(t).toContain('$40 each');
+      expect(t).toContain('$40.00/ session');
       expect(t).toContain('Valid for 30 days');
       expect(t).toContain('Unlimited sessions');
       expect(t).toContain('/ month');
