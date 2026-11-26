@@ -23,6 +23,10 @@ describe('LoginFormComponent', () => {
   let router: Router;
   let returnUrl: string | null;
   let mobileRedirect: string | null;
+  let googleAuthComplete: string | null;
+  let googleAuthAccessToken: string | null;
+  let googleAuthRefreshToken: string | null;
+  let googleAuthError: string | null;
 
   const successResponse = (accessToken = 'access-jwt', refreshToken = 'refresh-jwt') => ({
     message: 'Login successful',
@@ -54,6 +58,10 @@ describe('LoginFormComponent', () => {
     webAuthnServiceSpy.isPlatformAuthenticatorAvailable.and.returnValue(Promise.resolve(false));
     returnUrl = null;
     mobileRedirect = null;
+    googleAuthComplete = null;
+    googleAuthAccessToken = null;
+    googleAuthRefreshToken = null;
+    googleAuthError = null;
 
     TestBed.configureTestingModule({
       declarations: [LoginFormComponent],
@@ -73,6 +81,10 @@ describe('LoginFormComponent', () => {
                 return convertToParamMap({
                   ...(returnUrl ? { returnUrl } : {}),
                   ...(mobileRedirect ? { mobileRedirect } : {}),
+                  ...(googleAuthComplete ? { googleAuthComplete } : {}),
+                  ...(googleAuthAccessToken ? { accessToken: googleAuthAccessToken } : {}),
+                  ...(googleAuthRefreshToken ? { refreshToken: googleAuthRefreshToken } : {}),
+                  ...(googleAuthError ? { googleAuthError } : {}),
                 });
               }
             }
@@ -108,7 +120,13 @@ describe('LoginFormComponent', () => {
   describe('Google Sign-In button rendering', () => {
     it('asks SocialAuthService to render the official button into #googleSignInButton', () => {
       fixture.detectChanges();
-      expect(socialAuthService.renderGoogleButton).toHaveBeenCalledWith('googleSignInButton', jasmine.any(Function));
+      expect(socialAuthService.renderGoogleButton).toHaveBeenCalledWith('googleSignInButton', jasmine.any(Function), null);
+    });
+
+    it('passes the validated mobileRedirect through so the backend callback can hand tokens straight to the app', () => {
+      mobileRedirect = 'berliz://auth-callback';
+      fixture.detectChanges();
+      expect(socialAuthService.renderGoogleButton).toHaveBeenCalledWith('googleSignInButton', jasmine.any(Function), 'berliz://auth-callback');
     });
 
     it('sets googleReady=true once the button actually renders', fakeAsync(() => {
@@ -305,6 +323,58 @@ describe('LoginFormComponent', () => {
       fixture.detectChanges(); // ngOnInit
 
       expect(userService.checkToken).not.toHaveBeenCalled();
+    });
+  });
+
+  // Landing back here from Google's redirect-mode callback (SocialAuthRest#
+  // googleRedirectCallback) -- the popup-based fallback silently fails under Safari's ITP and
+  // in-app WebViews, so that endpoint redirects here with the resulting tokens in the query
+  // string instead. Reaching this page with these params always means an ordinary web session
+  // (a valid mobileRedirect makes the backend redirect straight to the app instead).
+  describe('Google redirect-mode callback landing (googleAuthComplete / googleAuthError)', () => {
+    it('stores the tokens and navigates, same as any other successful login', () => {
+      googleAuthComplete = '1';
+      googleAuthAccessToken = 'access-from-google-redirect';
+      googleAuthRefreshToken = 'refresh-from-google-redirect';
+
+      fixture.detectChanges(); // ngOnInit
+
+      expect(localStorage.getItem('token')).toBe('access-from-google-redirect');
+      expect(localStorage.getItem('refresh_token')).toBe('refresh-from-google-redirect');
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('does not treat googleAuthComplete as a login if the tokens are somehow missing', () => {
+      googleAuthComplete = '1';
+
+      fixture.detectChanges();
+
+      expect(localStorage.getItem('token')).toBeNull();
+      expect(router.navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('shows the backend-provided message and does not log in on a failed Google sign-in', () => {
+      googleAuthError = 'Invalid or expired Google token';
+
+      fixture.detectChanges();
+
+      expect(component.submitError).toBe('Invalid or expired Google token');
+      expect(localStorage.getItem('token')).toBeNull();
+      expect(router.navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('skips the ordinary already-logged-in shortcut while handling the callback', () => {
+      googleAuthComplete = '1';
+      googleAuthAccessToken = 'access-from-google-redirect';
+      googleAuthRefreshToken = 'refresh-from-google-redirect';
+      localStorage.setItem('token', 'some-stale-token');
+
+      fixture.detectChanges();
+
+      // checkToken() is the "already logged in" shortcut -- it must not run here, the fresh
+      // tokens from the callback are what should end up stored, not whatever was stale before.
+      expect(userService.checkToken).not.toHaveBeenCalled();
+      expect(localStorage.getItem('token')).toBe('access-from-google-redirect');
     });
   });
 

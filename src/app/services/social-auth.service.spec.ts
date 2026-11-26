@@ -88,6 +88,49 @@ describe('SocialAuthService', () => {
       container.remove();
     });
 
+    // GN-login: the popup-based fallback silently fails under Safari's ITP (the popup opens
+    // from inside GSI's own cross-origin iframe) and in every in-app WebView this same page
+    // doubles as the mobile hand-off for -- ux_mode: 'redirect' removes the popup from that
+    // fallback path entirely. onCredential/the FedCM success path is untouched by this.
+    it('configures the redirect-mode fallback to post to the backend callback, with no mobileRedirect', async () => {
+      (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
+
+      const container = document.createElement('div');
+      container.id = 'google-button-test-container-redirect-mode';
+      document.body.appendChild(container);
+
+      const initialize = jasmine.createSpy('initialize');
+      (window as any).google = { accounts: { id: { initialize, renderButton: jasmine.createSpy('renderButton') } } };
+
+      await service.renderGoogleButton('google-button-test-container-redirect-mode', () => {});
+
+      expect(initialize).toHaveBeenCalledWith(jasmine.objectContaining({
+        ux_mode: 'redirect',
+        login_uri: `${environment.api}/auth/google/redirect-callback`,
+      }));
+
+      container.remove();
+    });
+
+    it('appends mobileRedirect onto login_uri so the backend callback can hand tokens straight to the app', async () => {
+      (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
+
+      const container = document.createElement('div');
+      container.id = 'google-button-test-container-mobile-redirect';
+      document.body.appendChild(container);
+
+      const initialize = jasmine.createSpy('initialize');
+      (window as any).google = { accounts: { id: { initialize, renderButton: jasmine.createSpy('renderButton') } } };
+
+      await service.renderGoogleButton('google-button-test-container-mobile-redirect', () => {}, 'berliz://auth-callback');
+
+      expect(initialize).toHaveBeenCalledWith(jasmine.objectContaining({
+        login_uri: `${environment.api}/auth/google/redirect-callback?mobileRedirect=berliz%3A%2F%2Fauth-callback`,
+      }));
+
+      container.remove();
+    });
+
     it('only calls google.accounts.id.initialize() once across repeated renderGoogleButton() calls', async () => {
       (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
 

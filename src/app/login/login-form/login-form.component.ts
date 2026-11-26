@@ -107,7 +107,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.socialAuthService.renderGoogleButton('googleSignInButton', (idToken) => this.handleGoogleCredential(idToken))
+    this.socialAuthService.renderGoogleButton('googleSignInButton', (idToken) => this.handleGoogleCredential(idToken), this.mobileRedirect)
       .then(() => { this.googleReady = true; })
       .catch(() => { this.googleReady = false; });
 
@@ -128,6 +128,25 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
     const rawMobileRedirect = this.route.snapshot.queryParamMap.get('mobileRedirect');
     this.mobileRedirect = rawMobileRedirect && this.isAllowedMobileRedirect(rawMobileRedirect) ? rawMobileRedirect : null;
+
+    // Landing back here from Google's redirect-mode callback (see SocialAuthRest#
+    // googleRedirectCallback / renderGoogleButton's own doc comment) -- if that endpoint had a
+    // valid mobileRedirect, it sends the user straight to the app's own URI scheme and this page
+    // never loads at all, so reaching this branch always means an ordinary web session.
+    const googleAuthComplete = this.route.snapshot.queryParamMap.get('googleAuthComplete');
+    if (googleAuthComplete) {
+      const accessToken = this.route.snapshot.queryParamMap.get('accessToken');
+      const refreshToken = this.route.snapshot.queryParamMap.get('refreshToken');
+      if (accessToken && refreshToken) {
+        this.completeAuth({ accessToken, refreshToken });
+      }
+      return;
+    }
+    const googleAuthError = this.route.snapshot.queryParamMap.get('googleAuthError');
+    if (googleAuthError) {
+      this.submitError = googleAuthError;
+      return;
+    }
 
     // Skip the "already logged in here → bounce to returnUrl" shortcut when
     // this is the mobile hand-off flow (see completeAuth) — a stray web

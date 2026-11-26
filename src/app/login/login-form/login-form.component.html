@@ -79,7 +79,7 @@
                     <div *ngIf="googleReady" aria-hidden="true"
                         class="absolute inset-0 rounded-xl border border-brand-border bg-brand-card flex items-center justify-center
                                pointer-events-none transition group-hover:border-brand-red">
-                        <img src="assets/icons/google.png" alt="" class="h-5 w-5" />
+                        <img src="assets/icons/google.svg" alt="" class="h-5 w-5" />
                     </div>
                     <div id="googleSignInButton"
                         class="absolute inset-0 overflow-hidden rounded-xl opacity-0"
@@ -87,13 +87,13 @@
                     <button *ngIf="!googleReady" type="button" (click)="loginWithGoogleFallback()"
                         aria-label="Sign in with Google" class="w-11 h-11 rounded-xl border border-brand-border bg-brand-card flex items-center justify-center
                                hover:border-brand-red transition">
-                        <img src="assets/icons/google.png" alt="Google" class="h-5 w-5" />
+                        <img src="assets/icons/google.svg" alt="Google" class="h-5 w-5" />
                     </button>
                 </div>
 
                 <button type="button" (click)="loginWithFacebook()" aria-label="Sign in with Facebook" class="w-11 h-11 rounded-xl border border-brand-border bg-brand-card flex items-center justify-center
                            hover:border-brand-red transition">
-                    <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5" />
+                    <img src="assets/icons/facebook.svg" alt="Facebook" class="h-5 w-5" />
                 </button>
 
                 <!-- Only shown once this device confirms it actually has Face ID/Touch ID/Windows Hello available. -->

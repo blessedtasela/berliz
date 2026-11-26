@@ -75,13 +75,29 @@ export class SocialAuthService {
   /**
    * Initializes Google Identity Services and renders the official "Sign in with
    * Google" button inside the element with the given id. `onCredential` is invoked
-   * with the raw ID token (JWT) once the user completes the Google flow — hand it
-   * straight to `UserService.loginWithGoogle`.
+   * with the raw ID token (JWT) once the user completes the Google flow via the
+   * lightweight FedCM/One Tap path — hand it straight to `UserService.loginWithGoogle`.
+   *
+   * `ux_mode: 'redirect'` covers the FALLBACK path (FedCM unavailable): Google's rendered
+   * button lives in a cross-origin iframe, and when it falls back from FedCM to a popup,
+   * that popup opens FROM INSIDE that iframe -- Safari's Intelligent Tracking Prevention
+   * silently blocks it even for a direct tap, and the same is true of essentially every
+   * in-app WebView (which is exactly what this page is, for the mobile hand-off -- see
+   * LoginFormComponent). Redirect mode has no popup at all: a full top-level navigation to
+   * Google, then Google POSTs the result to `login_uri` (SocialAuthRest#googleRedirectCallback)
+   * as a plain form, not back to this page's JS -- that backend endpoint redirects to
+   * /login with the resulting tokens in the query string, the same shape completeAuth()
+   * already uses for the mobile hand-off. `onCredential` (and therefore the FedCM/One Tap
+   * success path) is unaffected; this only changes what happens when that path isn't usable.
+   *
+   * `mobileRedirect`: appended to `login_uri` so the backend callback can hand the tokens
+   * straight to the mobile app instead of landing on the web `/login` page -- see that
+   * endpoint's own doc comment for the matching server-side validation (SG-08).
    *
    * Rejects (without touching the DOM) if `environment.googleClientId` is still empty —
    * callers should catch this and fall back to their own "not configured yet" UI.
    */
-  async renderGoogleButton(elementId: string, onCredential: (idToken: string) => void): Promise<void> {
+  async renderGoogleButton(elementId: string, onCredential: (idToken: string) => void, mobileRedirect?: string | null): Promise<void> {
     if (!this.isGoogleConfigured) {
       throw new Error('Google Sign-In is not configured yet.');
     }
@@ -101,11 +117,17 @@ export class SocialAuthService {
 
     if (!this.googleInitialized) {
       this.googleInitialized = true;
+      let loginUri = `${environment.api}/auth/google/redirect-callback`;
+      if (mobileRedirect) {
+        loginUri += `?mobileRedirect=${encodeURIComponent(mobileRedirect)}`;
+      }
       google.accounts.id.initialize({
         client_id: environment.googleClientId,
         callback: (response: { credential: string }) =>
           this.currentGoogleCredentialHandler?.(response.credential),
         auto_select: false,
+        ux_mode: 'redirect',
+        login_uri: loginUri,
       });
     }
 

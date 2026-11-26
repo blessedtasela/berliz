@@ -49,6 +49,15 @@ export class QuickSignupComponent implements AfterViewInit {
       { validator: passwordMatchValidator });
   }
 
+  /**
+   * Google's redirect-mode fallback (see social-auth.service.ts' renderGoogleButton) always
+   * lands back on `/login` -- SocialAuthRest#googleRedirectCallback has no notion of "which page
+   * started this," and that's fine: `LoginFormComponent`'s own `ngOnInit` already handles a
+   * completed/failed callback generically regardless of whether it was started from here or
+   * there, so there's nothing for this component to do on landing. The agreedToTerms gate around
+   * this button (pointer-events-none until checked, see the template) already ran before the
+   * click that triggers this fallback in the first place, so no consent check is being skipped.
+   */
   ngAfterViewInit(): void {
     this.socialAuthService.renderGoogleButton('googleSignUpButton', (idToken) => this.handleGoogleCredential(idToken))
       .then(() => { this.googleReady = true; })
