@@ -47,30 +47,39 @@ export function trainerBookingControlValues(source: TrainerBookingSource | null 
 }
 
 /**
- * The request fields. The server treats a missing value as "leave it alone", so a cleared trial price (or
- * off-list-gym fee) is sent as 0 (which clears it, so the platform default applies) and a cleared policy as an
- * empty string (which clears it). The two toggles always send their real current value (the form always has
- * one, true or false -- there's no "untouched" state for a switch the trainer can see and has already loaded
- * pre-filled). welcomeBonusPercent follows trialPrice's own convention: blank means "use the platform default",
- * not "0% off" -- sent as `null`, never coerced to 0, so a trainer clearing the field actually resets it rather
- * than accidentally zeroing out their bonus.
+ * The request fields. The server treats a missing value (null, on a field where it checks for that) as
+ * "leave it alone" -- NOT as "clear it" -- so every field a trainer can blank out to reset to the platform
+ * default (trial price, off-list-gym fee, and now welcome bonus percent) is sent as 0, which the backend's
+ * ProviderPricingRules special-cases as the clear signal, same convention for all three. A cleared policy is
+ * sent as an empty string (which clears it). The two toggles always send their real current value (the form
+ * always has one, true or false -- there's no "untouched" state for a switch the trainer can see and has
+ * already loaded pre-filled).
+ *
+ * welcomeBonusPercent used to be the one exception here -- sent as `null` on the theory that 0 needed to mean
+ * a real "0% bonus" distinct from "use the default" -- but TrainerServiceImplement only ever calls
+ * setWelcomeBonusPercent() when the request value is non-null, so a `null` here was silently ignored
+ * server-side and left the trainer's OLD percent in place instead of resetting it, exactly contradicting the
+ * form's own "leave empty to use the platform's default" hint. A trainer who wants no bonus already has
+ * welcomeBonusEnabled=false for that, so "enabled with a literal 0%" was never a state worth preserving --
+ * reusing 0 as the clear sentinel here, like trialPrice, actually fixes the reset instead of just describing
+ * a behavior that didn't happen.
  */
 export function trainerBookingPayload(value: {
   trialPrice?: unknown; bookingPolicy?: unknown; offListGymFee?: unknown;
   freeTrialEnabled?: unknown; welcomeBonusEnabled?: unknown; welcomeBonusPercent?: unknown;
 }): {
   trialPrice: number; bookingPolicy: string; offListGymFee: number;
-  freeTrialEnabled: boolean; welcomeBonusEnabled: boolean; welcomeBonusPercent: number | null;
+  freeTrialEnabled: boolean; welcomeBonusEnabled: boolean; welcomeBonusPercent: number;
 } {
   const price = value.trialPrice === '' || value.trialPrice == null ? NaN : Number(value.trialPrice);
   const offListFee = value.offListGymFee === '' || value.offListGymFee == null ? NaN : Number(value.offListGymFee);
-  const bonusPercent = value.welcomeBonusPercent === '' || value.welcomeBonusPercent == null ? null : Number(value.welcomeBonusPercent);
+  const bonusPercent = value.welcomeBonusPercent === '' || value.welcomeBonusPercent == null ? NaN : Number(value.welcomeBonusPercent);
   return {
     trialPrice: Number.isFinite(price) && price > 0 ? price : 0,
     bookingPolicy: typeof value.bookingPolicy === 'string' ? value.bookingPolicy.trim() : '',
     offListGymFee: Number.isFinite(offListFee) && offListFee > 0 ? offListFee : 0,
     freeTrialEnabled: value.freeTrialEnabled !== false,
     welcomeBonusEnabled: value.welcomeBonusEnabled !== false,
-    welcomeBonusPercent: bonusPercent != null && Number.isFinite(bonusPercent) ? bonusPercent : null,
+    welcomeBonusPercent: Number.isFinite(bonusPercent) && bonusPercent > 0 ? bonusPercent : 0,
   };
 }

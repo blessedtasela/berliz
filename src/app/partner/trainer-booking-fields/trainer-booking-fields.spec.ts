@@ -41,18 +41,18 @@ describe('trainer-booking-fields', () => {
     expect(c['offListGymFee'].valid).toBeTrue();
   });
 
-  it('sends a cleared trial price, off-list gym fee as 0 and a cleared policy as empty, so the server clears them rather than ignoring them', () => {
+  it('sends a cleared trial price, off-list gym fee and welcome bonus percent as 0, and a cleared policy as empty, so the server clears them rather than ignoring them', () => {
     expect(trainerBookingPayload({ trialPrice: '', bookingPolicy: '   ', offListGymFee: '' }))
-      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: null });
+      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: 0 });
     expect(trainerBookingPayload({ trialPrice: null, bookingPolicy: null, offListGymFee: null }))
-      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: null });
+      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: 0 });
     expect(trainerBookingPayload({ trialPrice: 'abc', offListGymFee: 'abc' }))
-      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: null });
+      .toEqual({ trialPrice: 0, bookingPolicy: '', offListGymFee: 0, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: 0 });
   });
 
   it('sends a real trial price and off-list gym fee, and trims the policy', () => {
     expect(trainerBookingPayload({ trialPrice: '100', bookingPolicy: '  Monthly plans: ...  ', offListGymFee: '40' }))
-      .toEqual({ trialPrice: 100, bookingPolicy: 'Monthly plans: ...', offListGymFee: 40, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: null });
+      .toEqual({ trialPrice: 100, bookingPolicy: 'Monthly plans: ...', offListGymFee: 40, freeTrialEnabled: true, welcomeBonusEnabled: true, welcomeBonusPercent: 0 });
   });
 
   // Owner directive (Nov 18, 2026): both the free trial and the welcome bonus are per-trainer toggles, on by default.
@@ -71,12 +71,16 @@ describe('trainer-booking-fields', () => {
       expect(c['welcomeBonusPercent'].value).toBe(30);
     });
 
-    it('always sends the real current toggle value, and sends a blank bonus percent as null (the platform default), never 0', () => {
+    // A bare `null` here was silently ignored server-side (TrainerServiceImplement only calls
+    // setWelcomeBonusPercent() when the request value is non-null) -- a trainer clearing the field kept
+    // their OLD percent instead of resetting to the platform default, contradicting the "leave empty to
+    // use the platform's default" hint. 0 is the real, working clear signal, same as trialPrice -- a
+    // trainer wanting no bonus already has welcomeBonusEnabled=false for that.
+    it('always sends the real current toggle value, and sends a blank bonus percent as 0 so it actually clears', () => {
       expect(trainerBookingPayload({ freeTrialEnabled: false, welcomeBonusEnabled: true, welcomeBonusPercent: '' }))
-        .toEqual(jasmine.objectContaining({ freeTrialEnabled: false, welcomeBonusEnabled: true, welcomeBonusPercent: null }));
+        .toEqual(jasmine.objectContaining({ freeTrialEnabled: false, welcomeBonusEnabled: true, welcomeBonusPercent: 0 }));
       expect(trainerBookingPayload({ freeTrialEnabled: true, welcomeBonusEnabled: false, welcomeBonusPercent: '30' }))
         .toEqual(jasmine.objectContaining({ freeTrialEnabled: true, welcomeBonusEnabled: false, welcomeBonusPercent: 30 }));
-      // A trainer who explicitly sets 0% is a real, distinct choice from "leave it at the default" -- never coerced away.
       expect(trainerBookingPayload({ welcomeBonusPercent: '0' }).welcomeBonusPercent).toBe(0);
     });
   });
