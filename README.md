@@ -1,8 +1,10 @@
 # Berliz — Frontend
 
-Angular single-page application for Berliz, a fitness and combat sports platform connecting trainers, gyms, and clients through profiles, bookings, and content.
+Angular single-page application for berliz.fitness, a fitness platform connecting trainers, gyms, and clients through profiles, bookings, and content.
 
 **Live**: [berliz.fitness](https://berliz.fitness)
+
+The platform is live in production with real users. The first paying client came on in November 2026. The backend is Spring Boot with PostgreSQL, JWT auth, WebSockets, and Stripe payments. A React Native mobile client is in development.
 
 ## Stack
 
