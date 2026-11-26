@@ -158,6 +158,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   }
   /** The trainer's own trial price, else the platform's CA$100. */
   trialPrice = DEFAULT_TRIAL_PRICE;
+  /** The trainer's own switch for the free trial (see BookingServiceImplement#applySessionType) -- null/absent means on, same nullable-means-default convention as trialPrice itself. */
+  private providerFreeTrialEnabled: boolean | null = null;
   /**
    * The first trial with THIS trainer is free, once per (client, trainer) pair -- not a platform-wide
    * "new member" offer any more, so a returning client trying a NEW trainer still gets it. A visitor
@@ -165,8 +167,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
    * client sees it only once `trialStatus` confirms they haven't used this trainer's trial already --
    * hidden (not a guess) while that's still loading. 100 means free; kept as a percent rather than a
    * boolean so `app-booking-price-estimate` (below) can keep working the same way it always has.
+   * Also off when the trainer has switched the free trial off entirely -- the trial session itself
+   * still books (at the real trialPrice), it just isn't free, matching the server exactly.
    */
   get newMemberPercent(): number | null {
+    if (this.providerFreeTrialEnabled === false) return null;
     if (!this.user?.email) return 100;
     return this.trialStatus && !this.trialStatus.used ? 100 : null;
   }
@@ -443,6 +448,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.contactEmail = provider.contactEmail ?? null;
         this.contactPhone = provider.contactPhone ?? null;
         this.trialPrice = provider.trialPrice ?? DEFAULT_TRIAL_PRICE;
+        this.providerFreeTrialEnabled = provider.freeTrialEnabled ?? null;
         this.groupPrice = provider.groupPrice ?? DEFAULT_GROUP_PRICE;
         this.loadTrialStatus();
 

@@ -16,6 +16,8 @@ export interface ResolvedProvider {
   contactPhone?: string | null;
   /** A trainer's own trial-session price; null = the platform's CA$100 trial. */
   trialPrice?: number | null;
+  /** A trainer's own switch for the free trial (see BookingServiceImplement#applySessionType) -- null/absent means on. Trainers only; a center never offers a trial at all. */
+  freeTrialEnabled?: boolean | null;
   /** A trainer's own price per person in a group session; null = the platform's CA$75. */
   groupPrice?: number | null;
   /** What this provider trains in -- shown on the booking page so a client knows what they're booking before they pick a time. */
@@ -55,6 +57,7 @@ export function resolveProviderBySlug(
           contactEmail: match.contactEmail || null,
           contactPhone: match.contactPhone || null,
           trialPrice: match.trialPrice ?? null,
+          freeTrialEnabled: kind === 'trainer' ? (match.freeTrialEnabled ?? null) : null,
           groupPrice: match.groupPrice ?? null,
           // Trainers carry full category objects; centers only ever got the names added alongside
           // their existing categoryIds (see CenterResponse) -- normalise both to a plain name list.

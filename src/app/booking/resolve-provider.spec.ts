@@ -63,6 +63,35 @@ describe('resolveProviderBySlug', () => {
     expect(providerSlug('Coach Sam Lee')).toBe('Coach-Sam-Lee');
   });
 
+  // BookingPageComponent's newMemberPercent reads this to stop promising a free trial once a
+  // trainer has switched it off (see BookingServiceImplement#applySessionType) -- this was missing
+  // from the mapped object entirely until that gap was found, so the getter always read undefined.
+  describe('freeTrialEnabled', () => {
+    it('passes a trainer\'s own switch through', done => {
+      const service = trainers([{ id: 1, name: 'Coach Sam', freeTrialEnabled: false }]);
+      resolveProviderBySlug('trainer', 'Coach-Sam', service, centers([])).subscribe(provider => {
+        expect(provider!.freeTrialEnabled).toBeFalse();
+        done();
+      });
+    });
+
+    it('is null (default/on) when the trainer has never touched the switch', done => {
+      const service = trainers([{ id: 1, name: 'Coach Sam' }]);
+      resolveProviderBySlug('trainer', 'Coach-Sam', service, centers([])).subscribe(provider => {
+        expect(provider!.freeTrialEnabled).toBeNull();
+        done();
+      });
+    });
+
+    it('is always null for a center -- a center never offers a trial at all', done => {
+      const service = centers([{ id: 1, name: 'Downtown Gym', freeTrialEnabled: false }]);
+      resolveProviderBySlug('center', 'Downtown-Gym', trainers([]), service).subscribe(provider => {
+        expect(provider!.freeTrialEnabled).toBeNull();
+        done();
+      });
+    });
+  });
+
   describe('discipline/category names (BK-19: the booking page showed none at all)', () => {
     it('pulls a trainer\'s category names from their full category objects', done => {
       const service = trainers([{ id: 1, name: 'Coach Sam', categories: [{ id: 1, name: 'Yoga' }, { id: 2, name: 'Strength' }] }]);

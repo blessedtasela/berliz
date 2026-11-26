@@ -140,6 +140,23 @@ describe('BookingPageComponent plans', () => {
       expect(page.trialOfferText).toBeNull();
     });
 
+    // The trainer's own switch (BookingServiceImplement#applySessionType) -- the trial still books,
+    // it just isn't free, so web must stop promising "free" the moment this is off, the same way the
+    // server stops honoring it.
+    it('shows no free-trial offer when the trainer has switched it off, even for an otherwise-eligible client', () => {
+      page['providerFreeTrialEnabled'] = false;
+      expect(page.trialOfferText).toBeNull();
+      expect(page.newMemberPercent).toBeNull();
+
+      page.user = null; // the "visitor, assume eligible" branch must not override this either
+      expect(page.newMemberPercent).toBeNull();
+    });
+
+    it('still shows the free-trial offer when the trainer has not touched the switch (default on)', () => {
+      page['providerFreeTrialEnabled'] = null;
+      expect(page.newMemberPercent).toBe(100);
+    });
+
     it('asks for a trial only for a trainer, and never out of a pack', () => {
       page.sessionType = 'TRIAL';
       expect(page.requestedSessionType).toBe('TRIAL');
