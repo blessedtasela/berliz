@@ -73,10 +73,16 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
         Gym drop-in about {{ e.dropInFee | currency:'CAD':'symbol':'1.2-2' }}, paid to the gym directly, not included in your payment to Berliz.
       </p>
       <ng-container *ngIf="!direct; else directNote">
-      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="payment-timing">
+      <p *ngIf="e.total > 0; else freePaymentTiming" class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="payment-timing">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         Nothing is charged now. You pay {{ e.total | currency:'CAD':'symbol':'1.2-2' }} only after {{ providerName || 'the provider' }} confirms, and you have 24 hours to pay.
       </p>
+      <ng-template #freePaymentTiming>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="payment-timing">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          Nothing to pay: it's booked once {{ providerName || 'the provider' }} confirms.
+        </p>
+      </ng-template>
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="request-hold">
         <i-feather name="clock" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         {{ holdText }}

@@ -185,6 +185,13 @@ describe('BookingPriceEstimateComponent', () => {
       expect(total.textContent).toContain('$0.00');
     });
 
+    it('says there is nothing to pay, rather than "you pay $0.00", when the total is free', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 100, providerName: 'Coach Jane' });
+      const timing = fixture.nativeElement.querySelector('[data-testid="payment-timing"]') as HTMLElement;
+      expect(timing.textContent).toContain("Nothing to pay: it's booked once Coach Jane confirms.");
+      expect(timing.textContent).not.toContain('You pay');
+    });
+
     it('lists the gym drop-in as paid to the gym and keeps it out of the total', () => {
       show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50, gymDropIn: 25 });
       const line = fixture.nativeElement.querySelector('[data-testid="gym-dropin-line"]') as HTMLElement;
