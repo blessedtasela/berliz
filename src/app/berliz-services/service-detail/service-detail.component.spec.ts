@@ -48,9 +48,8 @@ describe('ServiceDetailComponent', () => {
     expect(el.textContent).toContain('Find online trainers');
   });
 
-  // GN-75 (Nov 21, 2026): MVP simplification removed the 'gyms-and-centers' and 'shop' service
-  // entries along with /centers and /shop -- both slugs now correctly fall into "not found",
-  // covered by the test below.
+  // 'gyms-and-centers' was restored alongside /centers (Nov 27, 2026); 'shop' stays hidden --
+  // /shop was never restored, so that slug still correctly falls into "not found" below.
 
   it('says so for an unknown service', () => {
     const el = setup('nope');

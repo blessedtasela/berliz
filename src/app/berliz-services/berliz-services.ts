@@ -106,9 +106,29 @@ export const BERLIZ_SERVICES: BerlizService[] = [
     mode: 'IN_PERSON',
     ctaLabel: 'Find in-person trainers',
   },
-  // GN-75 (Nov 21, 2026): MVP simplification hid /centers and /shop -- the "Gyms & training
-  // centers" and "Shop" service entries were removed here, not deleted (their CTAs had no
-  // other purpose than linking into those now-hidden routes). Restore alongside those routes.
+  {
+    slug: 'gyms-and-centers',
+    title: 'Gyms & training centers',
+    tagline: 'Connect with the right place to train.',
+    icon: 'home',
+    summary:
+      'Berliz connects you with gyms and training centers: see what each one offers, the equipment on the floor, the trainers who work there, their locations and pricing — then book a session or join.',
+    steps: [
+      { title: 'Browse centers', text: 'Compare centers by the disciplines they run, their locations and what they charge.' },
+      { title: 'Look inside', text: 'See the equipment, announcements, photos and the trainers affiliated with each center.' },
+      { title: 'Book or join', text: 'Send a booking request, or buy a membership or session pack from the center.' },
+    ],
+    benefits: [
+      'See the equipment before you walk in',
+      'Meet the trainers affiliated with each center',
+      'Memberships and packs with clear prices',
+      'Reviews and testimonials from real members',
+    ],
+    bestFor: ['Anyone looking for a new gym', 'Groups and classes', 'People who want trainers and facilities in one place'],
+    audience: 'centers',
+    ctaLabel: 'Browse centers',
+  },
+  // 'shop' stays hidden -- /shop was never restored, so a CTA linking there would still 404.
 ];
 
 export function findService(slug: string | null | undefined): BerlizService | undefined {

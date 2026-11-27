@@ -36,10 +36,10 @@
                     <i-feather name="home" class="text-sky-600" style="width:15px;height:15px;"></i-feather>
                 </div>
                 <div class="min-w-0">
-                    <!-- GN-75 (Nov 21, 2026): MVP simplification hid /centers -- was a link there, now plain text. -->
-                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                    <a [routerLink]="['/centers', centerSlug(membership.centerName)]"
+                        class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate hover:text-brand-red transition block">
                         {{ membership.centerName }}
-                    </p>
+                    </a>
                     <p class="text-[11px] text-gray-600 dark:text-gray-400">Member since {{ formatDate(membership.date) }}</p>
                 </div>
             </div>

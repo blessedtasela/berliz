@@ -24,8 +24,6 @@ describe('ServicesPageComponent', () => {
     expect(text).toContain('Online personal training');
     expect(text).toContain('Hybrid training');
     expect(text).toContain('In-person personal training');
-    // GN-75 (Nov 21, 2026): MVP simplification removed the "Gyms & training centers" and "Shop"
-    // entries along with /centers and /shop.
     expect(text).toContain('Boxing');
   });
 

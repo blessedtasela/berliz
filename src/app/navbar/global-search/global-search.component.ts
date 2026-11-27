@@ -27,6 +27,8 @@ import { PostService } from 'src/app/services/post.service';
 // ── PUBLIC ENTITIES ───────────────────────────────────────────────────────────
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
+import { loadActiveCenters } from 'src/app/state/center/center.actions';
+import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
@@ -191,9 +193,25 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
       }),
       browseAllLink: ['/trainers']
     },
-    // GN-75 (Nov 21, 2026): MVP simplification hid /centers -- the 'centers' search source that
-    // linked into it removed too, not deleted, so search can't surface a link into a route that
-    // no longer resolves. Bring it back alongside the route.
+    // Restored (Nov 27, 2026) alongside the /centers route -- see app-routing.module.ts.
+    {
+      key: 'centers',
+      label: 'Centers',
+      icon: 'map-pin',
+      adminOnly: false,
+      load: loadActiveCenters(),
+      select: selectActiveCenters,
+      // Same featured-boost rule as trainers (see above) -- a featured center surfaces on a
+      // bare category search even with no name match.
+      match: (c, q) => has(c?.name, q) || (!!c?.featured && matchesCategory('Centers', q)),
+      toItem: c => ({
+        id: c.id,
+        label: c.name,
+        sublabel: c.featured ? `★ Featured${c.address ? ' · ' + c.address : ''}` : (c.address || c.motto),
+        link: ['/centers', slug(c.name)]
+      }),
+      browseAllLink: ['/centers']
+    },
     {
       key: 'categories',
       label: 'Disciplines',

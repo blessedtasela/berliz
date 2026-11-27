@@ -38,11 +38,10 @@ export const routes: Routes = [
   // (empty path) so all three keep their original top-level paths.
   { path: '', loadChildren: () => import('./login/login-feature.module').then(m => m.LoginFeatureModule) },
   { path: 'trainers', loadChildren: () => import('./trainers/trainers-feature.module').then(m => m.TrainersFeatureModule) },
-  // GN-75 (Nov 21, 2026): MVP simplification -- the public Centers marketplace (listing +
-  // pricing pages) hidden (route removed, not deleted: CentersFeatureModule and its data are
-  // untouched). A trainer's own gym affiliation still shows as plain text on their profile,
-  // unaffected -- see my-trainer-centers.component.html, which never linked here.
-  // { path: 'centers', loadChildren: () => import('./centers/centers-feature.module').then(m => m.CentersFeatureModule) },
+  // Restored (Nov 27, 2026): the public Centers marketplace (listing + pricing pages), hidden
+  // by the GN-75 MVP simplification on Nov 21, 2026 -- the owner now wants it back as the
+  // directory to grow. CentersFeatureModule and its data were never touched while hidden.
+  { path: 'centers', loadChildren: () => import('./centers/centers-feature.module').then(m => m.CentersFeatureModule) },
   // Disciplines (Boxing, Yoga, Powerlifting… — the `category` data) live at /disciplines. They used to be called
   // "Services" and sat at /services/<id>/<name>; "Services" now means what Berliz offers (online, hybrid and in-person
   // training, gyms & centers, the shop to come). The redirects below keep every old link, bookmark and indexed URL alive.

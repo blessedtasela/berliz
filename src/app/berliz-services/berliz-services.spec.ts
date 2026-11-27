@@ -1,10 +1,10 @@
 import { BERLIZ_SERVICES, findService, trainersForService } from './berliz-services';
 
 describe('Berliz services content', () => {
-  // GN-75 (Nov 21, 2026): MVP simplification hid /centers and /shop -- 'gyms-and-centers' and
-  // 'shop' were removed from BERLIZ_SERVICES along with the routes their CTAs led to.
+  // Restored (Nov 27, 2026): 'gyms-and-centers' is back alongside the /centers route.
+  // 'shop' stays hidden -- /shop was never restored.
   it('lists the real offerings, each with the content a detail page needs', () => {
-    expect(BERLIZ_SERVICES.map(s => s.slug)).toEqual(['online-training', 'hybrid-training', 'in-person-training']);
+    expect(BERLIZ_SERVICES.map(s => s.slug)).toEqual(['online-training', 'hybrid-training', 'in-person-training', 'gyms-and-centers']);
     for (const s of BERLIZ_SERVICES) {
       expect(s.title).toBeTruthy();
       expect(s.summary.length).toBeGreaterThan(40);
