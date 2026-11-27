@@ -10,7 +10,7 @@
         <div>
             <h2 class="brand-heading text-base">Get in <span class="brand-accent-word">Touch</span></h2>
             <div class="mt-4 text-sm font-sans space-y-2 text-brand-muted normal-case">
-                <p>555 Burrard Street,<br>Vancouver BC V7X 1M8</p>
+                <p>1655 Barclay Street,<br>Vancouver BC V6G 2Y1</p>
                 <app-phone></app-phone>
                 <app-email></app-email>
                 <app-social></app-social>
@@ -25,7 +25,9 @@
                     <a [routerLink]="['/home']" class="hover:text-brand-red transition-all duration-300">
                         Home</a>
                 </li>
-                <!-- GN-75 (Nov 21, 2026): MVP simplification hid /centers. <li><a [routerLink]="['/centers']">Gym Centers</a></li> -->
+                <li>
+                    <a [routerLink]="['/centers']" class="hover:text-brand-red transition-all duration-300">Gym Centers</a>
+                </li>
                 <li>
                     <a [routerLink]="['/trainers']" class="hover:text-brand-red transition-all duration-300">Trainers</a>
                 </li>

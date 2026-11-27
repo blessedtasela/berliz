@@ -50,10 +50,10 @@ export const StructuredDataConfig = {
     email: 'berlizworld@gmail.com',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '555 Burrard Street',
+      streetAddress: '1655 Barclay Street',
       addressLocality: 'Vancouver',
       addressRegion: 'BC',
-      postalCode: 'V7X 1M8',
+      postalCode: 'V6G 2Y1',
       addressCountry: 'CA',
     },
     // Opening hours and geo-coordinates are not published anywhere in the app

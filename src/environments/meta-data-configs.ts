@@ -54,7 +54,7 @@ export const MetaDataConfig: Record<string, MetaData> = {
     },
     contact: {
         title: 'Contact Berliz - Get in Touch',
-        description: 'Have a question or want to partner with Berliz? Reach us at 555 Burrard Street, Vancouver BC, by phone at +1 (236) 990 0823, or send us a message.',
+        description: 'Have a question or want to partner with Berliz? Reach us at 1655 Barclay Street, Vancouver BC, by phone at +1 (236) 990 0823, or send us a message.',
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
         structuredData: StructuredDataConfig.localBusiness,
