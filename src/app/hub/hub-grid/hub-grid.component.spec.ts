@@ -30,15 +30,17 @@ describe('HubGridComponent', () => {
   });
 
   /**
-   * GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes -- no tile for it may
-   * render anywhere, including "Other", or the Hub would still be pointing at a dead route.
+   * Restored (Nov 27, 2026, GN-117) alongside the /dashboard/payment-codes route: the tile is
+   * back, under Content, and must link to the real top-level route, not the dead
+   * /dashboard/hub/payment-codes fallback a plain key-to-slug mapping would otherwise produce.
    */
-  it('GN-75: shows no tile at all for a hidden key, not even under "Other"', () => {
+  it('shows the Payment codes tile under Content, linking to the real top-level route', () => {
     component.items = { 'payment-codes': 2 };
     component.ngOnChanges({ items: {} as any });
 
-    for (const group of component.groups) {
-      expect(group.items.find(i => i.key === 'payment-codes')).toBeFalsy();
-    }
+    const content = component.groups.find(g => g.id === 'content');
+    const tile = content?.items.find(i => i.key === 'payment-codes');
+    expect(tile).toBeTruthy();
+    expect(tile?.link).toBe('/dashboard/payment-codes');
   });
 });

@@ -23,6 +23,7 @@ import {
   takeUntil
 } from 'rxjs';
 import { PostService } from 'src/app/services/post.service';
+import { BypassCodeService } from 'src/app/services/bypass-code.service';
 
 // ── PUBLIC ENTITIES ───────────────────────────────────────────────────────────
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
@@ -493,17 +494,34 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: m.bodyPart,
         link: ['/dashboard/hub/muscle-groups', m.id]
       })
+    },
+    // PY-28/29/30: the admin notification telling a reviewer to "Open bypass codes" pointed at a
+    // page global search could never find -- this source exists mainly so typing "bypass" (the
+    // exact word used) finds the Payment codes page at all, with its own issued codes searchable too.
+    // Restored (Nov 27, 2026) alongside the /dashboard/payment-codes route -- see GN-117.
+    {
+      key: 'bypassCodes',
+      label: 'Bypass codes',
+      icon: 'key',
+      adminOnly: true,
+      fetch$: () => this.bypassCodeService.getAllBypassCodes(),
+      match: (c, q) => has(c?.code, q) || has(c?.planName, q) || has(c?.createdByAdminEmail, q),
+      toItem: c => ({
+        id: c.id,
+        label: c.code,
+        sublabel: `${c.planName} · ${c.status === 'true' ? 'Active' : 'Inactive'}`,
+        link: ['/dashboard/payment-codes']
+      }),
+      browseAllLink: ['/dashboard/payment-codes'],
+      categoryAliases: ['Payment codes']
     }
-    // GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes -- the 'bypassCodes'
-    // search source added for PY-28/29/30 was removed from here (no code deleted, just this
-    // registration) so search can't surface a link into a route that no longer resolves. Bring it
-    // back alongside restoring the route.
   ];
 
   constructor(
     private store: Store,
     private elementRef: ElementRef,
-    private postService: PostService
+    private postService: PostService,
+    private bypassCodeService: BypassCodeService
   ) { }
 
   ngOnInit(): void {

@@ -38,16 +38,16 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'exercise-suggestions', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'profile-quiz-questions', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings', 'payouts'];
+    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions',
+    'bookings', 'payouts', 'payment-codes'];
 
   /**
-   * GN-75 (Nov 21, 2026): MVP simplification -- hidden, not removed. These backend counts stay
-   * (the ticket is explicit: hide the link, kill the route, keep the code and data), but no tile
-   * for them should render anywhere, in any bucket -- leaving a key out of PEOPLE/CONTENT/PERSONAL_KEYS
-   * would otherwise still surface it under "Other" (see the catch-all below), which is exactly the
-   * kind of stray link this ticket says must not exist. Bring a key back by moving it out of here.
+   * GN-75 (Nov 21, 2026) hid payment-codes here; restored (Nov 27, 2026, GN-117) into CONTENT_KEYS
+   * above, alongside payments/subscriptions/payouts. Nothing else is hidden this way right now --
+   * kept as an empty array, not deleted, since the mechanism (and the regression test guarding it)
+   * stays useful for the next thing that needs hiding without a route-level kill.
    */
-  private readonly HIDDEN_KEYS = ['payment-codes'];
+  private readonly HIDDEN_KEYS: string[] = [];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
@@ -189,6 +189,10 @@ export class HubGridComponent implements OnChanges {
     // no card at all pointing at it before this, which is why the Recalculate control it already
     // has was unreachable from the UI.
     'payouts': '/dashboard/billing',
+    // GN-117: the canonical page is the top-level /dashboard/payment-codes (restored Nov 27,
+    // 2026) -- the near-duplicate /dashboard/hub/payment-codes registration stays commented
+    // out (see dashboard-feature.module.ts), so this tile must not fall back to it.
+    'payment-codes': '/dashboard/payment-codes',
   };
 
   resolveRoute(key: string): string {

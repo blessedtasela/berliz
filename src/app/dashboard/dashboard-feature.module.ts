@@ -269,15 +269,15 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // GN-75 (Nov 21, 2026): MVP simplification -- Payment codes route hidden (commented out,
-      // not deleted: the component/service/backend are untouched). Uncomment this, plus its
-      // sibling at path 'hub' below, to restore the page.
-      // {
-      //   path: 'payment-codes',
-      //   loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent),
-      //   canActivate: [AuthGuard, RoleGuard],
-      //   data: { breadcrumb: 'Payment codes', expectedRole: expectedRoleAll }
-      // },
+      // Restored (Nov 27, 2026, GN-117) -- the component/service/backend were never touched
+      // while hidden by GN-75. The near-duplicate registration under 'hub' below stays
+      // commented out: GN-117's spec names this one canonical URL, not two.
+      {
+        path: 'payment-codes',
+        loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: { breadcrumb: 'Payment codes', expectedRole: expectedRoleAll }
+      },
       {
         path: 'weekly-subscriptions',
         loadComponent: () => import('../weekly-subscriptions/weekly-subscriptions.component').then(m => m.WeeklySubscriptionsComponent),
@@ -671,7 +671,9 @@ const dashboardRoutes: Routes = [
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Settings', expectedRole: expectedRoleAll } },
           { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Notifications', expectedRole: expectedRoleAll } },
           { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Tasks', expectedRole: expectedRoleAll } },
-          // { path: 'payment-codes', loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payment codes', expectedRole: expectedRoleAll } },
+          // Left hidden: a near-duplicate of the top-level '/dashboard/payment-codes' route
+          // restored above (GN-117) -- the same page at a second URL ('/dashboard/hub/payment-codes')
+          // serves no purpose the Hub tile pointing at the canonical URL doesn't already cover.
           { path: 'weekly-subscriptions', loadComponent: () => import('../weekly-subscriptions/weekly-subscriptions.component').then(m => m.WeeklySubscriptionsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Weekly subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: expectedRoleAll } },

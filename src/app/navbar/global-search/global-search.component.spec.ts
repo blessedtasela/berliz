@@ -35,12 +35,11 @@ describe('GlobalSearchComponent', () => {
   });
 
   /**
-   * GN-75 (Nov 21, 2026): MVP simplification hid /dashboard/payment-codes. The PY-28/29/30 search
-   * source that used to find it by "bypass" or "payment code" was removed along with it -- this
-   * guards against it silently reappearing (e.g. a future search source reusing that wording)
-   * while the route stays dead.
+   * Restored (Nov 27, 2026) alongside the /dashboard/payment-codes route (GN-117): "bypass" is
+   * the exact word the admin notification uses ("Open bypass codes to send them one, or decline"),
+   * so search must find the page by that word, not just by its own name.
    */
-  it('GN-75: "bypass" and "payment code" find nothing -- the page they used to find is hidden', async () => {
+  it('finds the Payment codes page by "bypass", the word its own admin notification uses', async () => {
     (component as any).isAdmin = true;
     spyOn(TestBed.inject(Store), 'select').and.returnValue(of([]));
     (component as any).primeStores();
@@ -48,8 +47,8 @@ describe('GlobalSearchComponent', () => {
     const bypassGroups: any[] = await firstValueFrom((component as any).search('bypass'));
     const paymentCodeGroups: any[] = await firstValueFrom((component as any).search('payment code'));
 
-    expect(bypassGroups.every((g: any) => g.items.length === 0)).toBeTrue();
-    expect(paymentCodeGroups.every((g: any) => g.items.length === 0)).toBeTrue();
+    expect(bypassGroups.some((g: any) => g.items.length > 0)).toBeTrue();
+    expect(paymentCodeGroups.some((g: any) => g.items.length > 0)).toBeTrue();
   });
 });
 
