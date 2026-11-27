@@ -1421,3 +1421,66 @@ reported after a fresh test against this build, the next thing to check is wheth
 describing a *different* interaction entirely (e.g. a touch-scroll gesture behaving differently on
 a specific mobile browser) rather than this exact "doesn't close on scroll" wording. `berliz`, this
 commit.
+
+## GN-127: media-loss incident -- closed out, root cause, and a guard against a repeat (Nov 23-27, 2026)
+
+**Status: closed.** The owner is handling re-upload of the lost media himself; this entry is the
+permanent record of what happened, what was and wasn't recoverable, and what now stops it from
+happening silently again.
+
+**What happened.** `strapi-berliz` had no persistent volume at all from the day it first went
+live (Aug 14, 2026) until Nov 26, 2026 -- every uploaded file lived only on the running
+container's own ephemeral disk. Two redeploys wiped that disk during this window: the Nov 23,
+01:41 UTC redeploy (the WebM-to-MP4 transcode commit, documented earlier in this file) wiped
+everything uploaded since the service first went live; a second, smaller loss happened Nov 26
+when a persistent volume was finally attached -- mounting a volume at an already-populated path
+replaces whatever was there with the fresh, empty volume, so the handful of files re-uploaded in
+the 3-day gap between the two incidents were lost the same way. **147 files lost in the first
+wipe, 1 more in the second; 148 total (119 images, 27 videos), confirmed by a direct count
+against Strapi's own `files` table, not estimated.**
+
+**Why it isn't recoverable.** No backup of any kind existed for either loss: Railway's own
+volume-backup feature only protects data that is *on* a volume, and there was no volume for
+most of this period to back anything up from. Two local folders in the `strapi-berliz` working
+tree that looked promising on sight (`orphan-files-backup-20260808-161408/`,
+`public/uploads_backup_20260828_085403/`) turned out to be unrelated content entirely --
+someone's personal documents and WhatsApp photos, not Berliz app media -- a dead end, not a
+backup. The only path back is the owner's own camera roll/phone for the photos, and two video
+files a teammate (Ben) already had local copies of.
+
+**What's permanently fixed.** A 50 GB Railway volume (`strapi-uploads`) is now mounted at
+`/app/public/uploads` on `strapi-berliz`; confirmed booting clean ("Strapi started successfully")
+and holding across the redeploys since Nov 26. Every file uploaded from Nov 26 onward survives a
+redeploy the way it always should have.
+
+**The guard added this session, so a human forgetting to check doesn't repeat this exact
+mistake:** `strapi-berliz/src/index.ts`'s `bootstrap()` hook now refuses to finish starting if it
+detects it's running on Railway (`RAILWAY_PROJECT_ID` set) without its uploads directory actually
+sitting on the mounted volume (`RAILWAY_VOLUME_MOUNT_PATH`, Railway's own env var for this). If
+the volume is ever detached, replaced, or the service is ever recreated without re-attaching it,
+the next deploy fails loudly and immediately instead of booting "successfully" into a state that
+would silently wipe whatever gets re-uploaded -- which is exactly how this incident went unnoticed
+for days the first time. Skipped entirely on a local dev machine (no `RAILWAY_PROJECT_ID`, no
+volume to check for).
+
+**Separately found and still open, not closed by this entry:** the daily `db-backup` cron
+(Postgres backups for `berliz-api`'s database, a completely different service and a different
+kind of data than this media incident) has been silently crashing on every run since it was
+created Nov 18, 0 seconds duration, zero log output ever produced, confirmed independently by the
+owner and by this session. Converted it from a cron job to an always-on looping service to
+sidestep whatever is specifically broken about Railway's cron-launch path for it; after that
+change Railway's own dashboard shows contradictory status for the identical deployment (Active on
+one view, "no active deployment" on another) and the target backup bucket is still empty after
+over an hour of real wait time, including after a manual restart. Not resolved -- needs Railway
+support, or the owner trying the dashboard Restart button himself to see if the outcome differs.
+Until this works, there is still no automated database backup running, independent of the media
+fix above.
+
+**Tests:** no test framework exists in `strapi-berliz`; verified the guard's logic by reading
+Strapi's own `strapi.dirs.static.public` resolution and Railway's documented volume-mount env
+vars rather than by running it against a live Railway boot in this session -- the real test is
+the next `strapi-berliz` deploy either booting clean (volume present, as it is right now) or
+failing loudly with the exact message above (volume absent). `tsc --noEmit` clean on the change.
+`strapi-berliz`, uncommitted as of this entry -- pending the owner's go-ahead to redeploy, per the
+standing rule that a redeploy touching storage needs the storage setup confirmed first (it has
+been, via the Railway API, immediately before writing this entry).
