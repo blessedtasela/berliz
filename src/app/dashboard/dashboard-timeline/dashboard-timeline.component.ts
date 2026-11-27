@@ -15,7 +15,7 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { PostVideoComponent } from 'src/app/shared/post-video/post-video.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
-import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
+import { PostActivityType, PostResponse, PostVisibility, ReactionType } from 'src/app/models/post.interface';
 import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -40,6 +40,8 @@ import { validatePostVideo } from 'src/app/utils/post-media.util';
 interface PostDraftData {
   content: string;
   activityType: PostActivityType;
+  /** Absent in drafts saved before GN-92 -- treated as PUBLIC (resumeDraft falls back). */
+  visibility?: PostVisibility;
   workoutId: number | null;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null;
   /** Absent in drafts saved before video posts existed. */
@@ -107,6 +109,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   // not a substitute for one.
   readonly maxContentLength = 5000;
   draftActivityType: PostActivityType = 'GENERAL';
+  /** GN-92: PUBLIC (default) or PRIVATE (followers/connections only, regardless of the author's own profile-level setting). */
+  draftVisibility: PostVisibility = 'PUBLIC';
   /** Optional workout template attached to a WORKOUT-type draft. */
   draftWorkoutId: number | null = null;
   myTemplates: WorkoutResponse[] = [];
@@ -214,6 +218,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     const d = this.pendingDraft.data;
     this.draftContent = d.content;
     this.draftActivityType = d.activityType;
+    this.draftVisibility = d.visibility ?? 'PUBLIC';
     this.draftWorkoutId = d.workoutId;
     this.uploadedPhoto = d.uploadedPhoto;
     this.uploadedVideo = d.uploadedVideo ?? null;
@@ -236,6 +241,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.draftService.save<PostDraftData>('post', {
       content: this.draftContent,
       activityType: this.draftActivityType,
+      visibility: this.draftVisibility,
       workoutId: this.draftWorkoutId,
       uploadedPhoto: this.uploadedPhoto,
       uploadedVideo: this.uploadedVideo,
@@ -336,6 +342,12 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.saveDraft();
   }
 
+  /** GN-92: PUBLIC <-> PRIVATE (followers/connections only). Independent of the activity type and of the author's own profile-level setting. */
+  toggleVisibility(): void {
+    this.draftVisibility = this.draftVisibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE';
+    this.saveDraft();
+  }
+
   submitPost(): void {
     if (!this.canPost) return;
 
@@ -344,6 +356,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.postService.addPost({
       content: this.draftContent.trim(),
       activityType: this.draftActivityType === 'GENERAL' ? undefined : this.draftActivityType,
+      visibility: this.draftVisibility === 'PUBLIC' ? undefined : this.draftVisibility,
       photo: this.uploadedPhoto ? { photoUrl: this.uploadedPhoto.photoUrl, strapiId: this.uploadedPhoto.strapiId } : null,
       video: this.uploadedVideo ? { videoUrl: this.uploadedVideo.videoUrl, strapiId: this.uploadedVideo.strapiId, mimeType: this.uploadedVideo.mimeType } : null,
       workoutId: this.draftActivityType === 'WORKOUT' && this.draftWorkoutId ? this.draftWorkoutId : undefined,
@@ -361,6 +374,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         }
         this.draftContent = '';
         this.draftActivityType = 'GENERAL';
+        this.draftVisibility = 'PUBLIC';
         this.draftWorkoutId = null;
         this.uploadedPhoto = null;
         this.uploadedVideo = null;

@@ -97,6 +97,7 @@
         <app-inline-alert [message]="postError" [kind]="'error'" [dismissible]="true" [dark]="true" (dismissed)="postError = null"></app-inline-alert>
 
         <div class="flex items-center justify-between gap-2 pt-1 border-t border-brand-border">
+          <div class="flex items-center gap-1 flex-wrap">
             <label class="flex items-center gap-1.5 text-[11px] font-semibold text-brand-muted hover:text-brand-text
                           cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-white/5">
                 <i-feather *ngIf="!uploading" name="image" style="width:14px;height:14px;"></i-feather>
@@ -113,6 +114,20 @@
                 <input type="file" accept="video/mp4,video/webm,video/quicktime" class="hidden"
                     [disabled]="uploading || !!uploadedPhoto || !!uploadedVideo" (change)="onVideoSelected($event)" />
             </label>
+
+            <!-- GN-92: per-post PUBLIC/PRIVATE, independent of the author's own profile-level setting -->
+            <button type="button" (click)="toggleVisibility()"
+                class="flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1.5 rounded-lg transition"
+                [class.text-brand-muted]="draftVisibility === 'PUBLIC'"
+                [class.hover:text-brand-text]="draftVisibility === 'PUBLIC'"
+                [class.hover:bg-white/5]="draftVisibility === 'PUBLIC'"
+                [class.text-amber-400]="draftVisibility === 'PRIVATE'"
+                [class.bg-amber-950/30]="draftVisibility === 'PRIVATE'"
+                [attr.title]="draftVisibility === 'PRIVATE' ? 'Only your followers and connections can see this post' : 'Everyone on Berliz can see this post'">
+                <i-feather [name]="draftVisibility === 'PRIVATE' ? 'lock' : 'globe'" style="width:14px;height:14px;"></i-feather>
+                {{ draftVisibility === 'PRIVATE' ? 'Private' : 'Public' }}
+            </button>
+          </div>
 
             <button type="button" (click)="submitPost()" [disabled]="!canPost"
                 class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-red text-white
@@ -161,7 +176,11 @@
                 </div>
                 <div class="flex flex-col leading-tight min-w-0">
                     <span class="text-xs font-bold text-brand-text truncate">{{ post.authorName }}{{ isMine(post) ? ' (You)' : '' }}</span>
-                    <span class="text-[10px] text-brand-muted">{{ post.date | date:'mediumDate' }}</span>
+                    <span class="text-[10px] text-brand-muted flex items-center gap-1">
+                        {{ post.date | date:'mediumDate' }}
+                        <i-feather *ngIf="post.visibility === 'PRIVATE'" name="lock" class="text-amber-400"
+                            style="width:9px;height:9px;" title="Private — only followers and connections can see this post"></i-feather>
+                    </span>
                 </div>
             </a>
 

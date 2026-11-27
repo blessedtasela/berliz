@@ -175,4 +175,55 @@ describe('DashboardTimelineComponent', () => {
       expect(component.uploadedVideo).toBeNull();
     });
   });
+
+  describe('post visibility (GN-92)', () => {
+    it('defaults the composer to PUBLIC', () => {
+      fixture.detectChanges();
+      expect(component.draftVisibility).toBe('PUBLIC');
+    });
+
+    it('toggleVisibility flips PUBLIC <-> PRIVATE', () => {
+      fixture.detectChanges();
+
+      component.toggleVisibility();
+      expect(component.draftVisibility).toBe('PRIVATE');
+
+      component.toggleVisibility();
+      expect(component.draftVisibility).toBe('PUBLIC');
+    });
+
+    it('omits visibility from the request when posting PUBLIC (server default)', () => {
+      fixture.detectChanges();
+      postServiceSpy.addPost.and.returnValue(of({ message: '', data: { id: 1 } as PostResponse, success: true, statusCode: 200 }));
+      component.draftContent = 'Leg day';
+
+      component.submitPost();
+
+      const req = postServiceSpy.addPost.calls.mostRecent().args[0];
+      expect(req.visibility).toBeUndefined();
+    });
+
+    it('sends visibility: PRIVATE when the composer is toggled private', () => {
+      fixture.detectChanges();
+      postServiceSpy.addPost.and.returnValue(of({ message: '', data: { id: 1 } as PostResponse, success: true, statusCode: 200 }));
+      component.draftContent = 'Just for my people';
+      component.toggleVisibility();
+
+      component.submitPost();
+
+      const req = postServiceSpy.addPost.calls.mostRecent().args[0];
+      expect(req.visibility).toBe('PRIVATE');
+    });
+
+    it('resets the composer back to PUBLIC after a successful post', () => {
+      fixture.detectChanges();
+      postServiceSpy.addPost.and.returnValue(of({ message: '', data: { id: 1 } as PostResponse, success: true, statusCode: 200 }));
+      component.draftContent = 'Just for my people';
+      component.toggleVisibility();
+
+      component.submitPost();
+
+      expect(component.draftVisibility).toBe('PUBLIC');
+    });
+  });
 });

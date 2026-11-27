@@ -16,6 +16,9 @@ export type PostActivityType =
  */
 export type ReactionType = 'LIKE' | 'STRONG' | 'FIRE' | 'CLAP' | 'LOVE' | 'WOW' | 'CELEBRATE';
 
+/** GN-92: a post's own visibility switch, independent of the author's profile-level public/private setting. */
+export type PostVisibility = 'PUBLIC' | 'PRIVATE';
+
 /** Display metadata for each pickable reaction, in picker order. */
 export const REACTIONS: { type: ReactionType; emoji: string; label: string }[] = [
   { type: 'LOVE', emoji: '❤️', label: 'Love' },
@@ -51,6 +54,8 @@ export interface PostResponse {
   videoUrl?: string | null;
   /** Always set by the server — `"GENERAL"` for a plain post. */
   activityType?: PostActivityType;
+  /** Always set by the server — `"PUBLIC"` unless the author marked this specific post private (GN-92). */
+  visibility?: PostVisibility;
   /** Optional — a linked workout template the reader can clone into their own workouts. */
   workoutId?: number | null;
   workoutName?: string | null;
@@ -75,6 +80,8 @@ export interface PostRequest {
   activityType?: PostActivityType;
   /** Optional — id of a workout template to link (WORKOUT posts). */
   workoutId?: number;
+  /** Omit on create for PUBLIC; omit on update to leave it unchanged (GN-92). */
+  visibility?: PostVisibility;
   photo?: {
     photoUrl: string;
     strapiId: number;
