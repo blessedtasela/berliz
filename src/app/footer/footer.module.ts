@@ -8,7 +8,6 @@ import { ScrollModule } from '../scroll/scroll.module';
 import { FeatherModule } from 'angular-feather';
 import { EmailComponent } from './email/email.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
-import { PhoneComponent } from './phone/phone.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SocialComponent } from './social/social.component';
 import { UnderConstructionComponent } from './under-construction/under-construction.component';
@@ -24,7 +23,6 @@ import { SharedModule } from '../shared/shared.module';
     SubFooterComponent,
     EmailComponent,
     NewsletterComponent,
-    PhoneComponent,
     SocialComponent,
     UnderConstructionComponent,
     BerlizFeedbackModalComponent

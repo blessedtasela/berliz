@@ -11,8 +11,9 @@ import { environment } from './environment';
  * value is simply omitted rather than invented.
  *
  * Source of truth for the contact details below is the live footer
- * (`src/app/footer/footer/footer.component.html` and the
- * `app-phone` / `app-email` components it renders).
+ * (`src/app/footer/footer/footer.component.html` and the `app-email`
+ * component it renders). No phone number is published anywhere on the
+ * site (removed at the owner's request, Nov 27 2026), so none is listed here.
  */
 
 const logoUrl = `${environment.baseUrl}/assets/landing/logo.png`;
@@ -34,7 +35,6 @@ export const StructuredDataConfig = {
     ],
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+1-236-990-0823',
       email: 'berlizworld@gmail.com',
       contactType: 'Customer Service',
     },
@@ -46,7 +46,6 @@ export const StructuredDataConfig = {
     name: 'Berliz Fitness',
     image: logoUrl,
     url: environment.baseUrl,
-    telephone: '+1-236-990-0823',
     email: 'berlizworld@gmail.com',
     address: {
       '@type': 'PostalAddress',
