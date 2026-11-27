@@ -38,7 +38,6 @@ import { CenterReviewFormComponent } from './center-review-form/center-review-fo
 import { CenterLocationsComponent } from './center-locations/center-locations.component';
 import { CenterHeaderComponent } from './center-header/center-header.component';
 import { CenterPartnerFormComponent } from './center-partner-form/center-partner-form.component';
-import { CenterFormComponent } from './center-form/center-form.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
@@ -68,8 +67,7 @@ import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booki
     CenterSubscriptionFormComponent,
     CenterLocationsComponent,
     CenterHeaderComponent,
-    CenterPartnerFormComponent,
-    CenterFormComponent
+    CenterPartnerFormComponent
   ],
   imports: [
     CenterReviewFormComponent,
